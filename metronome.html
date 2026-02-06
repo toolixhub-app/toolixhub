@@ -5,62 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Metronome - ToolixHub</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #f0f4f8;
-    margin: 0;
-    padding: 50px 20px;
-  }
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: #f0f4f8;
+  margin: 0;
+  padding: 50px 20px;
+}
 
-  h1 {
-    color: #4a90e2;
-    margin-bottom: 20px;
-  }
+h1 {
+  color: #4a90e2;
+  margin-bottom: 20px;
+}
 
-  #controls {
-    margin-bottom: 60px;
-  }
+#controls {
+  margin-bottom: 60px;
+}
 
-  #bpmSlider {
-    width: 250px;
-    margin: 10px 0;
-  }
+input[type=range], select {
+  width: 250px;
+  margin: 10px 0;
+  font-size: 16px;
+}
 
-  button {
-    font-size: 18px;
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 8px;
-    background: #4a90e2;
-    color: white;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+button {
+  font-size: 18px;
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
 
-  button:hover {
-    background: #357ABD;
-  }
+button:hover {
+  background: #357ABD;
+}
 
-  #beat {
-    font-size: 400px;
-    color: #4a90e2;
-    transition: opacity 0.05s;
-    line-height: 0.8;
-    margin-bottom: 20px;
-  }
+#beat {
+  font-size: 400px;
+  color: #4a90e2;
+  transition: opacity 0.05s;
+  line-height: 0.8;
+  margin-bottom: 20px;
+}
 
-  #measure {
-    font-size: 24px;
-    margin-top: -40px;
-    color: #555;
-  }
+#measure {
+  font-size: 24px;
+  margin-top: -40px;
+  color: #555;
+}
 
-  @media (max-width: 600px) {
-    #beat { font-size: 200px; }
-    #bpmSlider { width: 200px; }
-  }
+@media (max-width: 600px) {
+  #beat { font-size: 200px; }
+  input[type=range], select { width: 200px; }
+}
 </style>
 </head>
 <body>
@@ -71,55 +72,79 @@
   <label for="bpmSlider">BPM: <span id="bpmValue">60</span></label><br>
   <input type="range" id="bpmSlider" min="30" max="300" value="60">
   <br>
+  <label for="beatsPerMeasure">Beats per measure:</label><br>
+  <select id="beatsPerMeasure">
+    <option value="2">2/4</option>
+    <option value="3">3/4</option>
+    <option value="4" selected>4/4</option>
+    <option value="5">5/4</option>
+    <option value="6">6/4</option>
+  </select>
+  <br>
   <button onclick="start()">Start</button>
   <button onclick="stop()">Stop</button>
 </div>
 
 <div id="beat">●</div>
-<div id="measure">Measure: 1 / 4</div>
-
-<!-- Som embutido (beep curto) -->
-<audio id="clickSound" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="></audio>
+<div id="measure">Measure: 0 / 4</div>
 
 <script>
+// Web Audio Context para sons
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
 let interval;
 let beatEl = document.getElementById('beat');
 let measureEl = document.getElementById('measure');
 let bpmSlider = document.getElementById('bpmSlider');
 let bpmValue = document.getElementById('bpmValue');
-let sound = document.getElementById('clickSound');
+let beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 
 let beatCount = 0;
-const beatsPerMeasure = 4; // 4/4 padrão
 
 // Atualiza valor do slider
 bpmSlider.oninput = () => { bpmValue.textContent = bpmSlider.value; }
 
+// Função para tocar beep
+function playClick(isAccent=false) {
+  if(!audioCtx) audioCtx = new AudioContext(); // inicializa no primeiro clique
+  const osc = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  osc.type = 'square';
+  osc.frequency.value = isAccent ? 1000 : 700; // som diferente para primeiro beat
+  gainNode.gain.value = 0.2;
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.05); // duração curta
+}
+
+// Start
 function start() {
-  stop(); // garante que não tenha intervalo duplicado
+  stop(); // garante que não duplique intervalos
   let bpm = parseInt(bpmSlider.value);
   let ms = 60000 / bpm;
+  let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
   beatCount = 0;
 
   interval = setInterval(() => {
-    // Bolinha pisca
+    beatCount = (beatCount % beatsPerMeasure) + 1;
     beatEl.style.opacity = 1;
     setTimeout(() => beatEl.style.opacity = 0.2, ms/2);
 
-    // Toca som
-    sound.currentTime = 0;
-    sound.play();
+    // Primeiro beat do compasso tem som diferente
+    playClick(beatCount===1);
 
-    // Atualiza contagem de compassos
-    beatCount = (beatCount % beatsPerMeasure) + 1;
     measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
   }, ms);
 }
 
+// Stop
 function stop() {
   clearInterval(interval);
   beatEl.style.opacity = 1;
   beatCount = 0;
+  let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
   measureEl.textContent = `Measure: 0 / ${beatsPerMeasure}`;
 }
 </script>
