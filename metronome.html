@@ -5,50 +5,124 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Metronome - ToolixHub</title>
 <style>
-  body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
-  input, button { font-size: 18px; padding: 5px; margin: 5px; }
-  #beat {
-    font-size: 500px; /* bolinha gigante */
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background: #f0f4f8;
+    margin: 0;
+    padding: 50px 20px;
+  }
+
+  h1 {
     color: #4a90e2;
-    transition: opacity 0.1s;
+    margin-bottom: 20px;
+  }
+
+  #controls {
+    margin-bottom: 60px;
+  }
+
+  #bpmSlider {
+    width: 250px;
+    margin: 10px 0;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 8px;
+    background: #4a90e2;
+    color: white;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background: #357ABD;
+  }
+
+  #beat {
+    font-size: 400px;
+    color: #4a90e2;
+    transition: opacity 0.05s;
     line-height: 0.8;
+    margin-bottom: 20px;
+  }
+
+  #measure {
+    font-size: 24px;
+    margin-top: -40px;
+    color: #555;
+  }
+
+  @media (max-width: 600px) {
+    #beat { font-size: 200px; }
+    #bpmSlider { width: 200px; }
   }
 </style>
 </head>
 <body>
-<h1>Metronome</h1>
-<input type="number" id="bpm" placeholder="BPM" min="30" max="300">
-<button onclick="start()">Start</button>
-<button onclick="stop()">Stop</button>
-<div id="beat">●</div>
 
+<h1>🎵 Metronome</h1>
+
+<div id="controls">
+  <label for="bpmSlider">BPM: <span id="bpmValue">60</span></label><br>
+  <input type="range" id="bpmSlider" min="30" max="300" value="60">
+  <br>
+  <button onclick="start()">Start</button>
+  <button onclick="stop()">Stop</button>
+</div>
+
+<div id="beat">●</div>
+<div id="measure">Measure: 1 / 4</div>
+
+<!-- Som embutido (beep curto) -->
 <audio id="clickSound" src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAAAAA="></audio>
 
 <script>
 let interval;
+let beatEl = document.getElementById('beat');
+let measureEl = document.getElementById('measure');
+let bpmSlider = document.getElementById('bpmSlider');
+let bpmValue = document.getElementById('bpmValue');
 let sound = document.getElementById('clickSound');
 
+let beatCount = 0;
+const beatsPerMeasure = 4; // 4/4 padrão
+
+// Atualiza valor do slider
+bpmSlider.oninput = () => { bpmValue.textContent = bpmSlider.value; }
+
 function start() {
-  stop();
-  const bpm = parseInt(document.getElementById('bpm').value) || 60;
-  const ms = 60000 / bpm;
-  const beatEl = document.getElementById('beat');
-  let visible = true;
+  stop(); // garante que não tenha intervalo duplicado
+  let bpm = parseInt(bpmSlider.value);
+  let ms = 60000 / bpm;
+  beatCount = 0;
 
   interval = setInterval(() => {
-    beatEl.style.opacity = visible ? 1 : 0.2;
-    visible = !visible;
-    if(visible) {
-      // garante que o som toque mesmo repetindo rápido
-      sound.currentTime = 0;
-      sound.play();
-    }
+    // Bolinha pisca
+    beatEl.style.opacity = 1;
+    setTimeout(() => beatEl.style.opacity = 0.2, ms/2);
+
+    // Toca som
+    sound.currentTime = 0;
+    sound.play();
+
+    // Atualiza contagem de compassos
+    beatCount = (beatCount % beatsPerMeasure) + 1;
+    measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
   }, ms);
 }
 
 function stop() {
   clearInterval(interval);
+  beatEl.style.opacity = 1;
+  beatCount = 0;
+  measureEl.textContent = `Measure: 0 / ${beatsPerMeasure}`;
 }
 </script>
+
 </body>
 </html>
