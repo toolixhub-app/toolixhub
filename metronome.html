@@ -111,7 +111,7 @@ const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
 const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 
-let interval;
+let interval = null;  // global
 let beatCount = 0;
 
 // Slider live update
@@ -119,7 +119,7 @@ bpmSlider.oninput = () => bpmValue.textContent = bpmSlider.value;
 
 // Start Metronome
 function start() {
-  stop();
+  stop(); // garante que não duplique intervalos
   let bpm = parseInt(bpmSlider.value);
   let ms = 60000 / bpm;
   let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
@@ -142,7 +142,10 @@ function start() {
 
 // Stop Metronome
 function stop() {
-  clearInterval(interval);
+  if(interval) {
+    clearInterval(interval);
+    interval = null;  // garante que o Start possa reiniciar
+  }
   beatEl.style.transform = 'scale(1)';
   beatCount = 0;
   let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
