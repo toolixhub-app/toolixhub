@@ -8,7 +8,7 @@
 body {
   font-family: Arial, sans-serif;
   text-align: center;
-  background: #f0f4f8;
+  background: #eef2f7;
   margin: 0;
   padding: 50px 20px;
 }
@@ -37,7 +37,7 @@ button {
   background: #4a90e2;
   color: white;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.1s;
 }
 
 button:hover {
@@ -45,17 +45,17 @@ button:hover {
 }
 
 #beat {
-  font-size: 400px;
+  font-size: 350px;
   color: #4a90e2;
-  transition: opacity 0.05s;
+  margin: 0 auto 20px;
+  transition: transform 0.05s;
   line-height: 0.8;
-  margin-bottom: 20px;
 }
 
 #measure {
   font-size: 24px;
-  margin-top: -40px;
   color: #555;
+  margin-bottom: 30px;
 }
 
 @media (max-width: 600px) {
@@ -70,8 +70,8 @@ button:hover {
 
 <div id="controls">
   <label for="bpmSlider">BPM: <span id="bpmValue">60</span></label><br>
-  <input type="range" id="bpmSlider" min="30" max="300" value="60">
-  <br>
+  <input type="range" id="bpmSlider" min="30" max="300" value="60"><br>
+
   <label for="beatsPerMeasure">Beats per measure:</label><br>
   <select id="beatsPerMeasure">
     <option value="2">2/4</option>
@@ -79,8 +79,8 @@ button:hover {
     <option value="4" selected>4/4</option>
     <option value="5">5/4</option>
     <option value="6">6/4</option>
-  </select>
-  <br>
+  </select><br>
+
   <button onclick="start()">Start</button>
   <button onclick="stop()">Stop</button>
 </div>
@@ -89,39 +89,37 @@ button:hover {
 <div id="measure">Measure: 0 / 4</div>
 
 <script>
-// Web Audio Context para sons
-const AudioContext = window.AudioContext || window.webkitAudioContext;
+// Web Audio API
 let audioCtx;
-
-let interval;
-let beatEl = document.getElementById('beat');
-let measureEl = document.getElementById('measure');
-let bpmSlider = document.getElementById('bpmSlider');
-let bpmValue = document.getElementById('bpmValue');
-let beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
-
-let beatCount = 0;
-
-// Atualiza valor do slider
-bpmSlider.oninput = () => { bpmValue.textContent = bpmSlider.value; }
-
-// Função para tocar beep
 function playClick(isAccent=false) {
-  if(!audioCtx) audioCtx = new AudioContext(); // inicializa no primeiro clique
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const osc = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
   osc.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   osc.type = 'square';
-  osc.frequency.value = isAccent ? 1000 : 700; // som diferente para primeiro beat
+  osc.frequency.value = isAccent ? 1000 : 700;
   gainNode.gain.value = 0.2;
   osc.start();
-  osc.stop(audioCtx.currentTime + 0.05); // duração curta
+  osc.stop(audioCtx.currentTime + 0.05);
 }
 
-// Start
+// Elements
+const beatEl = document.getElementById('beat');
+const measureEl = document.getElementById('measure');
+const bpmSlider = document.getElementById('bpmSlider');
+const bpmValue = document.getElementById('bpmValue');
+const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
+
+let interval;
+let beatCount = 0;
+
+// Slider live update
+bpmSlider.oninput = () => bpmValue.textContent = bpmSlider.value;
+
+// Start Metronome
 function start() {
-  stop(); // garante que não duplique intervalos
+  stop();
   let bpm = parseInt(bpmSlider.value);
   let ms = 60000 / bpm;
   let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
@@ -129,20 +127,23 @@ function start() {
 
   interval = setInterval(() => {
     beatCount = (beatCount % beatsPerMeasure) + 1;
-    beatEl.style.opacity = 1;
-    setTimeout(() => beatEl.style.opacity = 0.2, ms/2);
 
-    // Primeiro beat do compasso tem som diferente
-    playClick(beatCount===1);
+    // Pulsar bolinha
+    beatEl.style.transform = 'scale(1.2)';
+    setTimeout(() => beatEl.style.transform = 'scale(1)', ms/2);
 
+    // Som
+    playClick(beatCount === 1);
+
+    // Atualiza medida
     measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
   }, ms);
 }
 
-// Stop
+// Stop Metronome
 function stop() {
   clearInterval(interval);
-  beatEl.style.opacity = 1;
+  beatEl.style.transform = 'scale(1)';
   beatCount = 0;
   let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
   measureEl.textContent = `Measure: 0 / ${beatsPerMeasure}`;
