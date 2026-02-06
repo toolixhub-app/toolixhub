@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Currency Converter - ToolixHub</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+  input, select, button { font-size: 18px; padding: 5px; margin: 5px; }
+  #result { font-size: 24px; margin-top: 20px; color: #222; }
+</style>
+</head>
+<body>
+<h1>Currency Converter</h1>
+<input type="number" id="amount" placeholder="Amount">
+<select id="from">
+  <option value="BRL">BRL</option>
+  <option value="USD">USD</option>
+  <option value="EUR">EUR</option>
+</select>
+<select id="to">
+  <option value="USD">USD</option>
+  <option value="BRL">BRL</option>
+  <option value="EUR">EUR</option>
+</select>
+<button onclick="convert()">Convert</button>
+<div id="result">Result: </div>
+
+<script>
+const rates = {
+  BRL: { USD: 0.20, EUR: 0.18, BRL: 1 },
+  USD: { BRL: 5, EUR: 0.91, USD: 1 },
+  EUR: { BRL: 5.5, USD: 1.1, EUR: 1 }
+};
+function convert() {
+  const amt = parseFloat(document.getElementById('amount').value) || 0;
+  const from = document.getElementById('from').value;
+  const to = document.getElementById('to').value;
+  const res = (amt * rates[from][to]).toFixed(2);
+  document.getElementById('result').innerText = `Result: ${res} ${to}`;
+}
+</script>
+</body>
+</html>
