@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metronome - ToolixHub</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
+  input, button { font-size: 18px; padding: 5px; margin: 5px; }
+  #beat { font-size: 48px; margin-top: 20px; color: #222; }
+</style>
+</head>
+<body>
+<h1>Metronome</h1>
+<input type="number" id="bpm" placeholder="BPM" min="30" max="300">
+<button onclick="start()">Start</button>
+<button onclick="stop()">Stop</button>
+<div id="beat">●</div>
+
+<script>
+let interval;
+function start() {
+  stop();
+  const bpm = parseInt(document.getElementById('bpm').value) || 60;
+  const ms = 60000 / bpm;
+  const beatEl = document.getElementById('beat');
+  let visible = true;
+  interval = setInterval(()=>{ beatEl.style.opacity = visible ? 1 : 0.2; visible = !visible; }, ms);
+}
+function stop() { clearInterval(interval); }
+</script>
+</body>
+</html>
