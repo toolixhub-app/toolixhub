@@ -1,12 +1,132 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ToolixHub</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToolixHub - Your Online Tool Hub</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: #4a90e2;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2em;
+  }
+  header p {
+    font-size: 1.1em;
+    margin-top: 5px;
+  }
+  main {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 40px 20px;
+    gap: 20px;
+  }
+  .tool-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    padding: 20px 30px;
+    width: 220px;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+  }
+  .tool-card h2 {
+    margin: 10px 0;
+    font-size: 1.3em;
+  }
+  .tool-card a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #4a90e2;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+  .tool-card a:hover {
+    background: #357ABD;
+  }
+  footer {
+    text-align: center;
+    padding: 20px;
+    color: #777;
+    font-size: 0.9em;
+  }
+  @media (max-width: 600px) {
+    main { flex-direction: column; align-items: center; }
+  }
+</style>
 </head>
 <body>
-  <h1>Bem-vindo ao ToolixHub!</h1>
-  <p>Seu hub de ferramentas online está no ar 🚀</p>
+
+<header>
+  <h1>ToolixHub</h1>
+  <p>Your online hub of simple, handy tools</p>
+</header>
+
+<main>
+  <div class="tool-card">
+    <h2>Timer</h2>
+    <a href="timer.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Calculator</h2>
+    <a href="calculator.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Countdown</h2>
+    <a href="countdown.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Currency Converter</h2>
+    <a href="currency.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Word/Char Counter</h2>
+    <a href="wordcounter.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Password Generator</h2>
+    <a href="password.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>BMI Calculator</h2>
+    <a href="bmi.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Stopwatch</h2>
+    <a href="stopwatch.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Temperature Converter</h2>
+    <a href="temperature.html">Open</a>
+  </div>
+  <div class="tool-card">
+    <h2>Metronome</h2>
+    <a href="metronome.html">Open</a>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 ToolixHub — All tools free and online
+</footer>
+
 </body>
 </html>
