@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Metronome 3.5</title>
+<title>Pro Metronome 3.6</title>
 <style>
 body {
   background-color: #121212;
@@ -51,6 +51,7 @@ select {
   border: 1px solid #555;
   border-radius: 4px;
   cursor: pointer;
+  -webkit-appearance: none; /* Melhora renderização no Android */
 }
 
 #measure-display {
@@ -90,6 +91,7 @@ select {
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.2s;
+    touch-action: manipulation; /* Melhora resposta no mobile */
 }
 .bpm-btn:hover { background: #444; }
 
@@ -101,6 +103,7 @@ select {
   background: #333;
   border-radius: 10px;
   cursor: pointer;
+  touch-action: none; /* Importante para o slider mobile */
 }
 
 #bpm-dot {
@@ -134,6 +137,7 @@ select {
     cursor: pointer;
     font-size: 12px;
     transition: all 0.2s;
+    touch-action: manipulation;
 }
 
 .sub-btn.active {
@@ -168,6 +172,7 @@ input[type=range] { width: 150px; cursor: pointer; }
   font-size: 16px;
   transition: all 0.2s;
   min-width: 100px;
+  touch-action: manipulation;
 }
 .btn:hover { background-color: #444; }
 .btn:active { transform: translateY(1px); }
@@ -210,7 +215,7 @@ footer {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.5</div>
+<div class="subtitle">Pro 3.6</div>
 
 <div class="main-container">
     <div class="controls-top">
@@ -275,7 +280,7 @@ footer {
 </div>
 
 <footer>
-    Pro Metronome v3.5. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
+    Pro Metronome v3.6. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
 </footer>
 
 <script>
@@ -285,7 +290,7 @@ let isPlaying = false;
 let currentBeat = 0;
 let currentMeasure = 1;
 let beatsPerMeasure = 4;
-let noteValue = 4; // 4 for quarter note, 8 for eighth note
+let noteValue = 4;
 let subdivision = 1;
 let tempoAudioContext = null;
 let masterGainNode = null;
@@ -328,7 +333,6 @@ function parseTimeSignature() {
 // --- Audio Logic ---
 function nextNote() {
   const secondsPerBeat = 60.0 / bpm;
-  // Ajuste para compassos compostos (ex: 6/8 toca na colcheia)
   let timeToNext = secondsPerBeat / subdivision;
   if(noteValue === 8) timeToNext = (secondsPerBeat * 2) / subdivision;
 
@@ -465,9 +469,9 @@ function updateBPMDisplay() {
   bpmDot.style.left = (percentage * 100) + "%";
 }
 
-function setBPMFromSlider(e) {
+function setBPMFromSlider(clientX) {
   const rect = bpmControl.getBoundingClientRect();
-  let x = e.clientX - rect.left;
+  let x = clientX - rect.left;
   x = Math.max(0, Math.min(rect.width, x));
   const percentage = x / rect.width;
   bpm = Math.round(40 + percentage * (220 - 40));
@@ -482,14 +486,36 @@ document.getElementById('bpm-minus').addEventListener('click', () => {
     if(bpm > 40) { bpm--; updateBPMDisplay(); }
 });
 
+// --- Slider Touch/Mouse Events ---
 let dragging = false;
+
+// Mouse
 bpmDot.addEventListener('mousedown', () => dragging = true);
 document.addEventListener('mouseup', () => dragging = false);
 document.addEventListener('mousemove', (e) => {
   if (!dragging) return;
-  setBPMFromSlider(e);
+  setBPMFromSlider(e.clientX);
 });
-bpmControl.addEventListener('mousedown', setBPMFromSlider);
+bpmControl.addEventListener('mousedown', (e) => setBPMFromSlider(e.clientX));
+
+// Touch (Android/iOS)
+bpmDot.addEventListener('touchstart', (e) => {
+    dragging = true;
+    e.preventDefault();
+}, {passive: false});
+
+document.addEventListener('touchend', () => dragging = false);
+document.addEventListener('touchmove', (e) => {
+  if (!dragging) return;
+  setBPMFromSlider(e.touches[0].clientX);
+  e.preventDefault();
+}, {passive: false});
+
+bpmControl.addEventListener('touchstart', (e) => {
+    setBPMFromSlider(e.touches[0].clientX);
+    dragging = true;
+    e.preventDefault();
+}, {passive: false});
 
 // --- Time Signature & Accent ---
 function renderBeats() {
