@@ -23,7 +23,7 @@
     color: #fff;
     border: 1px solid #555;
     padding: 10px 15px;
-    font-size: 16px;
+    font-size: 20px;
     margin: 0 5px;
     cursor: pointer;
   }
@@ -66,15 +66,14 @@
 <h1>Metronome Full</h1>
 
 <div class="top-controls">
-  <label>Time Sig:
-    <select id="timeSig">
-      <option value="2">2</option>
-      <option value="3" selected>3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-    </select>
-  </label>
+  <label for="beatsPerMeasure">Beats per measure:</label><br>
+  <select id="beatsPerMeasure">
+    <option value="2">2/4</option>
+    <option value="3">3/4</option>
+    <option value="4" selected>4/4</option>
+    <option value="5">5/4</option>
+    <option value="6">6/4</option>
+  </select>
 </div>
 
 <div class="bpm-control">
@@ -86,9 +85,10 @@
 </div>
 
 <div class="controls">
-  <button id="playBtn">Play</button>
-  <button id="pauseBtn">Pause</button>
-  <button id="stopBtn">Stop</button>
+  <button id="playBtn">▶</button>
+  <button id="pauseBtn">⏸</button>
+  <button id="stopBtn">■</button>
+  <button id="soundBtn">🔊</button>
 </div>
 
 <div class="beats" id="beatsContainer">
@@ -100,21 +100,23 @@
 
 <script>
 let bpm = 120;
-let timeSig = 3;
+let timeSig = 4;
 let accentIndex = 0;
 let currentBeat = 0;
 let isPlaying = false;
 let intervalId;
 let lastTap = 0;
+let soundOn = true;
 
 const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
-const timeSigSelect = document.getElementById('timeSig');
 const beatsContainer = document.getElementById('beatsContainer');
 const playBtn = document.getElementById('playBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const stopBtn = document.getElementById('stopBtn');
+const soundBtn = document.getElementById('soundBtn');
 const tapBtn = document.getElementById('tapBtn');
+const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 const soundNormal = document.getElementById('soundNormal');
 const soundAccent = document.getElementById('soundAccent');
 
@@ -144,6 +146,7 @@ function renderBeats() {
 }
 
 function playClick() {
+  if(!soundOn) return;
   if(currentBeat === accentIndex) {
     soundAccent.currentTime = 0;
     soundAccent.play();
@@ -186,8 +189,8 @@ bpmSlider.addEventListener('input', () => {
   }
 });
 
-timeSigSelect.addEventListener('change', () => {
-  timeSig = parseInt(timeSigSelect.value);
+beatsPerMeasureSelect.addEventListener('change', () => {
+  timeSig = parseInt(beatsPerMeasureSelect.value);
   if(accentIndex >= timeSig) accentIndex = 0;
   currentBeat = 0;
   renderBeats();
@@ -197,6 +200,10 @@ timeSigSelect.addEventListener('change', () => {
 playBtn.addEventListener('click', startMetronome);
 pauseBtn.addEventListener('click', pauseMetronome);
 stopBtn.addEventListener('click', stopMetronome);
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  soundBtn.textContent = soundOn ? "🔊" : "🔇";
+});
 
 // TAP Button
 tapBtn.addEventListener('click', () => {
