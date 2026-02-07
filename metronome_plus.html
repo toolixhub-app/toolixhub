@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Pro 3.0</title>
+<title>Metronome Pro 3.1</title>
 <style>
 body {
   background-color: #121212;
@@ -14,7 +14,7 @@ body {
   align-items: center;
   margin: 0;
   padding: 20px;
-  user-select: none; /* Evita selecionar texto ao clicar rápido */
+  user-select: none;
 }
 
 h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
@@ -39,6 +39,7 @@ h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
   padding: 10px 15px;
   border-radius: 8px;
   font-size: 14px;
+  align-items: center;
 }
 
 select {
@@ -85,7 +86,7 @@ select {
 
 /* Subdivision Controls */
 .subdivision-container {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: center;
     gap: 10px;
@@ -109,7 +110,19 @@ select {
     font-weight: bold;
 }
 
-.btn-container { margin-bottom: 20px; }
+/* Volume Control */
+.volume-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #aaa;
+}
+input[type=range] { width: 150px; cursor: pointer; }
+
+.btn-container { margin-bottom: 15px; }
 .btn {
   background-color: #333;
   color: white;
@@ -148,7 +161,7 @@ select {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.0</div>
+<div class="subtitle">Pro 3.1</div>
 
 <div class="main-container">
     <div class="controls-top">
@@ -177,6 +190,12 @@ select {
         <button class="sub-btn" data-sub="3">1/8 T</button>
         <button class="sub-btn" data-sub="4">1/16</button>
     </div>
+    
+    <div class="volume-container">
+        <span>🔇</span>
+        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.7">
+        <span>🔊</span>
+    </div>
 
     <div class="btn-container">
       <button class="btn" id="play-btn">Play</button>
@@ -191,11 +210,12 @@ select {
 // --- Configurações e Estado ---
 let bpm = 120;
 let isPlaying = false;
-let currentBeat = 0;
+let currentBeat = 0; // Beat relativo à subdivisão
 let currentMeasure = 1;
 let timeSignature = 4;
-let subdivision = 1; // 1=quarter, 2=eighth, 3=triplet, 4=sixteenth
+let subdivision = 1;
 let tempoAudioContext = null;
+let masterGainNode = null; // Para controle de volume
 let nextNoteTime = 0.0;
 let timerID = null;
 let accentBeatIndex = 0; 
@@ -210,6 +230,7 @@ const bpmControl = document.getElementById('bpm-control');
 const timeSigSelect = document.getElementById('time-signature');
 const beatIndicator = document.getElementById('beat-indicator');
 const measureDisplay = document.getElementById('measure-display');
+const volumeControl = document.getElementById('volume-control');
 
 // --- Inicialização ---
 function init() {
@@ -217,24 +238,23 @@ function init() {
   updateBPMDisplay();
 }
 
-// --- Lógica de Áudio (Precisão) ---
+// --- Lógica de Áudio (Precisão + Volume) ---
 function nextNote() {
   const secondsPerBeat = 60.0 / bpm;
   
-  // Lógica de subdivisão: quanto tempo até a próxima nota musical (main beat ou sub)
-  let timeToNext = secondsPerBeat;
-  if (subdivision === 2) timeToNext = secondsPerBeat / 2;
-  if (subdivision === 3) timeToNext = secondsPerBeat / 3;
-  if (subdivision === 4) timeToNext = secondsPerBeat / 4;
-
+  let timeToNext = secondsPerBeat / subdivision;
   nextNoteTime += timeToNext;
   
-  // Atualiza o beat apenas quando a subdivisão completa um tempo principal
-  // Para simplificar a visualização, o indicador pula na subdivisão
+  // Incrementa beat e compasso
   currentBeat = (currentBeat + 1) % (timeSignature * subdivision);
+  if (currentBeat === 0) {
+      currentMeasure++;
+      measureDisplay.innerText = currentMeasure;
+  }
 }
 
 function scheduleNote(beatNumber, time) {
+  // beatNumber é o índice baseado na subdivisão
   const isMainBeat = beatNumber % subdivision === 0;
   const mainBeatNumber = Math.floor(beatNumber / subdivision);
 
@@ -243,21 +263,16 @@ function scheduleNote(beatNumber, time) {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
       dot.classList.remove('accent-playing', 'sub-playing');
+      
       if (isMainBeat && index === mainBeatNumber) {
           dot.classList.add(mainBeatNumber === accentBeatIndex ? 'accent-playing' : 'active');
       } else if (!isMainBeat && index === mainBeatNumber) {
-          // Efeito visual sutil para subdivisão
           dot.classList.add('sub-playing');
       }
     });
-
-    // Atualiza contador de compasso
-    if (isMainBeat && mainBeatNumber === 0 && currentBeat < subdivision) {
-        // Logica simples de compasso, pode ser aprimorada
-    }
   }, (time - tempoAudioContext.currentTime) * 1000);
 
-  // Som
+  // Som com oscilador
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
@@ -267,14 +282,16 @@ function scheduleNote(beatNumber, time) {
       envelope.gain.setValueAtTime(1, time);
       envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
   } else {
-      // Som da subdivisão (mais baixo e curto)
+      // Som da subdivisão
       osc.frequency.value = 600;
-      envelope.gain.setValueAtTime(0.4, time);
+      envelope.gain.setValueAtTime(0.3, time); // Mais baixo
       envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
   }
 
   osc.connect(envelope);
-  envelope.connect(tempoAudioContext.destination);
+  envelope.connect(masterGainNode); // Conecta ao controle de volume
+  masterGainNode.connect(tempoAudioContext.destination);
+  
   osc.start(time);
   osc.stop(time + 0.05);
 }
@@ -291,6 +308,9 @@ function scheduler() {
 function play() {
   if (!tempoAudioContext) {
     tempoAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // Cria o nó de volume mestre
+    masterGainNode = tempoAudioContext.createGain();
+    masterGainNode.gain.value = volumeControl.value;
   }
   
   if (isPlaying) return;
@@ -316,6 +336,13 @@ function stop() {
   measureDisplay.innerText = currentMeasure;
   resetBeatVisuals();
 }
+
+// --- Volume control ---
+volumeControl.addEventListener('input', (e) => {
+    if (masterGainNode) {
+        masterGainNode.gain.value = e.target.value;
+    }
+});
 
 document.getElementById('play-btn').addEventListener('click', () => {
   if (isPlaying) pause(); else play();
