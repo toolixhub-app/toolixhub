@@ -73,8 +73,8 @@ button:hover {
   height: 150px;
   top: 50%;
   left: 50%;
-  transform-origin: bottom center;
-  background: radial-gradient(circle, #4a90e2 0%, #1c5bbf 70%);
+  transform-origin: center 140px; /* Centro da bolinha como eixo de rotação */
+  background: #4a90e2; /* cor sólida */
   border-radius: 10px;
   transform: rotate(0deg);
   transition: transform 0.05s linear;
@@ -98,9 +98,9 @@ button:hover {
 }
 
 #measure {
-  font-size: 24px;
+  font-size: 20px;
   color: #555;
-  margin-bottom: 20px;
+  margin: 10px 0;
 }
 
 footer {
@@ -112,7 +112,7 @@ footer {
 
 @media (max-width: 600px) {
   #metronome { width: 200px; height: 200px; }
-  #beat { height: 100px; width: 15px; }
+  #beat { height: 100px; width: 15px; transform-origin: center 90px; }
   input[type=range], select { width: 200px; }
   button { font-size: 20px; padding: 8px 12px; }
 }
@@ -136,7 +136,10 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
     <option value="4" selected>4/4</option>
     <option value="5">5/4</option>
     <option value="6">6/4</option>
-  </select><br>
+  </select>
+
+  <!-- Measure agora posicionado aqui -->
+  <div id="measure">Measure: 0 / 4</div>
 
   <div>
     <button id="playBtn">▶</button>
@@ -150,7 +153,7 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
   <div id="pulse"></div>
   <div id="beat"></div>
 </div>
-<div id="measure">Measure: 0 / 4</div>
+
 <footer>Version 1.1</footer>
 
 <script>
@@ -203,7 +206,7 @@ function scheduleBeat() {
 
   beatCount = (beatCount % beatsPerMeasure) + 1;
 
-  // Rotação tipo ponteiro centralizado
+  // Rotação tipo ponteiro centralizado no centro da bolinha
   const angle = (beatCount-1) * (360 / beatsPerMeasure);
   beatEl.style.transform = `rotate(${angle}deg)`;
 
@@ -214,7 +217,6 @@ function scheduleBeat() {
   measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
 
   // Pulse visual
-  pulseEl.style.background = `radial-gradient(circle, rgba(74,144,226,0.3) 0%, rgba(28,91,191,0.0) 70%)`;
   pulseEl.style.animation = 'none';
   void pulseEl.offsetWidth; // restart animation
   pulseEl.style.animation = `pulseAnim ${ms}ms linear`;
