@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome 1.1 - ToolixHub</title>
+<title>Metronome 1.2 - ToolixHub</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -73,11 +73,11 @@ button:hover {
   height: 150px;
   top: 50%;
   left: 50%;
-  transform-origin: center 140px; /* Centro da bolinha como eixo de rotação */
-  background: #4a90e2; /* cor sólida */
+  transform-origin: center 140px;
+  background: #4a90e2;
   border-radius: 10px;
   transform: rotate(0deg);
-  transition: transform 0.05s linear;
+  transition: transform 0.05s linear, background 0.05s linear;
 }
 
 #pulse {
@@ -91,9 +91,22 @@ button:hover {
   pointer-events: none;
 }
 
+#flash {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @keyframes pulseAnim {
   0% { transform: scale(0.8); opacity: 0; }
-  50% { transform: scale(1.2); opacity: 0.3; }
+  50% { transform: scale(1.2); opacity: 0.4; }
   100% { transform: scale(0.8); opacity: 0; }
 }
 
@@ -115,12 +128,13 @@ footer {
   #beat { height: 100px; width: 15px; transform-origin: center 90px; }
   input[type=range], select { width: 200px; }
   button { font-size: 20px; padding: 8px 12px; }
+  #flash { width: 20px; height: 20px; }
 }
 </style>
 </head>
 <body>
 
-<h1>🎵 Metronome 1.1</h1>
+<h1>🎵 Metronome 1.2</h1>
 <div id="description">
 Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios rítmicos. Ajuste o BPM e o número de batidas por compasso. Você pode ativar ou desativar o som.
 </div>
@@ -138,7 +152,6 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
     <option value="6">6/4</option>
   </select>
 
-  <!-- Measure agora posicionado aqui -->
   <div id="measure">Measure: 0 / 4</div>
 
   <div>
@@ -152,9 +165,10 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
 <div id="metronome">
   <div id="pulse"></div>
   <div id="beat"></div>
+  <div id="flash"></div>
 </div>
 
-<footer>Version 1.1</footer>
+<footer>Version 1.2</footer>
 
 <script>
 // --- Web Audio API ---
@@ -169,7 +183,7 @@ function playClick(isAccent=false) {
   osc.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   osc.type = 'square';
-  osc.frequency.value = isAccent ? 1200 : 700; 
+  osc.frequency.value = isAccent ? 1200 : 700;
   gainNode.gain.value = 0.25;
   osc.start();
   osc.stop(audioCtx.currentTime + 0.05);
@@ -178,6 +192,7 @@ function playClick(isAccent=false) {
 // --- Elementos ---
 const beatEl = document.getElementById('beat');
 const pulseEl = document.getElementById('pulse');
+const flashEl = document.getElementById('flash');
 const measureEl = document.getElementById('measure');
 const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
@@ -196,6 +211,12 @@ let isPaused = false;
 // Atualiza valor do slider
 bpmSlider.oninput = () => bpmValue.textContent = bpmSlider.value;
 
+// --- Função para gerar cores aleatórias ---
+function randomColor() {
+  const colors = ['#4a90e2','#e24a4a','#e2c84a','#4ae25a','#a64ae2','#e24ab1'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
 // Função do beat
 function scheduleBeat() {
   if(!isRunning || isPaused) return;
@@ -206,9 +227,14 @@ function scheduleBeat() {
 
   beatCount = (beatCount % beatsPerMeasure) + 1;
 
-  // Rotação tipo ponteiro centralizado no centro da bolinha
+  // Rotação tipo ponteiro centralizado
   const angle = (beatCount-1) * (360 / beatsPerMeasure);
   beatEl.style.transform = `rotate(${angle}deg)`;
+  beatEl.style.background = randomColor(); // cor dinâmica
+
+  // Flash central
+  flashEl.style.opacity = 1;
+  setTimeout(() => { flashEl.style.opacity = 0; }, 80);
 
   // Som
   playClick(beatCount === 1);
@@ -218,7 +244,7 @@ function scheduleBeat() {
 
   // Pulse visual
   pulseEl.style.animation = 'none';
-  void pulseEl.offsetWidth; // restart animation
+  void pulseEl.offsetWidth;
   pulseEl.style.animation = `pulseAnim ${ms}ms linear`;
 
   // Próximo beat
@@ -261,3 +287,4 @@ soundBtn.onclick = () => {
 
 </body>
 </html>
+
