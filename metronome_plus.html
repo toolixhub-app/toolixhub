@@ -1,208 +1,223 @@
-import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'dart:async';
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Metronome Full</title>
+<style>
+  body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .controls, .bpm-control, .beats {
+    margin: 20px 0;
+  }
+  button {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 10px 15px;
+    font-size: 16px;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #444;
+  }
+  .slider {
+    width: 200px;
+  }
+  .beats {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .beat {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 8px;
+    background-color: #444;
+    cursor: pointer;
+  }
+  .beat.current {
+    background-color: #fff;
+  }
+  .beat.accent {
+    background-color: red;
+  }
+  select {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 5px;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
 
-void main() => runApp(MetronomeApp());
+<h1>Metronome Full</h1>
 
-class MetronomeApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MetronomeFull(),
-    );
+<div class="top-controls">
+  <label>Time Sig:
+    <select id="timeSig">
+      <option value="2">2</option>
+      <option value="3" selected>3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+  </label>
+</div>
+
+<div class="bpm-control">
+  <label>BPM:
+    <input type="range" id="bpmSlider" class="slider" min="30" max="300" value="120">
+  </label>
+  <span id="bpmValue">120</span>
+  <button id="tapBtn">TAP</button>
+</div>
+
+<div class="controls">
+  <button id="playBtn">Play</button>
+  <button id="pauseBtn">Pause</button>
+  <button id="stopBtn">Stop</button>
+</div>
+
+<div class="beats" id="beatsContainer">
+  <!-- Bolinhas de beat vão aparecer aqui -->
+</div>
+
+<audio id="soundNormal" src="click_normal.wav"></audio>
+<audio id="soundAccent" src="click_accent.wav"></audio>
+
+<script>
+let bpm = 120;
+let timeSig = 3;
+let accentIndex = 0;
+let currentBeat = 0;
+let isPlaying = false;
+let intervalId;
+let lastTap = 0;
+
+const bpmSlider = document.getElementById('bpmSlider');
+const bpmValue = document.getElementById('bpmValue');
+const timeSigSelect = document.getElementById('timeSig');
+const beatsContainer = document.getElementById('beatsContainer');
+const playBtn = document.getElementById('playBtn');
+const pauseBtn = document.getElementById('pauseBtn');
+const stopBtn = document.getElementById('stopBtn');
+const tapBtn = document.getElementById('tapBtn');
+const soundNormal = document.getElementById('soundNormal');
+const soundAccent = document.getElementById('soundAccent');
+
+function updateBeats() {
+  beatsContainer.innerHTML = '';
+  for(let i = 0; i < timeSig; i++) {
+    const beat = document.createElement('div');
+    beat.classList.add('beat');
+    if(i === currentBeat) beat.classList.add('current');
+    if(i === accentIndex) beat.classList.add('accent');
+    beat.addEventListener('click', () => {
+      accentIndex = i;
+      renderBeats();
+    });
+    beatsContainer.appendChild(beat);
   }
 }
 
-class MetronomeFull extends StatefulWidget {
-  @override
-  _MetronomeFullState createState() => _MetronomeFullState();
+function renderBeats() {
+  const beatDivs = document.querySelectorAll('.beat');
+  beatDivs.forEach((b, i) => {
+    b.classList.remove('current');
+    b.classList.remove('accent');
+    if(i === currentBeat) b.classList.add('current');
+    if(i === accentIndex) b.classList.add('accent');
+  });
 }
 
-class _MetronomeFullState extends State<MetronomeFull> {
-  int bpm = 120;
-  int timeSig = 4;
-  int currentBeat = 0;
-  int accentIndex = 0;
-  bool isPlaying = false;
-  Timer? timer;
-
-  AudioPlayer player = AudioPlayer();
-
-  // Retorna as cores das bolinhas com base no beat atual e accent
-  List<Color> getBeatColors() {
-    return List.generate(timeSig, (index) {
-      if (index == currentBeat) {
-        return index == accentIndex ? Colors.red : Colors.white;
-      } else {
-        return Colors.grey.shade800;
-      }
-    });
-  }
-
-  void startMetronome() {
-    if (isPlaying) return;
-    isPlaying = true;
-    int interval = (60000 / bpm).round();
-    timer = Timer.periodic(Duration(milliseconds: interval), (t) {
-      playClick();
-      setState(() {
-        currentBeat = (currentBeat + 1) % timeSig;
-      });
-    });
-    setState(() {});
-  }
-
-  void stopMetronome() {
-    timer?.cancel();
-    timer = null;
-    isPlaying = false;
-    setState(() {
-      currentBeat = 0;
-    });
-  }
-
-  void pauseMetronome() {
-    timer?.cancel();
-    timer = null;
-    isPlaying = false;
-  }
-
-  void playClick() async {
-    String soundFile =
-        currentBeat == accentIndex ? 'click_accent.wav' : 'click_normal.wav';
-    await player.play(AssetSource(soundFile));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          children: [
-            // Título e controles Time Sig + Accent
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Metronome Full",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold),
-                ),
-                Row(
-                  children: [
-                    Text("Time Sig:", style: TextStyle(color: Colors.white)),
-                    SizedBox(width: 8),
-                    DropdownButton<int>(
-                      value: timeSig,
-                      dropdownColor: Colors.grey.shade900,
-                      style: TextStyle(color: Colors.white),
-                      items: [2, 3, 4, 5, 6]
-                          .map((e) => DropdownMenuItem(
-                              value: e, child: Text("$e")))
-                          .toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          timeSig = val!;
-                          if (accentIndex >= timeSig) accentIndex = 0;
-                        });
-                      },
-                    ),
-                  ],
-                )
-              ],
-            ),
-            SizedBox(height: 20),
-
-            // Controle de BPM
-            Row(
-              children: [
-                Text("BPM", style: TextStyle(color: Colors.white, fontSize: 16)),
-                Expanded(
-                  child: Slider(
-                    value: bpm.toDouble(),
-                    min: 30,
-                    max: 300,
-                    activeColor: Colors.red,
-                    inactiveColor: Colors.white24,
-                    onChanged: (val) {
-                      setState(() {
-                        bpm = val.round();
-                        if (isPlaying) {
-                          stopMetronome();
-                          startMetronome();
-                        }
-                      });
-                    },
-                  ),
-                ),
-                Text("$bpm",
-                    style: TextStyle(color: Colors.white, fontSize: 24)),
-              ],
-            ),
-
-            SizedBox(height: 20),
-
-            // Bolinhas do beat (indicador)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(timeSig, (index) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      accentIndex = index;
-                    });
-                  },
-                  child: Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8),
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: index == accentIndex
-                          ? Colors.red
-                          : getBeatColors()[index],
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                );
-              }),
-            ),
-
-            SizedBox(height: 40),
-
-            // Controles Play / Pause / Stop / Tap
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.play_arrow, color: Colors.white, size: 36),
-                  onPressed: startMetronome,
-                ),
-                IconButton(
-                  icon: Icon(Icons.pause, color: Colors.white, size: 36),
-                  onPressed: pauseMetronome,
-                ),
-                IconButton(
-                  icon: Icon(Icons.stop, color: Colors.white, size: 36),
-                  onPressed: stopMetronome,
-                ),
-                IconButton(
-                  icon: Icon(Icons.touch_app, color: Colors.white, size: 36),
-                  onPressed: () {
-                    setState(() {
-                      bpm = (bpm + 1).clamp(30, 300);
-                    });
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+function playClick() {
+  if(currentBeat === accentIndex) {
+    soundAccent.currentTime = 0;
+    soundAccent.play();
+  } else {
+    soundNormal.currentTime = 0;
+    soundNormal.play();
   }
 }
+
+function startMetronome() {
+  if(isPlaying) return;
+  isPlaying = true;
+  const interval = 60000 / bpm;
+  intervalId = setInterval(() => {
+    playClick();
+    currentBeat = (currentBeat + 1) % timeSig;
+    renderBeats();
+  }, interval);
+}
+
+function pauseMetronome() {
+  clearInterval(intervalId);
+  isPlaying = false;
+}
+
+function stopMetronome() {
+  clearInterval(intervalId);
+  isPlaying = false;
+  currentBeat = 0;
+  renderBeats();
+}
+
+// Eventos
+bpmSlider.addEventListener('input', () => {
+  bpm = parseInt(bpmSlider.value);
+  bpmValue.textContent = bpm;
+  if(isPlaying) {
+    pauseMetronome();
+    startMetronome();
+  }
+});
+
+timeSigSelect.addEventListener('change', () => {
+  timeSig = parseInt(timeSigSelect.value);
+  if(accentIndex >= timeSig) accentIndex = 0;
+  currentBeat = 0;
+  renderBeats();
+  updateBeats();
+});
+
+playBtn.addEventListener('click', startMetronome);
+pauseBtn.addEventListener('click', pauseMetronome);
+stopBtn.addEventListener('click', stopMetronome);
+
+// TAP Button
+tapBtn.addEventListener('click', () => {
+  const now = Date.now();
+  if(lastTap) {
+    const newBpm = 60000 / (now - lastTap);
+    bpm = Math.round(Math.min(Math.max(newBpm, 30), 300));
+    bpmSlider.value = bpm;
+    bpmValue.textContent = bpm;
+    if(isPlaying) {
+      pauseMetronome();
+      startMetronome();
+    }
+  }
+  lastTap = now;
+});
+
+// Inicializa
+updateBeats();
+renderBeats();
+</script>
+
+</body>
+</html>
