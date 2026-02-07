@@ -1,268 +1,208 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome</title>
-<style>
-body {
-  background-color: #1d1d1d;
-  color: white;
-  font-family: sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 0;
-  padding: 20px;
-}
+import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dart:async';
 
-h1 {
-  margin-bottom: 10px;
-  font-size: 36px; /* Metronome Full menor */
-}
+void main() => runApp(MetronomeApp());
 
-.controls-top {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-/* Controle de BPM */
-#bpm-display {
-  font-size: 60px;
-  margin: 20px 0;
-}
-
-#bpm-control {
-  position: relative;
-  width: 400px;
-  height: 30px;
-  margin-bottom: 30px;
-  background: #333;
-  border-radius: 15px;
-}
-
-#bpm-dot {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  background-color: red;
-  border-radius: 50%;
-  top: 0;
-  left: 140px;
-  cursor: pointer;
-}
-
-/* Botões */
-.btn {
-  background-color: #333;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  margin: 5px;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-/* Beat indicator */
-#beat-indicator {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-}
-
-.beat-group {
-  display: flex;
-  margin: 0 10px;
-}
-
-.beat-dot {
-  width: 20px;
-  height: 20px;
-  margin: 0 3px;
-  border-radius: 50%;
-  background-color: #555;
-}
-
-.separator {
-  width: 4px;
-  background-color: #888;
-  margin: 0 6px;
-}
-</style>
-</head>
-<body>
-
-<h1>Metronome</h1>
-
-<div class="controls-top">
-  <label for="time-signature">Time Sig: </label>
-  <select id="time-signature">
-    <option value="3">3/4</option>
-    <option value="4" selected>4/4</option>
-    <option value="6">6/8</option>
-    <option value="7">7/8</option>
-  </select>
-
-  <label for="accent">Accent Beat: </label>
-  <select id="accent">
-    <option value="0">1</option>
-    <option value="1">2</option>
-    <option value="2">3</option>
-    <option value="3">4</option>
-    <option value="4">5</option>
-    <option value="5">6</option>
-    <option value="6">7</option>
-  </select>
-</div>
-
-<div id="bpm-display">120</div>
-
-<div id="bpm-control">
-  <div id="bpm-dot"></div>
-</div>
-
-<div>
-  <button class="btn" id="play-btn">Play</button>
-  <button class="btn" id="pause-btn">Pause</button>
-  <button class="btn" id="stop-btn">Stop</button>
-  <button class="btn" id="tap-btn">Tap</button>
-</div>
-
-<div id="beat-indicator"></div>
-
-<script>
-let bpm = 120;
-let intervalId;
-let currentBeat = 0;
-let ts = parseInt(document.getElementById('time-signature').value);
-let accentBeat = parseInt(document.getElementById('accent').value);
-let tapTimes = [];
-
-const bpmDisplay = document.getElementById('bpm-display');
-const bpmDot = document.getElementById('bpm-dot');
-const bpmControl = document.getElementById('bpm-control');
-
-function updateBPMDisplay() {
-  bpmDisplay.innerText = bpm;
-}
-
-// Drag BPM dot
-let dragging = false;
-bpmDot.addEventListener('mousedown', () => dragging = true);
-document.addEventListener('mouseup', () => dragging = false);
-document.addEventListener('mousemove', (e) => {
-  if (!dragging) return;
-  const rect = bpmControl.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  x = Math.max(0, Math.min(rect.width, x));
-  bpm = Math.round(20 + (x / rect.width) * 300); // maior range
-  bpmDot.style.left = (x - bpmDot.offsetWidth/2) + "px";
-  updateBPMDisplay();
-  if(intervalId) startMetronome();
-});
-
-// Beat indicator
-const beatIndicator = document.getElementById('beat-indicator');
-function renderBeats() {
-  beatIndicator.innerHTML = '';
-  if(ts === 6){
-    for(let g=0; g<2; g++){
-      const group = document.createElement('div');
-      group.className = 'beat-group';
-      for(let i=0;i<3;i++){
-        const dot = document.createElement('div');
-        dot.className='beat-dot';
-        group.appendChild(dot);
-      }
-      beatIndicator.appendChild(group);
-      if(g===0){
-        const sep = document.createElement('div');
-        sep.className='separator';
-        beatIndicator.appendChild(sep);
-      }
-    }
-  } else {
-    const group = document.createElement('div');
-    group.className='beat-group';
-    for(let i=0;i<ts;i++){
-      const dot = document.createElement('div');
-      dot.className='beat-dot';
-      group.appendChild(dot);
-    }
-    beatIndicator.appendChild(group);
+class MetronomeApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MetronomeFull(),
+    );
   }
 }
-renderBeats();
 
-document.getElementById('time-signature').addEventListener('change',(e)=>{
-  ts = parseInt(e.target.value);
-  currentBeat = 0;
-  renderBeats();
-});
-document.getElementById('accent').addEventListener('change',(e)=>{
-  accentBeat = parseInt(e.target.value);
-});
-
-// Metronome audio confiável
-const clickNormal = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
-const clickAccent = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
-
-function startMetronome() {
-  clearInterval(intervalId);
-  const beatInterval = 60000 / bpm;
-  intervalId = setInterval(() => {
-    const dots = document.querySelectorAll('.beat-dot');
-    dots.forEach(dot=>dot.style.backgroundColor='#555');
-
-    // som
-    if(currentBeat === accentBeat){
-      dots[currentBeat].style.backgroundColor='red';
-      clickAccent.currentTime=0;
-      clickAccent.play();
-    } else {
-      dots[currentBeat].style.backgroundColor='white';
-      clickNormal.currentTime=0;
-      clickNormal.play();
-    }
-
-    currentBeat = (currentBeat+1)%ts;
-  }, beatInterval);
+class MetronomeFull extends StatefulWidget {
+  @override
+  _MetronomeFullState createState() => _MetronomeFullState();
 }
 
-document.getElementById('play-btn').addEventListener('click', startMetronome);
-document.getElementById('pause-btn').addEventListener('click', ()=>{
-  clearInterval(intervalId);
-});
-document.getElementById('stop-btn').addEventListener('click', ()=>{
-  clearInterval(intervalId);
-  currentBeat=0;
-  const dots = document.querySelectorAll('.beat-dot');
-  dots.forEach(dot=>dot.style.backgroundColor='#555');
-});
+class _MetronomeFullState extends State<MetronomeFull> {
+  int bpm = 120;
+  int timeSig = 4;
+  int currentBeat = 0;
+  int accentIndex = 0;
+  bool isPlaying = false;
+  Timer? timer;
 
-// Tap tempo
-document.getElementById('tap-btn').addEventListener('click', ()=>{
-  const now = Date.now();
-  tapTimes.push(now);
-  if(tapTimes.length>4) tapTimes.shift();
-  if(tapTimes.length>=2){
-    let intervals = [];
-    for(let i=1;i<tapTimes.length;i++){
-      intervals.push(tapTimes[i]-tapTimes[i-1]);
-    }
-    let avg = intervals.reduce((a,b)=>a+b,0)/intervals.length;
-    bpm = Math.round(60000/avg);
-    updateBPMDisplay();
-    const rect = bpmControl.getBoundingClientRect();
-    let pos = ((bpm-20)/300)*rect.width;
-    bpmDot.style.left = (pos - bpmDot.offsetWidth/2) + "px";
-    if(intervalId) startMetronome();
+  AudioPlayer player = AudioPlayer();
+
+  // Retorna as cores das bolinhas com base no beat atual e accent
+  List<Color> getBeatColors() {
+    return List.generate(timeSig, (index) {
+      if (index == currentBeat) {
+        return index == accentIndex ? Colors.red : Colors.white;
+      } else {
+        return Colors.grey.shade800;
+      }
+    });
   }
-});
-</script>
 
-</body>
-</html>
+  void startMetronome() {
+    if (isPlaying) return;
+    isPlaying = true;
+    int interval = (60000 / bpm).round();
+    timer = Timer.periodic(Duration(milliseconds: interval), (t) {
+      playClick();
+      setState(() {
+        currentBeat = (currentBeat + 1) % timeSig;
+      });
+    });
+    setState(() {});
+  }
+
+  void stopMetronome() {
+    timer?.cancel();
+    timer = null;
+    isPlaying = false;
+    setState(() {
+      currentBeat = 0;
+    });
+  }
+
+  void pauseMetronome() {
+    timer?.cancel();
+    timer = null;
+    isPlaying = false;
+  }
+
+  void playClick() async {
+    String soundFile =
+        currentBeat == accentIndex ? 'click_accent.wav' : 'click_normal.wav';
+    await player.play(AssetSource(soundFile));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Título e controles Time Sig + Accent
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Metronome Full",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold),
+                ),
+                Row(
+                  children: [
+                    Text("Time Sig:", style: TextStyle(color: Colors.white)),
+                    SizedBox(width: 8),
+                    DropdownButton<int>(
+                      value: timeSig,
+                      dropdownColor: Colors.grey.shade900,
+                      style: TextStyle(color: Colors.white),
+                      items: [2, 3, 4, 5, 6]
+                          .map((e) => DropdownMenuItem(
+                              value: e, child: Text("$e")))
+                          .toList(),
+                      onChanged: (val) {
+                        setState(() {
+                          timeSig = val!;
+                          if (accentIndex >= timeSig) accentIndex = 0;
+                        });
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
+            SizedBox(height: 20),
+
+            // Controle de BPM
+            Row(
+              children: [
+                Text("BPM", style: TextStyle(color: Colors.white, fontSize: 16)),
+                Expanded(
+                  child: Slider(
+                    value: bpm.toDouble(),
+                    min: 30,
+                    max: 300,
+                    activeColor: Colors.red,
+                    inactiveColor: Colors.white24,
+                    onChanged: (val) {
+                      setState(() {
+                        bpm = val.round();
+                        if (isPlaying) {
+                          stopMetronome();
+                          startMetronome();
+                        }
+                      });
+                    },
+                  ),
+                ),
+                Text("$bpm",
+                    style: TextStyle(color: Colors.white, fontSize: 24)),
+              ],
+            ),
+
+            SizedBox(height: 20),
+
+            // Bolinhas do beat (indicador)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(timeSig, (index) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      accentIndex = index;
+                    });
+                  },
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 8),
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: index == accentIndex
+                          ? Colors.red
+                          : getBeatColors()[index],
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                );
+              }),
+            ),
+
+            SizedBox(height: 40),
+
+            // Controles Play / Pause / Stop / Tap
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.play_arrow, color: Colors.white, size: 36),
+                  onPressed: startMetronome,
+                ),
+                IconButton(
+                  icon: Icon(Icons.pause, color: Colors.white, size: 36),
+                  onPressed: pauseMetronome,
+                ),
+                IconButton(
+                  icon: Icon(Icons.stop, color: Colors.white, size: 36),
+                  onPressed: stopMetronome,
+                ),
+                IconButton(
+                  icon: Icon(Icons.touch_app, color: Colors.white, size: 36),
+                  onPressed: () {
+                    setState(() {
+                      bpm = (bpm + 1).clamp(30, 300);
+                    });
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
