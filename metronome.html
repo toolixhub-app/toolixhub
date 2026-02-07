@@ -7,25 +7,35 @@
 <style>
 body {
   font-family: Arial, sans-serif;
-  text-align: center;
-  background: #eef2f7;
   margin: 0;
-  padding: 40px 20px;
+  padding: 0;
+  background: linear-gradient(160deg, #eef2f7, #cce0ff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 h1 {
   color: #4a90e2;
-  margin-bottom: 10px;
+  margin-top: 40px;
 }
 
 #description {
   font-size: 16px;
   color: #555;
-  margin-bottom: 30px;
+  margin: 10px 0 30px 0;
+  text-align: center;
+  max-width: 600px;
 }
 
 #controls {
   margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 input[type=range], select {
@@ -43,28 +53,67 @@ button {
   background: #4a90e2;
   color: white;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
+  transition: 0.2s;
 }
 
 button:hover {
   background: #357ABD;
 }
 
+#metronome {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
+}
+
 #beat {
-  font-size: 350px;
-  color: #4a90e2;
-  margin: 20px auto;
-  line-height: 0.8;
-  transition: transform 0.05s;
+  position: absolute;
+  width: 20px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  background: radial-gradient(circle, #4a90e2 0%, #1c5bbf 70%);
+  border-radius: 10px;
+  transform: rotate(0deg);
+  transition: transform 0.05s linear;
+}
+
+#pulse {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  background: rgba(74,144,226,0.2);
+  pointer-events: none;
+  animation: pulseAnim 1s infinite;
+}
+
+@keyframes pulseAnim {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(0.8); opacity: 0; }
 }
 
 #measure {
   font-size: 24px;
   color: #555;
+  margin-bottom: 20px;
+}
+
+footer {
+  font-size: 12px;
+  color: #999;
+  position: absolute;
+  bottom: 10px;
 }
 
 @media (max-width: 600px) {
-  #beat { font-size: 200px; }
+  #metronome { width: 200px; height: 200px; }
+  #beat { height: 100px; width: 15px; }
   input[type=range], select { width: 200px; }
   button { font-size: 20px; padding: 8px 12px; }
 }
@@ -90,13 +139,19 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
     <option value="6">6/4</option>
   </select><br>
 
-  <button id="playBtn">▶</button>
-  <button id="pauseBtn">⏸</button>
-  <button id="stopBtn">■</button>
+  <div>
+    <button id="playBtn">▶</button>
+    <button id="pauseBtn">⏸</button>
+    <button id="stopBtn">■</button>
+  </div>
 </div>
 
-<div id="beat">●</div>
+<div id="metronome">
+  <div id="pulse"></div>
+  <div id="beat"></div>
+</div>
 <div id="measure">Measure: 0 / 4</div>
+<footer>Version 1.0</footer>
 
 <script>
 // --- Web Audio API ---
@@ -141,18 +196,23 @@ function scheduleBeat() {
   const ms = 60000 / bpm;
   const beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
 
-  // Atualiza contagem
   beatCount = (beatCount % beatsPerMeasure) + 1;
 
-  // Pulsar bolinha
-  beatEl.style.transform = 'scale(1.2)';
-  setTimeout(() => beatEl.style.transform = 'scale(1)', ms/2);
+  // Rotação tipo ponteiro
+  const angle = (beatCount-1) * (360 / beatsPerMeasure);
+  beatEl.style.transform = `rotate(${angle}deg)`;
 
   // Som
   playClick(beatCount === 1);
 
   // Atualiza medida
   measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
+
+  // Pulse visual
+  const pulse = document.getElementById('pulse');
+  pulse.style.animation = 'none';
+  void pulse.offsetWidth; // restart animation
+  pulse.style.animation = `pulseAnim ${ms}ms linear`;
 
   // Próximo beat
   timerId = setTimeout(scheduleBeat, ms);
@@ -165,7 +225,7 @@ playBtn.onclick = () => {
     isPaused = false;
     scheduleBeat();
   } else if(isPaused) {
-    isPaused = false; // retoma
+    isPaused = false;
     scheduleBeat();
   }
 };
@@ -183,7 +243,7 @@ stopBtn.onclick = () => {
   timerId = null;
   beatCount = 0;
   measureEl.textContent = `Measure: 0 / ${beatsPerMeasureSelect.value}`;
-  beatEl.style.transform = 'scale(1)';
+  beatEl.style.transform = 'rotate(0deg)';
 };
 </script>
 
