@@ -12,7 +12,6 @@
   --text-color: #e0e0e0;
   --secondary-text: #aaa;
   --accent-color: #ff9800; /* Laranja do Logo para Destaques */
-  --secondary-accent: #00bcd4; /* Azul do Logo para detalhes */
   --border-color: #444;
   --ad-bg: #2a2a2a;
 }
@@ -30,7 +29,7 @@ body {
 }
 
 header {
-  background: var(--container-bg);
+  background: #000000; /* Cor preta solicitada */
   color: #fff;
   padding: 20px 20px;
   text-align: center;
@@ -41,15 +40,16 @@ header {
 }
 
 header img {
-  max-width: 250px;
+  max-width: 400px; /* Aumentei um pouco para aproveitar a largura */
   height: auto;
   margin-bottom: 5px;
 }
 
 header p {
-  font-size: 1.1em;
+  font-size: 0.9em; /* Texto menor solicitado */
   margin: 0;
   color: var(--secondary-text);
+  letter-spacing: 1px;
 }
 
 /* Ad Space Styling */
@@ -131,7 +131,7 @@ footer {
 }
 
 @media (max-width: 600px) {
-    header img { max-width: 180px; }
+    header img { max-width: 250px; } /* Ajuste para celular */
     main { grid-template-columns: 1fr; }
     .ad-space { max-width: 320px; height: 50px; }
 }
@@ -140,7 +140,7 @@ footer {
 <body>
 
 <header>
-  <img src="logo_toolixhub.jpg" alt="ToolixHub Handy Tools">
+  <img src="logo_toolixhub.jpg" alt="ToolixHub Logo">
   <p>Your online hub of handy tools</p>
 </header>
 
