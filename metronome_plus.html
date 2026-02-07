@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Pro 3.2</title>
+<title>Metronome Pro 3.4</title>
 <style>
 body {
   background-color: #121212;
@@ -67,7 +67,16 @@ select {
 }
 
 #bpm-display { font-size: 80px; font-weight: bold; color: #fff; min-width: 150px;}
-.bpm-label { font-size: 16px; color: #888; margin-bottom: 10px; }
+.bpm-label { font-size: 16px; color: #888; margin-bottom: 5px; }
+
+/* Timer Display */
+#timer-display {
+    font-size: 16px;
+    color: #00bcd4;
+    font-weight: bold;
+    margin-bottom: 15px;
+    font-family: monospace;
+}
 
 .bpm-btn {
     background: #333;
@@ -163,6 +172,7 @@ input[type=range] { width: 150px; cursor: pointer; }
 .btn#play-btn { background-color: #00bcd4; color: #000; }
 .btn#play-btn:hover { background-color: #26c6da; }
 
+/* Visual Dots Styles */
 #beat-indicator { display: flex; justify-content: center; margin-top: 10px; min-height: 25px; flex-wrap: wrap; gap: 5px;}
 .beat-dot {
   width: 15px;
@@ -170,20 +180,25 @@ input[type=range] { width: 150px; cursor: pointer; }
   margin: 0 2px;
   border-radius: 50%;
   background-color: #333;
-  transition: all 0.1s;
+  transition: all 0.05s;
   cursor: pointer;
 }
 .beat-dot.active { background-color: #555; }
-.beat-dot.accent-playing { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; transform: scale(1.2); }
-.beat-dot.sub-playing { background-color: #ff5252; transform: scale(0.8); }
-.beat-dot.will-accent { border: 2px solid #00bcd4; box-sizing: border-box; }
+/* Destaque tempo normal */
+.beat-dot.normal-playing { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; transform: scale(1.2); }
+/* Destaque acento (Vermelho) */
+.beat-dot.accent-playing { background-color: #ff5252; box-shadow: 0 0 10px #ff5252; transform: scale(1.2); }
+/* Destaque subdivisão */
+.beat-dot.sub-playing { background-color: #ff5252; opacity: 0.7; transform: scale(0.8); }
+
+.beat-dot.will-accent { border: 2px solid #ff5252; box-sizing: border-box; }
 
 </style>
 </head>
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.2</div>
+<div class="subtitle">Pro 3.4</div>
 
 <div class="main-container">
     <div class="controls-top">
@@ -212,6 +227,8 @@ input[type=range] { width: 150px; cursor: pointer; }
         <button class="bpm-btn" id="bpm-plus">+</button>
     </div>
     <div class="bpm-label">BPM</div>
+    
+    <div id="timer-display">00:00</div>
 
     <div id="bpm-control">
       <div id="bpm-dot"></div>
@@ -253,6 +270,11 @@ let nextNoteTime = 0.0;
 let timerID = null;
 let accentBeatIndex = 0; 
 
+// Cronômetro
+let studyTimerID = null;
+let startTime = 0;
+let elapsedPausedTime = 0;
+
 const lookahead = 25.0;
 const scheduleAheadTime = 0.1;
 
@@ -264,6 +286,7 @@ const timeSigSelect = document.getElementById('time-signature');
 const beatIndicator = document.getElementById('beat-indicator');
 const measureDisplay = document.getElementById('measure-display');
 const volumeControl = document.getElementById('volume-control');
+const timerDisplay = document.getElementById('timer-display');
 
 // --- Inicialização ---
 function init() {
@@ -287,24 +310,28 @@ function nextNote() {
 function scheduleNote(beatNumber, time) {
   const isMainBeat = beatNumber % subdivision === 0;
   const mainBeatNumber = Math.floor(beatNumber / subdivision);
+  const isAccent = mainBeatNumber === accentBeatIndex;
 
+  // Atualização Visual Síncrona
   setTimeout(() => {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
-      dot.classList.remove('accent-playing', 'sub-playing');
+      dot.classList.remove('normal-playing', 'accent-playing', 'sub-playing');
+      
       if (isMainBeat && index === mainBeatNumber) {
-          dot.classList.add(mainBeatNumber === accentBeatIndex ? 'accent-playing' : 'active');
+          dot.classList.add(isAccent ? 'accent-playing' : 'normal-playing');
       } else if (!isMainBeat && index === mainBeatNumber) {
           dot.classList.add('sub-playing');
       }
     });
   }, (time - tempoAudioContext.currentTime) * 1000);
 
+  // Som
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
   if (isMainBeat) {
-      osc.frequency.value = (mainBeatNumber === accentBeatIndex) ? 1200 : 800;
+      osc.frequency.value = isAccent ? 1200 : 800;
       envelope.gain.setValueAtTime(1, time);
       envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
   } else {
@@ -342,6 +369,13 @@ function play() {
   currentMeasure = 1;
   measureDisplay.innerText = currentMeasure;
   nextNoteTime = tempoAudioContext.currentTime;
+  
+  // Inicia cronômetro
+  if (!studyTimerID) {
+    startTime = Date.now();
+    studyTimerID = setInterval(updateTimer, 1000);
+  }
+  
   scheduler();
   document.getElementById('play-btn').innerText = "Pause";
 }
@@ -349,6 +383,11 @@ function play() {
 function pause() {
   isPlaying = false;
   clearTimeout(timerID);
+  
+  // Pausa cronômetro
+  clearInterval(studyTimerID);
+  studyTimerID = null;
+  
   document.getElementById('play-btn').innerText = "Play";
 }
 
@@ -357,10 +396,23 @@ function stop() {
   currentBeat = 0;
   currentMeasure = 1;
   measureDisplay.innerText = currentMeasure;
+  
+  // Reseta cronômetro
+  clearInterval(studyTimerID);
+  studyTimerID = null;
+  timerDisplay.innerText = "00:00";
+  
   resetBeatVisuals();
 }
 
-// --- Volume control ---
+// --- Funções Auxiliares (Cronômetro e Volume) ---
+function updateTimer() {
+  const diff = Date.now() - startTime;
+  const minutes = Math.floor(diff / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  timerDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
 volumeControl.addEventListener('input', (e) => {
     if (masterGainNode) {
         masterGainNode.gain.value = e.target.value;
@@ -372,7 +424,7 @@ document.getElementById('play-btn').addEventListener('click', () => {
 });
 document.getElementById('stop-btn').addEventListener('click', stop);
 
-// --- Funcionalidades UI (BPM Slider and Buttons) ---
+// --- Funcionalidades UI ---
 function updateBPMDisplay() {
   bpmDisplay.innerText = bpm;
   const percentage = (bpm - 40) / (220 - 40);
@@ -408,7 +460,6 @@ bpmControl.addEventListener('mousedown', setBPMFromSlider);
 // --- Time Signature & Accent ---
 function renderBeats() {
   beatIndicator.innerHTML = '';
-  // Se o índice de acento atual for maior que a nova assinatura, reseta para 0
   if(accentBeatIndex >= timeSignature) accentBeatIndex = 0;
 
   for (let i = 0; i < timeSignature; i++) {
@@ -442,7 +493,7 @@ function updateAccentVisuals() {
 function resetBeatVisuals() {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach(dot => {
-        dot.classList.remove('active', 'accent-playing', 'sub-playing');
+        dot.classList.remove('normal-playing', 'accent-playing', 'sub-playing');
     });
 }
 
