@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Metronome 3.8</title>
+<title>Pro Metronome 3.9</title>
 <style>
 body {
   background-color: #121212;
@@ -75,9 +75,9 @@ select {
     font-weight: 900; /* Super Bold */
     color: #c6ff00;
     min-width: 180px;
-    text-shadow: 0 0 15px rgba(198, 255, 0, 0.4); /* Brilho mais intenso */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte Original */
-    letter-spacing: -2px; /* Aumenta a sensação de densidade */
+    text-shadow: 0 0 15px rgba(198, 255, 0, 0.4);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    letter-spacing: -2px;
 }
 
 .bpm-label { font-size: 16px; color: #888; margin-bottom: 5px; }
@@ -210,10 +210,26 @@ input[type=range] { width: 150px; cursor: pointer; }
 
 .beat-dot.will-accent { border: 2px solid #ff5252; box-sizing: border-box; }
 
+/* --- How To Use Section --- */
+.instructions {
+    text-align: left;
+    font-size: 13px;
+    color: #aaa;
+    background: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+.instructions h3 { margin: 0 0 10px 0; color: #fff; font-size: 15px; }
+.instructions ul { padding-left: 20px; margin: 0; }
+.instructions li { margin-bottom: 5px; }
+.instructions span { color: #00bcd4; font-weight: bold; }
+
 /* Footer */
 footer {
-    margin-top: 30px;
-    font-size: 12px;
+    margin-top: 20px;
+    font-size: 11px;
     color: #666;
     max-width: 600px;
     text-align: center;
@@ -225,7 +241,7 @@ footer {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.8</div>
+<div class="subtitle">Pro 3.9</div>
 
 <div class="main-container">
     <div class="controls-top">
@@ -287,10 +303,20 @@ footer {
     </div>
 
     <div id="beat-indicator"></div>
+
+    <div class="instructions">
+        <h3>How to use:</h3>
+        <ul>
+            <li><span>Accent Beats:</span> Click on the dots below the controls to set which beat gets the accent (red color).</li>
+            <li><span>Slider:</span> Drag the cyan dot to quickly change the BPM.</li>
+            <li><span>Tap Tempo:</span> Click the "Tap" button to the rhythm you want to set the BPM.</li>
+            <li><span>Volume:</span> Adjust the slider for the desired volume level.</li>
+        </ul>
+    </div>
 </div>
 
 <footer>
-    Pro Metronome v3.8. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
+    Pro Metronome v3.9. Precise timing and subdivision tool for musicians.
 </footer>
 
 <script>
