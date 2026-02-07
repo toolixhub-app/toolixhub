@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Calculator 1.0</title>
+<title>Pro Calculator 2.0</title>
 <style>
 /* --- Identidade Visual Unificada --- */
 :root {
@@ -17,6 +17,7 @@
   --btn-bg: #333;
   --btn-hover: #444;
   --special-btn-bg: #555; /* Botões de operação */
+  --sci-btn-bg: #2a2a2a; /* Botões científicos */
   --ac-btn-bg: #ff5252; /* Botão Clear */
   --ad-bg: #2a2a2a;
 }
@@ -32,6 +33,7 @@ body.light-theme {
   --btn-bg: #e0e0e0;
   --btn-hover: #d0d0d0;
   --special-btn-bg: #bbb;
+  --sci-btn-bg: #eee;
   --ac-btn-bg: #ff7961;
   --ad-bg: #eee;
 }
@@ -73,20 +75,31 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   width: 100%;
-  max-width: 320px; /* Largura padrão calculadora */
+  max-width: 320px;
 }
 
-/* Theme Toggle */
-#theme-toggle {
+/* Toggle Buttons */
+.toggle-row {
+    display: flex;
+    gap: 10px;
     margin-bottom: 15px;
+}
+
+.btn-toggle {
+    flex: 1;
     background: var(--btn-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    padding: 8px 16px;
+    padding: 8px;
     cursor: pointer;
     font-size: 12px;
-    width: 100%;
+}
+
+.btn-toggle.active {
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
 }
 
 /* Calculator Display */
@@ -94,7 +107,7 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
     background: #000;
     color: var(--highlight-color);
     font-family: 'Courier New', Courier, monospace;
-    font-size: 36px;
+    font-size: 32px;
     text-align: right;
     padding: 15px;
     border-radius: 8px;
@@ -107,16 +120,18 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
 /* Buttons Grid */
 .calc-buttons {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 8px;
 }
+
+.basic-grid { grid-template-columns: repeat(4, 1fr); }
+.sci-grid { grid-template-columns: repeat(5, 1fr); display: none; }
 
 .btn-calc {
     background-color: var(--btn-bg);
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    padding: 20px 10px;
-    font-size: 18px;
+    padding: 15px 5px;
+    font-size: 16px;
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
@@ -128,6 +143,7 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
 
 /* Special Buttons */
 .btn-calc.op { background-color: var(--special-btn-bg); }
+.btn-calc.sci { background-color: var(--sci-btn-bg); font-size: 14px; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.equal { background-color: var(--accent-color); color: #fff; grid-column: span 2; }
 
@@ -146,11 +162,15 @@ footer {
 <div class="ad-space">Top Ad Banner (320x50)</div>
 
 <div class="main-container">
-    <button id="theme-toggle">Toggle Theme 🌓</button>
+    <div class="toggle-row">
+        <button id="toggle-basic" class="btn-toggle active" onclick="setMode('basic')">Basic</button>
+        <button id="toggle-sci" class="btn-toggle" onclick="setMode('sci')">Scientific</button>
+        <button id="theme-toggle" class="btn-toggle">🌓</button>
+    </div>
     
     <div id="calc-display">0</div>
 
-    <div class="calc-buttons">
+    <div id="basic-buttons" class="calc-buttons basic-grid">
         <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
         <button class="btn-calc op" onclick="appendOperator('/')">÷</button>
         <button class="btn-calc op" onclick="appendOperator('*')">×</button>
@@ -173,17 +193,54 @@ footer {
         
         <button class="btn-calc equal" onclick="calculate()">=</button>
     </div>
+
+    <div id="sci-buttons" class="calc-buttons sci-grid">
+        <button class="btn-calc sci" onclick="scientific('sin')">sin</button>
+        <button class="btn-calc sci" onclick="scientific('cos')">cos</button>
+        <button class="btn-calc sci" onclick="scientific('tan')">tan</button>
+        <button class="btn-calc sci" onclick="scientific('log')">log</button>
+        <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
+        
+        <button class="btn-calc sci" onclick="scientific('sqrt')">√</button>
+        <button class="btn-calc sci" onclick="scientific('pow')">x²</button>
+        <button class="btn-calc sci" onclick="scientific('pi')">π</button>
+        <button class="btn-calc sci" onclick="scientific('e')">e</button>
+        <button class="btn-calc op" onclick="appendOperator('/')">÷</button>
+
+        <button class="btn-calc" onclick="appendNumber('7')">7</button>
+        <button class="btn-calc" onclick="appendNumber('8')">8</button>
+        <button class="btn-calc" onclick="appendNumber('9')">9</button>
+        <button class="btn-calc op" onclick="appendOperator('*')">×</button>
+        <button class="btn-calc op" onclick="appendOperator('-')">−</button>
+        
+        <button class="btn-calc" onclick="appendNumber('4')">4</button>
+        <button class="btn-calc" onclick="appendNumber('5')">5</button>
+        <button class="btn-calc" onclick="appendNumber('6')">6</button>
+        <button class="btn-calc op" onclick="appendOperator('+')">+</button>
+        <button class="btn-calc" onclick="appendNumber('.')">.</button>
+        
+        <button class="btn-calc" onclick="appendNumber('1')">1</button>
+        <button class="btn-calc" onclick="appendNumber('2')">2</button>
+        <button class="btn-calc" onclick="appendNumber('3')">3</button>
+        <button class="btn-calc" onclick="appendNumber('0')">0</button>
+        <button class="btn-calc equal" onclick="calculate()">=</button>
+    </div>
 </div>
 
 <div class="ad-space">Bottom Ad Banner (320x50)</div>
 
 <footer>
-    Pro Calculator v1.0. Designed for musicians.
+    Pro Calculator v2.0. Suite of Tools.
 </footer>
 
 <script>
     const display = document.getElementById('calc-display');
     const themeToggle = document.getElementById('theme-toggle');
+    const basicBtn = document.getElementById('toggle-basic');
+    const sciBtn = document.getElementById('toggle-sci');
+    const basicGrid = document.getElementById('basic-buttons');
+    const sciGrid = document.getElementById('sci-buttons');
+    
     let currentInput = '0';
     let shouldResetDisplay = false;
 
@@ -191,6 +248,21 @@ footer {
     themeToggle.addEventListener('click', () => {
         document.body.classList.toggle('light-theme');
     });
+
+    // Mode Toggle
+    function setMode(mode) {
+        if (mode === 'basic') {
+            basicBtn.classList.add('active');
+            sciBtn.classList.remove('active');
+            basicGrid.style.display = 'grid';
+            sciGrid.style.display = 'none';
+        } else {
+            sciBtn.classList.add('active');
+            basicBtn.classList.remove('active');
+            sciGrid.style.display = 'grid';
+            basicGrid.style.display = 'none';
+        }
+    }
 
     function updateDisplay() {
         display.innerText = currentInput;
@@ -213,7 +285,6 @@ footer {
 
     function appendOperator(operator) {
         if (shouldResetDisplay) shouldResetDisplay = false;
-        // Previne múltiplos operadores seguidos
         if (['+','-','*','/'].includes(currentInput.slice(-1))) {
             currentInput = currentInput.slice(0, -1) + operator;
         } else {
@@ -224,7 +295,6 @@ footer {
 
     function calculate() {
         try {
-            // Avalia a string matemática com segurança limitada
             let result = eval(currentInput);
             currentInput = result.toString();
             shouldResetDisplay = true;
@@ -234,6 +304,27 @@ footer {
             updateDisplay();
             shouldResetDisplay = true;
         }
+    }
+
+    // Scientific Functions
+    function scientific(func) {
+        let val = parseFloat(currentInput);
+        let result = 0;
+        
+        switch(func) {
+            case 'sin': result = Math.sin(val); break;
+            case 'cos': result = Math.cos(val); break;
+            case 'tan': result = Math.tan(val); break;
+            case 'log': result = Math.log10(val); break;
+            case 'sqrt': result = Math.sqrt(val); break;
+            case 'pow': result = Math.pow(val, 2); break;
+            case 'pi': result = Math.PI; break;
+            case 'e': result = Math.E; break;
+        }
+        
+        currentInput = result.toString();
+        shouldResetDisplay = true;
+        updateDisplay();
     }
 </script>
 </body>
