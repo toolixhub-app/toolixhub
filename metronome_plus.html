@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Pro 3.4</title>
+<title>Pro Metronome 3.5</title>
 <style>
 body {
   background-color: #121212;
@@ -15,6 +15,7 @@ body {
   margin: 0;
   padding: 20px;
   user-select: none;
+  min-height: 100vh;
 }
 
 h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
@@ -28,6 +29,7 @@ h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
   text-align: center;
   width: 100%;
   max-width: 450px;
+  flex-grow: 1;
 }
 
 .controls-top {
@@ -193,28 +195,44 @@ input[type=range] { width: 150px; cursor: pointer; }
 
 .beat-dot.will-accent { border: 2px solid #ff5252; box-sizing: border-box; }
 
+/* Footer */
+footer {
+    margin-top: 30px;
+    font-size: 12px;
+    color: #666;
+    max-width: 600px;
+    text-align: center;
+    line-height: 1.5;
+}
+
 </style>
 </head>
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.4</div>
+<div class="subtitle">Pro 3.5</div>
 
 <div class="main-container">
     <div class="controls-top">
       <label>T.S: 
         <select id="time-signature">
-          <optgroup label="Simples" style="background:#333">
-              <option value="2">2/4</option>
-              <option value="3">3/4</option>
-              <option value="4" selected>4/4</option>
-              <option value="5">5/4</option>
+          <optgroup label="Simple" style="background:#333">
+              <option value="2/4">2/4</option>
+              <option value="3/4">3/4</option>
+              <option value="4/4" selected>4/4</option>
+              <option value="5/4">5/4</option>
+              <option value="6/4">6/4</option>
+              <option value="7/4">7/4</option>
           </optgroup>
-          <optgroup label="Compostos/Ímpares" style="background:#333">
-              <option value="6">6/8</option>
-              <option value="7">7/8</option>
-              <option value="9">9/8</option>
-              <option value="12">12/8</option>
+          <optgroup label="Compound/Odd" style="background:#333">
+              <option value="3/8">3/8</option>
+              <option value="5/8">5/8</option>
+              <option value="6/8">6/8</option>
+              <option value="7/8">7/8</option>
+              <option value="9/8">9/8</option>
+              <option value="11/8">11/8</option>
+              <option value="12/8">12/8</option>
+              <option value="13/8">13/8</option>
           </optgroup>
         </select>
       </label>
@@ -256,13 +274,18 @@ input[type=range] { width: 150px; cursor: pointer; }
     <div id="beat-indicator"></div>
 </div>
 
+<footer>
+    Pro Metronome v3.5. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
+</footer>
+
 <script>
-// --- Configurações e Estado ---
+// --- Config & State ---
 let bpm = 120;
 let isPlaying = false;
 let currentBeat = 0;
 let currentMeasure = 1;
-let timeSignature = 4;
+let beatsPerMeasure = 4;
+let noteValue = 4; // 4 for quarter note, 8 for eighth note
 let subdivision = 1;
 let tempoAudioContext = null;
 let masterGainNode = null;
@@ -270,10 +293,9 @@ let nextNoteTime = 0.0;
 let timerID = null;
 let accentBeatIndex = 0; 
 
-// Cronômetro
+// Timer
 let studyTimerID = null;
 let startTime = 0;
-let elapsedPausedTime = 0;
 
 const lookahead = 25.0;
 const scheduleAheadTime = 0.1;
@@ -288,19 +310,31 @@ const measureDisplay = document.getElementById('measure-display');
 const volumeControl = document.getElementById('volume-control');
 const timerDisplay = document.getElementById('timer-display');
 
-// --- Inicialização ---
+// --- Initialization ---
 function init() {
+  parseTimeSignature();
   renderBeats();
   updateBPMDisplay();
 }
 
-// --- Lógica de Áudio ---
+// --- Parse Time Sig ---
+function parseTimeSignature() {
+    const val = timeSigSelect.value;
+    const parts = val.split('/');
+    beatsPerMeasure = parseInt(parts[0]);
+    noteValue = parseInt(parts[1]);
+}
+
+// --- Audio Logic ---
 function nextNote() {
   const secondsPerBeat = 60.0 / bpm;
+  // Ajuste para compassos compostos (ex: 6/8 toca na colcheia)
   let timeToNext = secondsPerBeat / subdivision;
+  if(noteValue === 8) timeToNext = (secondsPerBeat * 2) / subdivision;
+
   nextNoteTime += timeToNext;
   
-  currentBeat = (currentBeat + 1) % (timeSignature * subdivision);
+  currentBeat = (currentBeat + 1) % (beatsPerMeasure * subdivision);
   if (currentBeat === 0) {
       currentMeasure++;
       measureDisplay.innerText = currentMeasure;
@@ -312,7 +346,7 @@ function scheduleNote(beatNumber, time) {
   const mainBeatNumber = Math.floor(beatNumber / subdivision);
   const isAccent = mainBeatNumber === accentBeatIndex;
 
-  // Atualização Visual Síncrona
+  // Visual Update
   setTimeout(() => {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
@@ -326,7 +360,7 @@ function scheduleNote(beatNumber, time) {
     });
   }, (time - tempoAudioContext.currentTime) * 1000);
 
-  // Som
+  // Sound
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
@@ -355,7 +389,7 @@ function scheduler() {
   timerID = setTimeout(scheduler, lookahead);
 }
 
-// --- Controle de Transporte ---
+// --- Transport ---
 function play() {
   if (!tempoAudioContext) {
     tempoAudioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -370,7 +404,7 @@ function play() {
   measureDisplay.innerText = currentMeasure;
   nextNoteTime = tempoAudioContext.currentTime;
   
-  // Inicia cronômetro
+  // Timer
   if (!studyTimerID) {
     startTime = Date.now();
     studyTimerID = setInterval(updateTimer, 1000);
@@ -384,7 +418,7 @@ function pause() {
   isPlaying = false;
   clearTimeout(timerID);
   
-  // Pausa cronômetro
+  // Pause timer
   clearInterval(studyTimerID);
   studyTimerID = null;
   
@@ -397,7 +431,7 @@ function stop() {
   currentMeasure = 1;
   measureDisplay.innerText = currentMeasure;
   
-  // Reseta cronômetro
+  // Reset timer
   clearInterval(studyTimerID);
   studyTimerID = null;
   timerDisplay.innerText = "00:00";
@@ -405,7 +439,7 @@ function stop() {
   resetBeatVisuals();
 }
 
-// --- Funções Auxiliares (Cronômetro e Volume) ---
+// --- Helpers (Timer & Volume) ---
 function updateTimer() {
   const diff = Date.now() - startTime;
   const minutes = Math.floor(diff / 60000);
@@ -424,7 +458,7 @@ document.getElementById('play-btn').addEventListener('click', () => {
 });
 document.getElementById('stop-btn').addEventListener('click', stop);
 
-// --- Funcionalidades UI ---
+// --- UI Funcs ---
 function updateBPMDisplay() {
   bpmDisplay.innerText = bpm;
   const percentage = (bpm - 40) / (220 - 40);
@@ -460,9 +494,9 @@ bpmControl.addEventListener('mousedown', setBPMFromSlider);
 // --- Time Signature & Accent ---
 function renderBeats() {
   beatIndicator.innerHTML = '';
-  if(accentBeatIndex >= timeSignature) accentBeatIndex = 0;
+  if(accentBeatIndex >= beatsPerMeasure) accentBeatIndex = 0;
 
-  for (let i = 0; i < timeSignature; i++) {
+  for (let i = 0; i < beatsPerMeasure; i++) {
     const dot = document.createElement('div');
     dot.className = 'beat-dot';
     
@@ -498,12 +532,12 @@ function resetBeatVisuals() {
 }
 
 timeSigSelect.addEventListener('change', (e) => {
-  timeSignature = parseInt(e.target.value);
+  parseTimeSignature();
   currentBeat = 0;
   renderBeats();
 });
 
-// --- Subdivisão ---
+// --- Subdivision ---
 document.querySelectorAll('.sub-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
         document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
