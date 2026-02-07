@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Full</title>
+<title>Metronome</title>
 <style>
 body {
   background-color: #1d1d1d;
@@ -17,18 +17,26 @@ body {
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  font-size: 36px; /* Metronome Full menor */
 }
 
-#bpm-display {
-  font-size: 32px;
+.controls-top {
+  display: flex;
+  gap: 15px;
   margin-bottom: 20px;
+  align-items: center;
 }
 
 /* Controle de BPM */
+#bpm-display {
+  font-size: 60px;
+  margin: 20px 0;
+}
+
 #bpm-control {
   position: relative;
-  width: 300px;
+  width: 400px;
   height: 30px;
   margin-bottom: 30px;
   background: #333;
@@ -87,24 +95,10 @@ h1 {
 </head>
 <body>
 
-<h1>Metronome Full</h1>
+<h1>Metronome</h1>
 
-<div id="bpm-display">120 BPM</div>
-
-<div id="bpm-control">
-  <div id="bpm-dot"></div>
-</div>
-
-<div>
-  <button class="btn" id="play-btn">Play</button>
-  <button class="btn" id="stop-btn">Stop</button>
-  <button class="btn" id="tap-btn">Tap</button>
-</div>
-
-<div id="beat-indicator"></div>
-
-<div style="margin-top:20px;">
-  <label for="time-signature">Time Signature: </label>
+<div class="controls-top">
+  <label for="time-signature">Time Sig: </label>
   <select id="time-signature">
     <option value="3">3/4</option>
     <option value="4" selected>4/4</option>
@@ -112,19 +106,39 @@ h1 {
     <option value="7">7/8</option>
   </select>
 
-  <label for="accent">Accent: </label>
+  <label for="accent">Accent Beat: </label>
   <select id="accent">
-    <option value="0">Off</option>
-    <option value="1" selected>On</option>
+    <option value="0">1</option>
+    <option value="1">2</option>
+    <option value="2">3</option>
+    <option value="3">4</option>
+    <option value="4">5</option>
+    <option value="5">6</option>
+    <option value="6">7</option>
   </select>
 </div>
+
+<div id="bpm-display">120</div>
+
+<div id="bpm-control">
+  <div id="bpm-dot"></div>
+</div>
+
+<div>
+  <button class="btn" id="play-btn">Play</button>
+  <button class="btn" id="pause-btn">Pause</button>
+  <button class="btn" id="stop-btn">Stop</button>
+  <button class="btn" id="tap-btn">Tap</button>
+</div>
+
+<div id="beat-indicator"></div>
 
 <script>
 let bpm = 120;
 let intervalId;
 let currentBeat = 0;
 let ts = parseInt(document.getElementById('time-signature').value);
-let accentOn = parseInt(document.getElementById('accent').value);
+let accentBeat = parseInt(document.getElementById('accent').value);
 let tapTimes = [];
 
 const bpmDisplay = document.getElementById('bpm-display');
@@ -132,7 +146,7 @@ const bpmDot = document.getElementById('bpm-dot');
 const bpmControl = document.getElementById('bpm-control');
 
 function updateBPMDisplay() {
-  bpmDisplay.innerText = bpm + " BPM";
+  bpmDisplay.innerText = bpm;
 }
 
 // Drag BPM dot
@@ -144,7 +158,7 @@ document.addEventListener('mousemove', (e) => {
   const rect = bpmControl.getBoundingClientRect();
   let x = e.clientX - rect.left;
   x = Math.max(0, Math.min(rect.width, x));
-  bpm = Math.round(40 + (x / rect.width) * 200);
+  bpm = Math.round(20 + (x / rect.width) * 300); // maior range
   bpmDot.style.left = (x - bpmDot.offsetWidth/2) + "px";
   updateBPMDisplay();
   if(intervalId) startMetronome();
@@ -155,7 +169,6 @@ const beatIndicator = document.getElementById('beat-indicator');
 function renderBeats() {
   beatIndicator.innerHTML = '';
   if(ts === 6){
-    // 6/8 → 2 grupos de 3
     for(let g=0; g<2; g++){
       const group = document.createElement('div');
       group.className = 'beat-group';
@@ -190,12 +203,12 @@ document.getElementById('time-signature').addEventListener('change',(e)=>{
   renderBeats();
 });
 document.getElementById('accent').addEventListener('change',(e)=>{
-  accentOn = parseInt(e.target.value);
+  accentBeat = parseInt(e.target.value);
 });
 
-// Metronome audio
-const clickNormal = new Audio('https://freesound.org/data/previews/20/20062_35199-lq.mp3'); // batida normal
-const clickAccent = new Audio('https://freesound.org/data/previews/20/20062_35199-lq.mp3'); // pode trocar por outro som
+// Metronome audio confiável
+const clickNormal = new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg');
+const clickAccent = new Audio('https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg');
 
 function startMetronome() {
   clearInterval(intervalId);
@@ -205,7 +218,7 @@ function startMetronome() {
     dots.forEach(dot=>dot.style.backgroundColor='#555');
 
     // som
-    if(accentOn && currentBeat%ts===0){
+    if(currentBeat === accentBeat){
       dots[currentBeat].style.backgroundColor='red';
       clickAccent.currentTime=0;
       clickAccent.play();
@@ -220,6 +233,9 @@ function startMetronome() {
 }
 
 document.getElementById('play-btn').addEventListener('click', startMetronome);
+document.getElementById('pause-btn').addEventListener('click', ()=>{
+  clearInterval(intervalId);
+});
 document.getElementById('stop-btn').addEventListener('click', ()=>{
   clearInterval(intervalId);
   currentBeat=0;
@@ -240,9 +256,8 @@ document.getElementById('tap-btn').addEventListener('click', ()=>{
     let avg = intervals.reduce((a,b)=>a+b,0)/intervals.length;
     bpm = Math.round(60000/avg);
     updateBPMDisplay();
-    // atualizar bolinha
     const rect = bpmControl.getBoundingClientRect();
-    let pos = ((bpm-40)/200)*rect.width;
+    let pos = ((bpm-20)/300)*rect.width;
     bpmDot.style.left = (pos - bpmDot.offsetWidth/2) + "px";
     if(intervalId) startMetronome();
   }
