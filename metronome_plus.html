@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Metronome 3.6</title>
+<title>Pro Metronome 3.7</title>
 <style>
 body {
   background-color: #121212;
@@ -51,7 +51,7 @@ select {
   border: 1px solid #555;
   border-radius: 4px;
   cursor: pointer;
-  -webkit-appearance: none; /* Melhora renderização no Android */
+  -webkit-appearance: none;
 }
 
 #measure-display {
@@ -69,7 +69,16 @@ select {
     margin: 10px 0;
 }
 
-#bpm-display { font-size: 80px; font-weight: bold; color: #fff; min-width: 150px;}
+/* --- BPM Display Updated --- */
+#bpm-display { 
+    font-size: 104px; /* Aumentado em 30% */
+    font-weight: 800; /* Mais grosso */
+    color: #c6ff00; /* Cor Neon Lima */
+    min-width: 180px;
+    text-shadow: 0 0 15px rgba(198, 255, 0, 0.3); /* Brilho suave */
+    font-family: 'Courier New', Courier, monospace; /* Fonte mais técnica */
+}
+
 .bpm-label { font-size: 16px; color: #888; margin-bottom: 5px; }
 
 /* Timer Display */
@@ -91,7 +100,7 @@ select {
     border-radius: 50%;
     cursor: pointer;
     transition: background 0.2s;
-    touch-action: manipulation; /* Melhora resposta no mobile */
+    touch-action: manipulation;
 }
 .bpm-btn:hover { background: #444; }
 
@@ -103,20 +112,20 @@ select {
   background: #333;
   border-radius: 10px;
   cursor: pointer;
-  touch-action: none; /* Importante para o slider mobile */
+  touch-action: none;
 }
 
 #bpm-dot {
   position: absolute;
   width: 25px;
   height: 25px;
-  background-color: #00bcd4;
+  background-color: #c6ff00; /* Cor do slider acompanhando o BPM */
   border-radius: 50%;
   top: -5px;
   left: 140px;
   transform: translateX(-50%);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,188,212,0.7);
+  box-shadow: 0 0 10px rgba(198, 255, 0, 0.5);
   transition: left 0.05s linear;
 }
 
@@ -215,7 +224,7 @@ footer {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.6</div>
+<div class="subtitle">Pro 3.7</div>
 
 <div class="main-container">
     <div class="controls-top">
@@ -280,7 +289,7 @@ footer {
 </div>
 
 <footer>
-    Pro Metronome v3.6. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
+    Pro Metronome v3.7. A precise tool for musicians to practice timing and subdivision. Featuring audio-synced visual cues, multiple time signatures, and a built-in study timer.
 </footer>
 
 <script>
