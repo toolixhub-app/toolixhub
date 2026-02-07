@@ -1,139 +1,206 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Metronome Full</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metronome Plus - ToolixHub</title>
 <style>
-  body { background: #000; color: #fff; font-family: Arial, sans-serif; text-align: center; }
-  .beat { display: inline-block; width: 30px; height: 30px; margin: 5px; border-radius: 50%; background: #444; cursor: pointer; }
-  .accent { background: red; }
-  .active { border: 2px solid #fff; }
-  button { font-size: 24px; margin: 5px; }
-  #controls { margin-top: 20px; }
-  #bpmValue { font-size: 24px; margin-left: 10px; }
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100vh;
+    margin: 0;
+  }
+  h1 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  select, button {
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  .circle-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 20px 0;
+  }
+  .circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid #bdc3c7;
+    position: relative;
+  }
+  .ball {
+    width: 20px;
+    height: 20px;
+    background-color: #e74c3c;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(0deg);
+    transform-origin: center -90px;
+    transition: transform 0.05s linear;
+  }
+  .player-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  button.play { background-color: #2ecc71; color: #fff; }
+  button.pause { background-color: #f1c40f; color: #fff; }
+  button.stop { background-color: #e74c3c; color: #fff; }
+  footer {
+    font-size: 12px;
+    margin-top: auto;
+    margin-bottom: 5px;
+  }
 </style>
 </head>
 <body>
 
-<h1>Metronome Full</h1>
+<h1>Metronome Plus</h1>
 
-<label for="beatsPerMeasure">Beats per measure:</label><br>
-<select id="beatsPerMeasure">
-  <option value="2">2/4</option>
-  <option value="3">3/4</option>
-  <option value="4" selected>4/4</option>
-  <option value="5">5/4</option>
-  <option value="6">6/4</option>
-</select>
-
-<div>
-  <label for="bpm">BPM:</label>
-  <input type="range" id="bpm" min="30" max="300" value="120">
-  <span id="bpmValue">120</span>
-</div>
-
-<div id="beatContainer"></div>
-
-<div id="controls">
-  <button id="playBtn">▶</button>
-  <button id="pauseBtn">⏸</button>
-  <button id="stopBtn">■</button>
+<div class="controls">
+  <div>BPM: <span id="bpmDisplay">120</span></div>
   <button id="tapBtn">TAP</button>
+  <label>Time Signature: 
+    <select id="timeSignature">
+      <option>2/4</option><option>3/4</option><option>4/4</option>
+      <option>5/4</option><option>5/8</option><option>6/4</option>
+      <option>6/8</option><option>7/4</option><option>7/8</option>
+      <option>8/4</option><option>8/8</option><option>9/8</option>
+      <option>10/8</option><option>11/8</option><option>12/8</option>
+      <option>13/8</option>
+    </select>
+  </label>
+  <div>Measure: <span id="currentMeasure">0</span></div>
 </div>
+
+<div class="controls">
+  <label>Accent: <input type="checkbox" id="accentToggle" checked></label>
+  <button id="soundToggle">Sound On</button>
+</div>
+
+<div class="circle-container">
+  <div class="circle">
+    <div class="ball" id="ball"></div>
+  </div>
+</div>
+
+<div class="player-buttons">
+  <button class="play" id="playBtn">&#9658;</button>
+  <button class="pause" id="pauseBtn">||</button>
+  <button class="stop" id="stopBtn">&#9632;</button>
+</div>
+
+<footer>Version 1.4 | ToolixHub</footer>
 
 <script>
 let bpm = 120;
-let beatsPerMeasure = 4;
-let accentIndex = 0;
+let interval = null;
 let currentBeat = 0;
-let intervalId = null;
+let measureCount = 0;
+let soundOn = true;
+let accentOn = true;
+let lastTap = 0;
 
-const bpmSlider = document.getElementById('bpm');
-const bpmValue = document.getElementById('bpmValue');
-const beatContainer = document.getElementById('beatContainer');
-const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
+const bpmDisplay = document.getElementById("bpmDisplay");
+const timeSignatureSelect = document.getElementById("timeSignature");
+const accentToggle = document.getElementById("accentToggle");
+const soundToggle = document.getElementById("soundToggle");
+const currentMeasure = document.getElementById("currentMeasure");
+const ball = document.getElementById("ball");
 
-// Web Audio API para os sons
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-function playClick(accent = false) {
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.frequency.value = accent ? 1000 : 600; // som mais agudo para accent
-    gainNode.gain.value = 0.2;
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.1);
+const playBtn = document.getElementById("playBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const stopBtn = document.getElementById("stopBtn");
+const tapBtn = document.getElementById("tapBtn");
+
+// Audio
+const click = new Audio('https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b6f054e55.mp3?filename=click-123.mp3');
+click.volume = 0.5;
+
+function updateBPMDisplay() { bpmDisplay.textContent = bpm; }
+
+function getBeatsPerMeasure() {
+  const val = timeSignatureSelect.value.split('/')[0];
+  return parseInt(val) || 4;
 }
 
-// Atualiza as bolinhas
-function renderBeats() {
-    beatContainer.innerHTML = '';
-    for (let i = 0; i < beatsPerMeasure; i++) {
-        const div = document.createElement('div');
-        div.classList.add('beat');
-        if (i === accentIndex) div.classList.add('accent');
-        if (i === currentBeat) div.classList.add('active');
-        div.addEventListener('click', () => {
-            accentIndex = i;
-            renderBeats();
-        });
-        beatContainer.appendChild(div);
+function playMetronome() {
+  if(interval) return;
+  const intervalMs = 60000 / bpm;
+  interval = setInterval(() => {
+    if(soundOn) {
+      if(currentBeat === 0 && accentOn) click.play();
+      else click.play();
     }
+    ball.style.transform = `translate(-50%, -50%) rotate(${(360/getBeatsPerMeasure())*currentBeat}deg)`;
+    currentBeat++;
+    if(currentBeat >= getBeatsPerMeasure()) {
+      currentBeat = 0;
+      measureCount++;
+      currentMeasure.textContent = measureCount;
+    }
+  }, intervalMs);
 }
 
-// Função que toca o próximo beat
-function nextBeat() {
-    playClick(currentBeat === accentIndex);
-    currentBeat = (currentBeat + 1) % beatsPerMeasure;
-    renderBeats();
+function pauseMetronome() {
+  clearInterval(interval);
+  interval = null;
 }
 
-// Controles
-document.getElementById('playBtn').addEventListener('click', () => {
-    if (intervalId) return;
-    const interval = 60000 / bpm;
-    intervalId = setInterval(nextBeat, interval);
-});
-document.getElementById('pauseBtn').addEventListener('click', () => {
-    clearInterval(intervalId);
-    intervalId = null;
-});
-document.getElementById('stopBtn').addEventListener('click', () => {
-    clearInterval(intervalId);
-    intervalId = null;
-    currentBeat = 0;
-    renderBeats();
-});
-document.getElementById('tapBtn').addEventListener('click', () => {
-    bpm = Math.min(300, bpm + 1);
-    bpmSlider.value = bpm;
-    bpmValue.textContent = bpm;
-    if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = setInterval(nextBeat, 60000 / bpm);
-    }
-});
+function stopMetronome() {
+  pauseMetronome();
+  currentBeat = 0;
+  measureCount = 0;
+  currentMeasure.textContent = measureCount;
+  ball.style.transform = `translate(-50%, -50%) rotate(0deg)`;
+}
 
-bpmSlider.addEventListener('input', () => {
-    bpm = parseInt(bpmSlider.value);
-    bpmValue.textContent = bpm;
-    if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = setInterval(nextBeat, 60000 / bpm);
-    }
-});
+playBtn.onclick = playMetronome;
+pauseBtn.onclick = pauseMetronome;
+stopBtn.onclick = stopMetronome;
 
-beatsPerMeasureSelect.addEventListener('change', () => {
-    beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
-    if (accentIndex >= beatsPerMeasure) accentIndex = 0;
-    currentBeat = 0;
-    renderBeats();
-});
+timeSignatureSelect.onchange = () => {
+  currentBeat = 0;
+  ball.style.transform = `translate(-50%, -50%) rotate(0deg)`;
+}
 
-// Inicializa
-renderBeats();
+accentToggle.onchange = () => accentOn = accentToggle.checked;
+
+soundToggle.onclick = () => {
+  soundOn = !soundOn;
+  soundToggle.textContent = soundOn ? 'Sound On' : 'Sound Off';
+}
+
+// Tap tempo
+tapBtn.onclick = () => {
+  const now = Date.now();
+  if(lastTap) {
+    const diff = now - lastTap;
+    bpm = Math.round(60000 / diff);
+    updateBPMDisplay();
+  }
+  lastTap = now;
+}
 </script>
-
 </body>
 </html>
