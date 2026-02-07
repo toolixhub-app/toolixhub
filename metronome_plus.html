@@ -3,29 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Pro</title>
+<title>Metronome Pro 3.0</title>
 <style>
 body {
-  background-color: #1d1d1d;
-  color: white;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
   padding: 20px;
+  user-select: none; /* Evita selecionar texto ao clicar rápido */
 }
 
-h1 { margin-bottom: 10px; font-size: 32px; }
+h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
+.subtitle { color: #888; margin-bottom: 20px; font-size: 14px; }
+
+.main-container {
+  background: #1e1e1e;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  text-align: center;
+  width: 100%;
+  max-width: 450px;
+}
 
 .controls-top {
   display: flex;
+  justify-content: space-between;
   gap: 15px;
-  margin-bottom: 20px;
-  align-items: center;
+  margin-bottom: 15px;
   background: #2a2a2a;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border-radius: 8px;
+  font-size: 14px;
 }
 
 select {
@@ -34,15 +47,23 @@ select {
   color: white;
   border: 1px solid #555;
   border-radius: 4px;
+  cursor: pointer;
 }
 
-#bpm-display { font-size: 72px; font-weight: bold; margin: 10px 0; color: #00bcd4; }
+#measure-display {
+    font-size: 18px;
+    color: #00bcd4;
+    font-weight: bold;
+}
+
+#bpm-display { font-size: 80px; font-weight: bold; margin: 0; color: #fff; }
+.bpm-label { font-size: 16px; color: #888; margin-bottom: 10px; }
 
 #bpm-control {
   position: relative;
-  width: 400px;
+  width: 100%;
   height: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   background: #333;
   border-radius: 10px;
   cursor: pointer;
@@ -58,9 +79,37 @@ select {
   left: 140px;
   transform: translateX(-50%);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(0,188,212,0.5);
+  box-shadow: 0 0 10px rgba(0,188,212,0.7);
+  transition: left 0.05s linear;
 }
 
+/* Subdivision Controls */
+.subdivision-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sub-btn {
+    background: #333;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.sub-btn.active {
+    background: #00bcd4;
+    color: #000;
+    border-color: #00bcd4;
+    font-weight: bold;
+}
+
+.btn-container { margin-bottom: 20px; }
 .btn {
   background-color: #333;
   color: white;
@@ -71,69 +120,84 @@ select {
   border-radius: 4px;
   font-weight: bold;
   font-size: 16px;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  min-width: 100px;
 }
 .btn:hover { background-color: #444; }
-.btn:active { background-color: #555; }
-.btn#play-btn { background-color: #2e7d32; }
-.btn#play-btn:hover { background-color: #388e3c; }
+.btn:active { transform: translateY(1px); }
+.btn#play-btn { background-color: #00bcd4; color: #000; }
+.btn#play-btn:hover { background-color: #26c6da; }
 
-#beat-indicator { display: flex; justify-content: center; margin-top: 30px; }
+#beat-indicator { display: flex; justify-content: center; margin-top: 10px; min-height: 25px;}
 .beat-dot {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   margin: 0 5px;
   border-radius: 50%;
-  background-color: #444;
-  transition: background-color 0.1s;
-  cursor: pointer; /* Indica que é clicável */
+  background-color: #333;
+  transition: all 0.1s;
+  cursor: pointer;
 }
-.beat-dot.active { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; }
-/* Estilo para o ponto que será acentuado */
-.beat-dot.will-accent { background-color: #ff5252; opacity: 0.5; }
-/* Estilo para o momento em que o acento toca */
-.beat-dot.accent-playing { background-color: #ff5252; box-shadow: 0 0 15px #ff5252; }
+.beat-dot.active { background-color: #555; }
+.beat-dot.accent-playing { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; transform: scale(1.2); }
+.beat-dot.sub-playing { background-color: #ff5252; transform: scale(0.8); }
+.beat-dot.will-accent { border: 2px solid #00bcd4; box-sizing: border-box; }
+
 </style>
 </head>
 <body>
 
 <h1>Metronome</h1>
+<div class="subtitle">Pro 3.0</div>
 
-<div class="controls-top">
-  <label>Time Sig: 
-    <select id="time-signature">
-      <option value="3">3/4</option>
-      <option value="4" selected>4/4</option>
-      <option value="5">5/4</option>
-      <option value="6">6/8</option>
-    </select>
-  </label>
+<div class="main-container">
+    <div class="controls-top">
+      <label>T.S: 
+        <select id="time-signature">
+          <option value="2">2/4</option>
+          <option value="3">3/4</option>
+          <option value="4" selected>4/4</option>
+          <option value="5">5/4</option>
+          <option value="6">6/8</option>
+        </select>
+      </label>
+      <div>Comp: <span id="measure-display">1</span></div>
+    </div>
+
+    <div id="bpm-display">120</div>
+    <div class="bpm-label">BPM</div>
+
+    <div id="bpm-control">
+      <div id="bpm-dot"></div>
+    </div>
+
+    <div class="subdivision-container">
+        <button class="sub-btn active" data-sub="1">1/4</button>
+        <button class="sub-btn" data-sub="2">1/8</button>
+        <button class="sub-btn" data-sub="3">1/8 T</button>
+        <button class="sub-btn" data-sub="4">1/16</button>
+    </div>
+
+    <div class="btn-container">
+      <button class="btn" id="play-btn">Play</button>
+      <button class="btn" id="stop-btn">Stop</button>
+      <button class="btn" id="tap-btn">Tap</button>
+    </div>
+
+    <div id="beat-indicator"></div>
 </div>
-
-<div id="bpm-display">120</div>
-
-<div id="bpm-control">
-  <div id="bpm-dot"></div>
-</div>
-
-<div>
-  <button class="btn" id="play-btn">Play</button>
-  <button class="btn" id="stop-btn">Stop</button>
-  <button class="btn" id="tap-btn">Tap</button>
-</div>
-
-<div id="beat-indicator"></div>
 
 <script>
 // --- Configurações e Estado ---
 let bpm = 120;
 let isPlaying = false;
 let currentBeat = 0;
+let currentMeasure = 1;
 let timeSignature = 4;
+let subdivision = 1; // 1=quarter, 2=eighth, 3=triplet, 4=sixteenth
 let tempoAudioContext = null;
 let nextNoteTime = 0.0;
 let timerID = null;
-// Novo: armazena qual tempo está acentuado (começa no primeiro)
 let accentBeatIndex = 0; 
 
 const lookahead = 25.0;
@@ -145,6 +209,7 @@ const bpmDot = document.getElementById('bpm-dot');
 const bpmControl = document.getElementById('bpm-control');
 const timeSigSelect = document.getElementById('time-signature');
 const beatIndicator = document.getElementById('beat-indicator');
+const measureDisplay = document.getElementById('measure-display');
 
 // --- Inicialização ---
 function init() {
@@ -155,39 +220,63 @@ function init() {
 // --- Lógica de Áudio (Precisão) ---
 function nextNote() {
   const secondsPerBeat = 60.0 / bpm;
-  nextNoteTime += secondsPerBeat;
-  currentBeat = (currentBeat + 1) % timeSignature;
+  
+  // Lógica de subdivisão: quanto tempo até a próxima nota musical (main beat ou sub)
+  let timeToNext = secondsPerBeat;
+  if (subdivision === 2) timeToNext = secondsPerBeat / 2;
+  if (subdivision === 3) timeToNext = secondsPerBeat / 3;
+  if (subdivision === 4) timeToNext = secondsPerBeat / 4;
+
+  nextNoteTime += timeToNext;
+  
+  // Atualiza o beat apenas quando a subdivisão completa um tempo principal
+  // Para simplificar a visualização, o indicador pula na subdivisão
+  currentBeat = (currentBeat + 1) % (timeSignature * subdivision);
 }
 
 function scheduleNote(beatNumber, time) {
+  const isMainBeat = beatNumber % subdivision === 0;
+  const mainBeatNumber = Math.floor(beatNumber / subdivision);
+
   // Atualização Visual Síncrona
   setTimeout(() => {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
-      // Remove classes de estado anterior
-      dot.classList.remove('active', 'accent-playing');
-      
-      // Adiciona classe de "destaque" se for o tempo atual
-      if (index === beatNumber) {
-        dot.classList.add(index === accentBeatIndex ? 'accent-playing' : 'active');
+      dot.classList.remove('accent-playing', 'sub-playing');
+      if (isMainBeat && index === mainBeatNumber) {
+          dot.classList.add(mainBeatNumber === accentBeatIndex ? 'accent-playing' : 'active');
+      } else if (!isMainBeat && index === mainBeatNumber) {
+          // Efeito visual sutil para subdivisão
+          dot.classList.add('sub-playing');
       }
     });
+
+    // Atualiza contador de compasso
+    if (isMainBeat && mainBeatNumber === 0 && currentBeat < subdivision) {
+        // Logica simples de compasso, pode ser aprimorada
+    }
   }, (time - tempoAudioContext.currentTime) * 1000);
 
   // Som
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
-  // Frequência do som (agudo se for o beat acentuado)
-  osc.frequency.value = (beatNumber === accentBeatIndex) ? 1000 : 800;
-  envelope.gain.value = 1;
-  envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+  if (isMainBeat) {
+      // Som do tempo principal
+      osc.frequency.value = (mainBeatNumber === accentBeatIndex) ? 1200 : 800;
+      envelope.gain.setValueAtTime(1, time);
+      envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+  } else {
+      // Som da subdivisão (mais baixo e curto)
+      osc.frequency.value = 600;
+      envelope.gain.setValueAtTime(0.4, time);
+      envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
+  }
 
   osc.connect(envelope);
   envelope.connect(tempoAudioContext.destination);
-
   osc.start(time);
-  osc.stop(time + 0.1);
+  osc.stop(time + 0.05);
 }
 
 function scheduler() {
@@ -207,6 +296,8 @@ function play() {
   if (isPlaying) return;
   isPlaying = true;
   currentBeat = 0;
+  currentMeasure = 1;
+  measureDisplay.innerText = currentMeasure;
   nextNoteTime = tempoAudioContext.currentTime;
   scheduler();
   document.getElementById('play-btn').innerText = "Pause";
@@ -221,6 +312,8 @@ function pause() {
 function stop() {
   pause();
   currentBeat = 0;
+  currentMeasure = 1;
+  measureDisplay.innerText = currentMeasure;
   resetBeatVisuals();
 }
 
@@ -257,19 +350,16 @@ bpmControl.addEventListener('mousedown', setBPMFromSlider);
 // --- Time Signature & Accent ---
 function renderBeats() {
   beatIndicator.innerHTML = '';
-  // Se o accentBeatIndex atual for maior que a nova assinatura, reseta para 0
   if(accentBeatIndex >= timeSignature) accentBeatIndex = 0;
 
   for (let i = 0; i < timeSignature; i++) {
     const dot = document.createElement('div');
     dot.className = 'beat-dot';
     
-    // Marca o ponto que já está acentuado
     if(i === accentBeatIndex) {
         dot.classList.add('will-accent');
     }
 
-    // EVENTO DE CLIQUE NO PONTO
     dot.addEventListener('click', () => {
         accentBeatIndex = i;
         updateAccentVisuals();
@@ -279,7 +369,6 @@ function renderBeats() {
   }
 }
 
-// Atualiza quais pontos estão marcados como acento na UI
 function updateAccentVisuals() {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
@@ -294,7 +383,7 @@ function updateAccentVisuals() {
 function resetBeatVisuals() {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach(dot => {
-        dot.classList.remove('active', 'accent-playing');
+        dot.classList.remove('active', 'accent-playing', 'sub-playing');
     });
 }
 
@@ -302,6 +391,15 @@ timeSigSelect.addEventListener('change', (e) => {
   timeSignature = parseInt(e.target.value);
   currentBeat = 0;
   renderBeats();
+});
+
+// --- Subdivisão ---
+document.querySelectorAll('.sub-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        subdivision = parseInt(e.target.dataset.sub);
+    });
 });
 
 // Tap Tempo
