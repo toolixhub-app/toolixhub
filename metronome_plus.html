@@ -3,33 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Metronome 3.9</title>
+<title>Pro Metronome 4.0</title>
 <style>
+/* --- Tema Dark (Padrão) --- */
+:root {
+  --bg-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --secondary-text: #888;
+  --accent-color: #00bcd4;
+  --bpm-color: #c6ff00;
+  --border-color: #555;
+  --btn-bg: #333;
+  --btn-hover: #444;
+  --ad-bg: #2a2a2a;
+}
+
+/* --- Tema Light --- */
+body.light-theme {
+  --bg-color: #f4f4f4;
+  --container-bg: #ffffff;
+  --text-color: #333;
+  --secondary-text: #666;
+  --accent-color: #008ba3;
+  --bpm-color: #000;
+  --border-color: #ccc;
+  --btn-bg: #e0e0e0;
+  --btn-hover: #d0d0d0;
+  --ad-bg: #eee;
+}
+
 body {
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0;
-  padding: 20px;
+  padding: 10px;
   user-select: none;
   min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
-.subtitle { color: #888; margin-bottom: 20px; font-size: 14px; }
+h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
+.subtitle { color: var(--secondary-text); margin-bottom: 10px; font-size: 14px; }
+
+/* Ad Space Styling */
+.ad-space {
+    background-color: var(--ad-bg);
+    color: var(--secondary-text);
+    width: 100%;
+    max-width: 320px; /* Standard mobile banner width */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0;
+    border-radius: 8px;
+    font-size: 12px;
+    border: 1px dashed var(--border-color);
+}
 
 .main-container {
-  background: #1e1e1e;
-  padding: 20px;
+  background: var(--container-bg);
+  padding: 15px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   text-align: center;
   width: 100%;
   max-width: 450px;
   flex-grow: 1;
+  position: relative;
+}
+
+/* Theme Toggle Button */
+#theme-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--btn-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 14px;
 }
 
 .controls-top {
@@ -37,7 +98,7 @@ h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
   justify-content: space-between;
   gap: 15px;
   margin-bottom: 15px;
-  background: #2a2a2a;
+  background: var(--btn-bg);
   padding: 10px 15px;
   border-radius: 8px;
   font-size: 14px;
@@ -46,9 +107,9 @@ h1 { margin-bottom: 5px; font-size: 28px; color: #fff; }
 
 select {
   padding: 5px;
-  background: #333;
-  color: white;
-  border: 1px solid #555;
+  background: var(--container-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   cursor: pointer;
   -webkit-appearance: none;
@@ -56,7 +117,7 @@ select {
 
 #measure-display {
     font-size: 18px;
-    color: #00bcd4;
+    color: var(--accent-color);
     font-weight: bold;
 }
 
@@ -69,32 +130,31 @@ select {
     margin: 10px 0;
 }
 
-/* --- BPM Display Updated --- */
 #bpm-display { 
-    font-size: 104px;
-    font-weight: 900; /* Super Bold */
-    color: #c6ff00;
-    min-width: 180px;
-    text-shadow: 0 0 15px rgba(198, 255, 0, 0.4);
+    font-size: 90px;
+    font-weight: 900;
+    color: var(--bpm-color);
+    min-width: 160px;
+    text-shadow: 0 0 10px rgba(198, 255, 0, 0.2);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     letter-spacing: -2px;
 }
 
-.bpm-label { font-size: 16px; color: #888; margin-bottom: 5px; }
+.bpm-label { font-size: 14px; color: var(--secondary-text); margin-bottom: 5px; }
 
 /* Timer Display */
 #timer-display {
     font-size: 16px;
-    color: #00bcd4;
+    color: var(--accent-color);
     font-weight: bold;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-family: monospace;
 }
 
 .bpm-btn {
-    background: #333;
-    border: none;
-    color: white;
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
     font-size: 24px;
     width: 40px;
     height: 40px;
@@ -103,14 +163,14 @@ select {
     transition: background 0.2s;
     touch-action: manipulation;
 }
-.bpm-btn:hover { background: #444; }
+.bpm-btn:hover { background: var(--btn-hover); }
 
 #bpm-control {
   position: relative;
   width: 100%;
   height: 15px;
   margin-bottom: 25px;
-  background: #333;
+  background: var(--btn-bg);
   border-radius: 10px;
   cursor: pointer;
   touch-action: none;
@@ -120,13 +180,13 @@ select {
   position: absolute;
   width: 25px;
   height: 25px;
-  background-color: #c6ff00;
+  background-color: var(--accent-color);
   border-radius: 50%;
   top: -5px;
   left: 140px;
   transform: translateX(-50%);
   cursor: pointer;
-  box-shadow: 0 0 10px rgba(198, 255, 0, 0.5);
+  box-shadow: 0 0 10px rgba(0, 188, 212, 0.5);
   transition: left 0.05s linear;
 }
 
@@ -139,9 +199,9 @@ select {
 }
 
 .sub-btn {
-    background: #333;
-    border: 1px solid #555;
-    color: #aaa;
+    background: var(--btn-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
     padding: 8px 12px;
     border-radius: 4px;
     cursor: pointer;
@@ -151,9 +211,9 @@ select {
 }
 
 .sub-btn.active {
-    background: #00bcd4;
-    color: #000;
-    border-color: #00bcd4;
+    background: var(--accent-color);
+    color: #fff;
+    border-color: var(--accent-color);
     font-weight: bold;
 }
 
@@ -163,17 +223,17 @@ select {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     font-size: 14px;
-    color: #aaa;
+    color: var(--secondary-text);
 }
 input[type=range] { width: 150px; cursor: pointer; }
 
 .btn-container { margin-bottom: 15px; }
 .btn {
-  background-color: #333;
-  color: white;
-  border: none;
+  background-color: var(--btn-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
   padding: 12px 24px;
   margin: 5px;
   cursor: pointer;
@@ -184,10 +244,9 @@ input[type=range] { width: 150px; cursor: pointer; }
   min-width: 100px;
   touch-action: manipulation;
 }
-.btn:hover { background-color: #444; }
+.btn:hover { background-color: var(--btn-hover); }
 .btn:active { transform: translateY(1px); }
-.btn#play-btn { background-color: #00bcd4; color: #000; }
-.btn#play-btn:hover { background-color: #26c6da; }
+.btn#play-btn { background-color: var(--accent-color); color: #fff; border:none; }
 
 /* Visual Dots Styles */
 #beat-indicator { display: flex; justify-content: center; margin-top: 10px; min-height: 25px; flex-wrap: wrap; gap: 5px;}
@@ -196,13 +255,13 @@ input[type=range] { width: 150px; cursor: pointer; }
   height: 15px;
   margin: 0 2px;
   border-radius: 50%;
-  background-color: #333;
+  background-color: var(--btn-bg);
   transition: all 0.05s;
   cursor: pointer;
 }
-.beat-dot.active { background-color: #555; }
+.beat-dot.active { background-color: var(--border-color); }
 /* Destaque tempo normal */
-.beat-dot.normal-playing { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; transform: scale(1.2); }
+.beat-dot.normal-playing { background-color: var(--accent-color); box-shadow: 0 0 10px var(--accent-color); transform: scale(1.2); }
 /* Destaque acento (Vermelho) */
 .beat-dot.accent-playing { background-color: #ff5252; box-shadow: 0 0 10px #ff5252; transform: scale(1.2); }
 /* Destaque subdivisão */
@@ -210,30 +269,28 @@ input[type=range] { width: 150px; cursor: pointer; }
 
 .beat-dot.will-accent { border: 2px solid #ff5252; box-sizing: border-box; }
 
-/* --- How To Use Section --- */
+/* Instructions */
 .instructions {
     text-align: left;
-    font-size: 13px;
-    color: #aaa;
-    background: #2a2a2a;
-    padding: 15px;
+    font-size: 12px;
+    color: var(--text-color);
+    background: var(--btn-bg);
+    padding: 10px;
     border-radius: 8px;
-    margin-top: 20px;
-    line-height: 1.6;
+    margin-top: 15px;
+    line-height: 1.5;
 }
-.instructions h3 { margin: 0 0 10px 0; color: #fff; font-size: 15px; }
-.instructions ul { padding-left: 20px; margin: 0; }
-.instructions li { margin-bottom: 5px; }
-.instructions span { color: #00bcd4; font-weight: bold; }
+.instructions h3 { margin: 0 0 5px 0; color: var(--accent-color); font-size: 14px; }
+.instructions ul { padding-left: 18px; margin: 0; }
+.instructions li { margin-bottom: 3px; }
 
 /* Footer */
 footer {
     margin-top: 20px;
-    font-size: 11px;
-    color: #666;
+    font-size: 10px;
+    color: var(--secondary-text);
     max-width: 600px;
     text-align: center;
-    line-height: 1.5;
 }
 
 </style>
@@ -241,13 +298,17 @@ footer {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.9</div>
+<div class="subtitle">Pro 4.0</div>
+
+<div class="ad-space">Top Ad Banner (320x50)</div>
 
 <div class="main-container">
+    <button id="theme-toggle">🌓</button>
+    
     <div class="controls-top">
       <label>T.S: 
         <select id="time-signature">
-          <optgroup label="Simple" style="background:#333">
+          <optgroup label="Simple" style="background:var(--container-bg); color:var(--text-color)">
               <option value="2/4">2/4</option>
               <option value="3/4">3/4</option>
               <option value="4/4" selected>4/4</option>
@@ -255,7 +316,7 @@ footer {
               <option value="6/4">6/4</option>
               <option value="7/4">7/4</option>
           </optgroup>
-          <optgroup label="Compound/Odd" style="background:#333">
+          <optgroup label="Compound/Odd" style="background:var(--container-bg); color:var(--text-color)">
               <option value="3/8">3/8</option>
               <option value="5/8">5/8</option>
               <option value="6/8">6/8</option>
@@ -307,16 +368,17 @@ footer {
     <div class="instructions">
         <h3>How to use:</h3>
         <ul>
-            <li><span>Accent Beats:</span> Click on the dots below the controls to set which beat gets the accent (red color).</li>
-            <li><span>Slider:</span> Drag the cyan dot to quickly change the BPM.</li>
-            <li><span>Tap Tempo:</span> Click the "Tap" button to the rhythm you want to set the BPM.</li>
-            <li><span>Volume:</span> Adjust the slider for the desired volume level.</li>
+            <li><span>Accent:</span> Click dots to toggle accent (red).</li>
+            <li><span>BPM:</span> Drag cyan dot to change speed.</li>
+            <li><span>Tap:</span> Click "Tap" to set rhythm.</li>
         </ul>
     </div>
 </div>
 
+<div class="ad-space">Bottom Ad Banner (320x50)</div>
+
 <footer>
-    Pro Metronome v3.9. Precise timing and subdivision tool for musicians.
+    Pro Metronome v4.0. Precision timing tool for musicians.
 </footer>
 
 <script>
@@ -350,6 +412,7 @@ const beatIndicator = document.getElementById('beat-indicator');
 const measureDisplay = document.getElementById('measure-display');
 const volumeControl = document.getElementById('volume-control');
 const timerDisplay = document.getElementById('timer-display');
+const themeToggle = document.getElementById('theme-toggle');
 
 // --- Initialization ---
 function init() {
@@ -357,6 +420,11 @@ function init() {
   renderBeats();
   updateBPMDisplay();
 }
+
+// --- Theme Toggle ---
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light-theme');
+});
 
 // --- Parse Time Sig ---
 function parseTimeSignature() {
