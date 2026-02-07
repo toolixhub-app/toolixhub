@@ -86,9 +86,13 @@ select {
   border-radius: 50%;
   background-color: #444;
   transition: background-color 0.1s;
+  cursor: pointer; /* Indica que é clicável */
 }
 .beat-dot.active { background-color: #00bcd4; box-shadow: 0 0 10px #00bcd4; }
-.beat-dot.accent { background-color: #ff5252; box-shadow: 0 0 10px #ff5252; }
+/* Estilo para o ponto que será acentuado */
+.beat-dot.will-accent { background-color: #ff5252; opacity: 0.5; }
+/* Estilo para o momento em que o acento toca */
+.beat-dot.accent-playing { background-color: #ff5252; box-shadow: 0 0 15px #ff5252; }
 </style>
 </head>
 <body>
@@ -129,10 +133,11 @@ let timeSignature = 4;
 let tempoAudioContext = null;
 let nextNoteTime = 0.0;
 let timerID = null;
+// Novo: armazena qual tempo está acentuado (começa no primeiro)
+let accentBeatIndex = 0; 
 
-// Parâmetros de agendamento (em segundos)
-const lookahead = 25.0; // Frequência de verificação da fila
-const scheduleAheadTime = 0.1; // Quanto tempo à frente agendar
+const lookahead = 25.0;
+const scheduleAheadTime = 0.1;
 
 // --- UI Elements ---
 const bpmDisplay = document.getElementById('bpm-display');
@@ -155,13 +160,16 @@ function nextNote() {
 }
 
 function scheduleNote(beatNumber, time) {
-  // Visualização
+  // Atualização Visual Síncrona
   setTimeout(() => {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
-      dot.className = 'beat-dot'; // reset
+      // Remove classes de estado anterior
+      dot.classList.remove('active', 'accent-playing');
+      
+      // Adiciona classe de "destaque" se for o tempo atual
       if (index === beatNumber) {
-        dot.classList.add(beatNumber === 0 ? 'accent' : 'active');
+        dot.classList.add(index === accentBeatIndex ? 'accent-playing' : 'active');
       }
     });
   }, (time - tempoAudioContext.currentTime) * 1000);
@@ -170,8 +178,8 @@ function scheduleNote(beatNumber, time) {
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
-  // Frequência do som (mais agudo no primeiro tempo)
-  osc.frequency.value = (beatNumber === 0) ? 1000 : 800;
+  // Frequência do som (agudo se for o beat acentuado)
+  osc.frequency.value = (beatNumber === accentBeatIndex) ? 1000 : 800;
   envelope.gain.value = 1;
   envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
 
@@ -224,7 +232,6 @@ document.getElementById('stop-btn').addEventListener('click', stop);
 // --- Funcionalidades UI ---
 function updateBPMDisplay() {
   bpmDisplay.innerText = bpm;
-  // Atualiza posição do dot
   const percentage = (bpm - 40) / (220 - 40);
   bpmDot.style.left = (percentage * 100) + "%";
 }
@@ -238,7 +245,6 @@ function setBPMFromSlider(e) {
   updateBPMDisplay();
 }
 
-// Dragging slider
 let dragging = false;
 bpmDot.addEventListener('mousedown', () => dragging = true);
 document.addEventListener('mouseup', () => dragging = false);
@@ -248,19 +254,48 @@ document.addEventListener('mousemove', (e) => {
 });
 bpmControl.addEventListener('mousedown', setBPMFromSlider);
 
-// Time Signature
+// --- Time Signature & Accent ---
 function renderBeats() {
   beatIndicator.innerHTML = '';
+  // Se o accentBeatIndex atual for maior que a nova assinatura, reseta para 0
+  if(accentBeatIndex >= timeSignature) accentBeatIndex = 0;
+
   for (let i = 0; i < timeSignature; i++) {
     const dot = document.createElement('div');
     dot.className = 'beat-dot';
+    
+    // Marca o ponto que já está acentuado
+    if(i === accentBeatIndex) {
+        dot.classList.add('will-accent');
+    }
+
+    // EVENTO DE CLIQUE NO PONTO
+    dot.addEventListener('click', () => {
+        accentBeatIndex = i;
+        updateAccentVisuals();
+    });
+
     beatIndicator.appendChild(dot);
   }
 }
 
+// Atualiza quais pontos estão marcados como acento na UI
+function updateAccentVisuals() {
+    const dots = document.querySelectorAll('.beat-dot');
+    dots.forEach((dot, index) => {
+        if(index === accentBeatIndex) {
+            dot.classList.add('will-accent');
+        } else {
+            dot.classList.remove('will-accent');
+        }
+    });
+}
+
 function resetBeatVisuals() {
     const dots = document.querySelectorAll('.beat-dot');
-    dots.forEach(dot => dot.className = 'beat-dot');
+    dots.forEach(dot => {
+        dot.classList.remove('active', 'accent-playing');
+    });
 }
 
 timeSigSelect.addEventListener('change', (e) => {
