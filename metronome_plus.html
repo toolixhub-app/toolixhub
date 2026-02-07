@@ -11,13 +11,8 @@
     text-align: center;
     padding: 20px;
   }
-  h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
-  }
-  .controls, .bpm-control, .beats {
-    margin: 20px 0;
-  }
+  h1 { font-size: 32px; margin-bottom: 10px; }
+  .top-controls, .bpm-control, .beats, .controls { margin: 20px 0; }
   button {
     background-color: #222;
     color: #fff;
@@ -27,17 +22,8 @@
     margin: 0 5px;
     cursor: pointer;
   }
-  button:hover {
-    background-color: #444;
-  }
-  .slider {
-    width: 200px;
-  }
-  .beats {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
+  button:hover { background-color: #444; }
+  .beats { display: flex; justify-content: center; margin-top: 20px; }
   .beat {
     width: 30px;
     height: 30px;
@@ -46,19 +32,26 @@
     background-color: #444;
     cursor: pointer;
   }
-  .beat.current {
-    background-color: #fff;
+  .beat.current { background-color: #fff; }
+  .beat.accent { background-color: red; }
+  #bpmSliderContainer {
+    position: relative;
+    width: 300px;
+    height: 20px;
+    margin: 0 auto;
+    background-color: #444;
+    border-radius: 10px;
   }
-  .beat.accent {
+  #bpmHandle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
     background-color: red;
+    position: absolute;
+    top: 0;
+    cursor: pointer;
   }
-  select {
-    background-color: #222;
-    color: #fff;
-    border: 1px solid #555;
-    padding: 5px;
-    font-size: 16px;
-  }
+  select { background-color: #222; color: #fff; border: 1px solid #555; padding: 5px; font-size: 16px; }
 </style>
 </head>
 <body>
@@ -77,11 +70,12 @@
 </div>
 
 <div class="bpm-control">
-  <label>BPM:
-    <input type="range" id="bpmSlider" class="slider" min="30" max="300" value="120">
-  </label>
-  <span id="bpmValue">120</span>
-  <button id="tapBtn">TAP</button>
+  <div id="bpmSliderContainer">
+    <div id="bpmHandle"></div>
+  </div>
+  <div style="margin-top:10px;">BPM: <span id="bpmValue">120</span>
+    <button id="tapBtn">TAP</button>
+  </div>
 </div>
 
 <div class="controls">
@@ -91,9 +85,7 @@
   <button id="soundBtn">🔊</button>
 </div>
 
-<div class="beats" id="beatsContainer">
-  <!-- Bolinhas de beat vão aparecer aqui -->
-</div>
+<div class="beats" id="beatsContainer"></div>
 
 <audio id="soundNormal" src="click_normal.wav"></audio>
 <audio id="soundAccent" src="click_accent.wav"></audio>
@@ -108,7 +100,6 @@ let intervalId;
 let lastTap = 0;
 let soundOn = true;
 
-const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
 const beatsContainer = document.getElementById('beatsContainer');
 const playBtn = document.getElementById('playBtn');
@@ -120,6 +111,12 @@ const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 const soundNormal = document.getElementById('soundNormal');
 const soundAccent = document.getElementById('soundAccent');
 
+const bpmHandle = document.getElementById('bpmHandle');
+const bpmSliderContainer = document.getElementById('bpmSliderContainer');
+const sliderWidth = 300;
+const handleWidth = 20;
+
+// Funções de beat
 function updateBeats() {
   beatsContainer.innerHTML = '';
   for(let i = 0; i < timeSig; i++) {
@@ -145,6 +142,7 @@ function renderBeats() {
   });
 }
 
+// Sons
 function playClick() {
   if(!soundOn) return;
   if(currentBeat === accentIndex) {
@@ -156,6 +154,7 @@ function playClick() {
   }
 }
 
+// Metronome
 function startMetronome() {
   if(isPlaying) return;
   isPlaying = true;
@@ -179,16 +178,18 @@ function stopMetronome() {
   renderBeats();
 }
 
-// Eventos
-bpmSlider.addEventListener('input', () => {
-  bpm = parseInt(bpmSlider.value);
-  bpmValue.textContent = bpm;
-  if(isPlaying) {
-    pauseMetronome();
-    startMetronome();
+// TAP
+tapBtn.addEventListener('click', () => {
+  const now = Date.now();
+  if(lastTap) {
+    const newBpm = 60000 / (now - lastTap);
+    bpm = Math.round(Math.min(Math.max(newBpm, 30), 300));
+    updateBPMHandle();
   }
+  lastTap = now;
 });
 
+// Time Signature
 beatsPerMeasureSelect.addEventListener('change', () => {
   timeSig = parseInt(beatsPerMeasureSelect.value);
   if(accentIndex >= timeSig) accentIndex = 0;
@@ -197,6 +198,7 @@ beatsPerMeasureSelect.addEventListener('change', () => {
   updateBeats();
 });
 
+// Botões
 playBtn.addEventListener('click', startMetronome);
 pauseBtn.addEventListener('click', pauseMetronome);
 stopBtn.addEventListener('click', stopMetronome);
@@ -205,25 +207,35 @@ soundBtn.addEventListener('click', () => {
   soundBtn.textContent = soundOn ? "🔊" : "🔇";
 });
 
-// TAP Button
-tapBtn.addEventListener('click', () => {
-  const now = Date.now();
-  if(lastTap) {
-    const newBpm = 60000 / (now - lastTap);
-    bpm = Math.round(Math.min(Math.max(newBpm, 30), 300));
-    bpmSlider.value = bpm;
-    bpmValue.textContent = bpm;
-    if(isPlaying) {
-      pauseMetronome();
-      startMetronome();
-    }
+// BPM Handle
+function updateBPMHandle() {
+  bpmValue.textContent = bpm;
+  bpmHandle.style.left = ((bpm - 30) / 270 * (sliderWidth - handleWidth)) + 'px';
+  if(isPlaying) {
+    pauseMetronome();
+    startMetronome();
   }
-  lastTap = now;
+}
+
+bpmHandle.addEventListener('mousedown', (e) => {
+  const onMouseMove = (eMove) => {
+    let x = eMove.clientX - bpmSliderContainer.getBoundingClientRect().left - handleWidth/2;
+    x = Math.max(0, Math.min(x, sliderWidth - handleWidth));
+    bpm = Math.round((x / (sliderWidth - handleWidth)) * 270 + 30);
+    updateBPMHandle();
+  };
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 });
 
-// Inicializa
+// Inicialização
 updateBeats();
 renderBeats();
+updateBPMHandle();
 </script>
 
 </body>
