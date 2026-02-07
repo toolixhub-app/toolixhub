@@ -10,16 +10,22 @@ body {
   text-align: center;
   background: #eef2f7;
   margin: 0;
-  padding: 50px 20px;
+  padding: 40px 20px;
 }
 
 h1 {
   color: #4a90e2;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+}
+
+#description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 30px;
 }
 
 #controls {
-  margin-bottom: 60px;
+  margin-bottom: 50px;
 }
 
 input[type=range], select {
@@ -47,15 +53,14 @@ button:hover {
 #beat {
   font-size: 350px;
   color: #4a90e2;
-  margin: 0 auto 20px;
-  transition: transform 0.05s;
+  margin: 20px auto;
   line-height: 0.8;
+  transition: transform 0.05s;
 }
 
 #measure {
   font-size: 24px;
   color: #555;
-  margin-bottom: 30px;
 }
 
 @media (max-width: 600px) {
@@ -67,6 +72,9 @@ button:hover {
 <body>
 
 <h1>🎵 Metronome</h1>
+<div id="description">
+Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios rítmicos. Você pode ajustar o BPM e a quantidade de batidas por compasso.
+</div>
 
 <div id="controls">
   <label for="bpmSlider">BPM: <span id="bpmValue">60</span></label><br>
@@ -89,7 +97,7 @@ button:hover {
 <div id="measure">Measure: 0 / 4</div>
 
 <script>
-// Web Audio API
+// --- Web Audio API para sons ---
 let audioCtx;
 function playClick(isAccent=false) {
   if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -98,58 +106,68 @@ function playClick(isAccent=false) {
   osc.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   osc.type = 'square';
-  osc.frequency.value = isAccent ? 1000 : 700;
+  osc.frequency.value = isAccent ? 1000 : 700; 
   gainNode.gain.value = 0.2;
   osc.start();
   osc.stop(audioCtx.currentTime + 0.05);
 }
 
-// Elements
+// --- Elementos ---
 const beatEl = document.getElementById('beat');
 const measureEl = document.getElementById('measure');
 const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
 const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 
-let interval = null;  // global
 let beatCount = 0;
+let nextBeatTime = 0;
+let isRunning = false;
+let timerId = null;
 
-// Slider live update
+// Atualiza valor do slider
 bpmSlider.oninput = () => bpmValue.textContent = bpmSlider.value;
 
-// Start Metronome
-function start() {
-  stop(); // garante que não duplique intervalos
-  let bpm = parseInt(bpmSlider.value);
-  let ms = 60000 / bpm;
-  let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
-  beatCount = 0;
+// Função para executar cada batida
+function scheduleBeat() {
+  if(!isRunning) return;
 
-  interval = setInterval(() => {
-    beatCount = (beatCount % beatsPerMeasure) + 1;
+  const bpm = parseInt(bpmSlider.value);
+  const ms = 60000 / bpm;
+  const beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
 
-    // Pulsar bolinha
-    beatEl.style.transform = 'scale(1.2)';
-    setTimeout(() => beatEl.style.transform = 'scale(1)', ms/2);
+  // Atualiza contagem
+  beatCount = (beatCount % beatsPerMeasure) + 1;
 
-    // Som
-    playClick(beatCount === 1);
+  // Pulsar bolinha
+  beatEl.style.transform = 'scale(1.2)';
+  setTimeout(() => beatEl.style.transform = 'scale(1)', ms/2);
 
-    // Atualiza medida
-    measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
-  }, ms);
+  // Som
+  playClick(beatCount === 1);
+
+  // Atualiza medida
+  measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
+
+  // Próximo beat
+  timerId = setTimeout(scheduleBeat, ms);
 }
 
-// Stop Metronome
+// Start
+function start() {
+  if(isRunning) stop(); // garante restart
+  beatCount = 0;
+  isRunning = true;
+  scheduleBeat();
+}
+
+// Stop
 function stop() {
-  if(interval) {
-    clearInterval(interval);
-    interval = null;  // garante que o Start possa reiniciar
-  }
+  isRunning = false;
+  if(timerId) clearTimeout(timerId);
+  timerId = null;
   beatEl.style.transform = 'scale(1)';
   beatCount = 0;
-  let beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
-  measureEl.textContent = `Measure: 0 / ${beatsPerMeasure}`;
+  measureEl.textContent = `Measure: 0 / ${beatsPerMeasureSelect.value}`;
 }
 </script>
 
