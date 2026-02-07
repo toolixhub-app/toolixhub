@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome - ToolixHub</title>
+<title>Metronome 1.1 - ToolixHub</title>
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -20,7 +20,7 @@ body {
 
 h1 {
   color: #4a90e2;
-  margin-top: 40px;
+  margin-top: 30px;
 }
 
 #description {
@@ -32,7 +32,7 @@ h1 {
 }
 
 #controls {
-  margin-bottom: 50px;
+  margin-bottom: 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,7 +89,6 @@ button:hover {
   left: 0;
   background: rgba(74,144,226,0.2);
   pointer-events: none;
-  animation: pulseAnim 1s infinite;
 }
 
 @keyframes pulseAnim {
@@ -121,9 +120,9 @@ footer {
 </head>
 <body>
 
-<h1>🎵 Metronome</h1>
+<h1>🎵 Metronome 1.1</h1>
 <div id="description">
-Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios rítmicos. Ajuste o BPM e o número de batidas por compasso.
+Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios rítmicos. Ajuste o BPM e o número de batidas por compasso. Você pode ativar ou desativar o som.
 </div>
 
 <div id="controls">
@@ -143,6 +142,7 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
     <button id="playBtn">▶</button>
     <button id="pauseBtn">⏸</button>
     <button id="stopBtn">■</button>
+    <button id="soundBtn">🔊</button>
   </div>
 </div>
 
@@ -151,26 +151,30 @@ Use este metrônomo para manter o tempo de suas músicas, ensaios ou exercícios
   <div id="beat"></div>
 </div>
 <div id="measure">Measure: 0 / 4</div>
-<footer>Version 1.0</footer>
+<footer>Version 1.1</footer>
 
 <script>
 // --- Web Audio API ---
 let audioCtx;
+let soundEnabled = true;
+
 function playClick(isAccent=false) {
+  if(!soundEnabled) return;
   if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const osc = audioCtx.createOscillator();
   const gainNode = audioCtx.createGain();
   osc.connect(gainNode);
   gainNode.connect(audioCtx.destination);
   osc.type = 'square';
-  osc.frequency.value = isAccent ? 1000 : 700; 
-  gainNode.gain.value = 0.2;
+  osc.frequency.value = isAccent ? 1200 : 700; 
+  gainNode.gain.value = 0.25;
   osc.start();
   osc.stop(audioCtx.currentTime + 0.05);
 }
 
 // --- Elementos ---
 const beatEl = document.getElementById('beat');
+const pulseEl = document.getElementById('pulse');
 const measureEl = document.getElementById('measure');
 const bpmSlider = document.getElementById('bpmSlider');
 const bpmValue = document.getElementById('bpmValue');
@@ -179,6 +183,7 @@ const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 const playBtn = document.getElementById('playBtn');
 const pauseBtn = document.getElementById('pauseBtn');
 const stopBtn = document.getElementById('stopBtn');
+const soundBtn = document.getElementById('soundBtn');
 
 let beatCount = 0;
 let timerId = null;
@@ -198,7 +203,7 @@ function scheduleBeat() {
 
   beatCount = (beatCount % beatsPerMeasure) + 1;
 
-  // Rotação tipo ponteiro
+  // Rotação tipo ponteiro centralizado
   const angle = (beatCount-1) * (360 / beatsPerMeasure);
   beatEl.style.transform = `rotate(${angle}deg)`;
 
@@ -209,10 +214,10 @@ function scheduleBeat() {
   measureEl.textContent = `Measure: ${beatCount} / ${beatsPerMeasure}`;
 
   // Pulse visual
-  const pulse = document.getElementById('pulse');
-  pulse.style.animation = 'none';
-  void pulse.offsetWidth; // restart animation
-  pulse.style.animation = `pulseAnim ${ms}ms linear`;
+  pulseEl.style.background = `radial-gradient(circle, rgba(74,144,226,0.3) 0%, rgba(28,91,191,0.0) 70%)`;
+  pulseEl.style.animation = 'none';
+  void pulseEl.offsetWidth; // restart animation
+  pulseEl.style.animation = `pulseAnim ${ms}ms linear`;
 
   // Próximo beat
   timerId = setTimeout(scheduleBeat, ms);
@@ -244,6 +249,11 @@ stopBtn.onclick = () => {
   beatCount = 0;
   measureEl.textContent = `Measure: 0 / ${beatsPerMeasureSelect.value}`;
   beatEl.style.transform = 'rotate(0deg)';
+};
+
+soundBtn.onclick = () => {
+  soundEnabled = !soundEnabled;
+  soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
 };
 </script>
 
