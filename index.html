@@ -3,133 +3,174 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToolixHub - Your Online Tool Hub</title>
+<title>Pro Tools Suite - Your Online Tool Hub</title>
 <style>
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #eef2f7;
-    color: #333;
-    margin: 0;
-    padding: 0;
-  }
-  header {
-    background: linear-gradient(135deg,#4a90e2,#357ABD);
-    color: white;
-    padding: 40px 20px;
-    text-align: center;
-  }
-  header h1 {
-    margin: 0;
-    font-size: 2.4em;
-    letter-spacing: 2px;
-  }
-  header p {
-    font-size: 1.2em;
-    margin-top: 5px;
-  }
-  main {
+/* --- Identidade Visual Unificada (Dark Mode Pro) --- */
+:root {
+  --bg-color: #121212;
+  --container-bg: #1e1e1e;
+  --text-color: #e0e0e0;
+  --secondary-text: #888;
+  --accent-color: #00bcd4; /* Azul Ciano - Links/Destaques */
+  --highlight-color: #c6ff00; /* Verde Lima - Títulos */
+  --border-color: #555;
+  --ad-bg: #2a2a2a;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+header {
+  background: var(--container-bg);
+  color: #fff;
+  padding: 30px 20px;
+  text-align: center;
+  width: 100%;
+  border-bottom: 2px solid var(--accent-color);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5em;
+  letter-spacing: 2px;
+  color: var(--accent-color);
+}
+
+header p {
+  font-size: 1.1em;
+  margin-top: 5px;
+  color: var(--secondary-text);
+}
+
+/* Ad Space Styling */
+.ad-space {
+    background-color: var(--ad-bg);
+    color: var(--secondary-text);
+    width: 100%;
+    max-width: 728px; /* Standard Desktop Banner */
+    height: 90px;
     display: flex;
-    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
-    padding: 40px 20px;
-    gap: 20px;
-  }
-  .tool-card {
-    background: linear-gradient(145deg,#ffffff,#dfe7f5);
-    border-radius: 16px;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    padding: 25px 20px;
-    width: 220px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
-  }
-  .tool-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 20px rgba(0,0,0,0.2);
-  }
-  .tool-card h2 {
-    margin: 10px 0;
-    font-size: 1.4em;
-  }
-  .tool-card a {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 12px 25px;
-    background: #4a90e2;
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  .tool-card a:hover {
-    background: #357ABD;
-  }
-  footer {
-    text-align: center;
-    padding: 25px;
-    color: #555;
-    font-size: 0.9em;
-    background: #f1f4f9;
-  }
-  @media (max-width: 600px) {
-    main { flex-direction: column; align-items: center; }
-  }
+    margin: 20px 0;
+    border-radius: 8px;
+    font-size: 14px;
+    border: 1px dashed var(--border-color);
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1000px;
+  box-sizing: border-box;
+}
+
+.tool-card {
+  background: var(--container-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,188,212,0.2);
+  border-color: var(--accent-color);
+}
+
+.tool-card h2 {
+  margin: 0 0 15px 0;
+  font-size: 1.2em;
+  color: var(--text-color);
+}
+
+.tool-card a {
+  display: block;
+  padding: 10px;
+  background: transparent;
+  color: var(--accent-color);
+  text-decoration: none;
+  border: 1px solid var(--accent-color);
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.tool-card a:hover {
+  background: var(--accent-color);
+  color: #000;
+}
+
+footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--secondary-text);
+  font-size: 0.9em;
+  margin-top: auto;
+  width: 100%;
+  background: var(--container-bg);
+  border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 600px) {
+    main { grid-template-columns: 1fr; }
+    .ad-space { max-width: 320px; height: 50px; }
+}
 </style>
 </head>
 <body>
 
 <header>
-  <h1>ToolixHub</h1>
-  <p>Your online hub of handy tools 🚀</p>
+  <h1>Pro Tools Suite</h1>
+  <p>Precision tools for musicians & engineers</p>
 </header>
+
+<div class="ad-space">Top Ad Banner (728x90)</div>
 
 <main>
   <div class="tool-card">
-    <h2>⏱ Timer</h2>
-    <a href="timer.html" target="_blank">Open</a>
+    <h2>🧮 Pro Calculator</h2>
+    <a href="calculator.html">Open Tool</a>
   </div>
+  
   <div class="tool-card">
-    <h2>🧮 Calculator</h2>
-    <a href="calculator.html" target="_blank">Open</a>
+    <h2>🎵 Pro Metronome</h2>
+    <a href="metronome.html">Open Tool</a>
   </div>
+  
   <div class="tool-card">
     <h2>⏳ Countdown</h2>
-    <a href="countdown.html" target="_blank">Open</a>
+    <a href="countdown.html">Open Tool</a>
   </div>
-  <div class="tool-card">
-    <h2>💱 Currency Converter</h2>
-    <a href="currency.html" target="_blank">Open</a>
-  </div>
-  <div class="tool-card">
-    <h2>✍️ Word/Char Counter</h2>
-    <a href="wordcounter.html" target="_blank">Open</a>
-  </div>
-  <div class="tool-card">
-    <h2>🔑 Password Generator</h2>
-    <a href="password.html" target="_blank">Open</a>
-  </div>
+  
   <div class="tool-card">
     <h2>⚖️ BMI Calculator</h2>
-    <a href="bmi.html" target="_blank">Open</a>
-  </div>
-  <div class="tool-card">
-    <h2>⏱ Stopwatch</h2>
-    <a href="stopwatch.html" target="_blank">Open</a>
-  </div>
-  <div class="tool-card">
-    <h2>🌡 Temperature Converter</h2>
-    <a href="temperature.html" target="_blank">Open</a>
-  </div>
-  <div class="tool-card">
-    <h2>🎵 Metronome</h2>
-    <a href="metronome.html" target="_blank">Open</a>
+    <a href="bmi.html">Open Tool</a>
   </div>
 </main>
 
+<div class="ad-space">Bottom Ad Banner (728x90)</div>
+
 <footer>
-  &copy; 2026 ToolixHub — All tools free and online
+  &copy; 2026 Pro Tools Suite — All tools free and online
 </footer>
 
 </body>
