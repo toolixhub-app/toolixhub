@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Tools Suite - Your Online Tool Hub</title>
+<title>ToolixHub - Your Online Tool Hub</title>
 <style>
 /* --- Identidade Visual Unificada (Dark Mode Pro) --- */
 :root {
   --bg-color: #121212;
   --container-bg: #1e1e1e;
   --text-color: #e0e0e0;
-  --secondary-text: #888;
-  --accent-color: #00bcd4; /* Azul Ciano - Links/Destaques */
-  --highlight-color: #c6ff00; /* Verde Lima - Títulos */
-  --border-color: #555;
+  --secondary-text: #aaa;
+  --accent-color: #ff9800; /* Laranja do Logo para Destaques */
+  --secondary-accent: #00bcd4; /* Azul do Logo para detalhes */
+  --border-color: #444;
   --ad-bg: #2a2a2a;
 }
 
@@ -32,23 +32,23 @@ body {
 header {
   background: var(--container-bg);
   color: #fff;
-  padding: 30px 20px;
+  padding: 20px 20px;
   text-align: center;
   width: 100%;
   border-bottom: 2px solid var(--accent-color);
   box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  box-sizing: border-box;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2.5em;
-  letter-spacing: 2px;
-  color: var(--accent-color);
+header img {
+  max-width: 250px;
+  height: auto;
+  margin-bottom: 5px;
 }
 
 header p {
   font-size: 1.1em;
-  margin-top: 5px;
+  margin: 0;
   color: var(--secondary-text);
 }
 
@@ -57,7 +57,7 @@ header p {
     background-color: var(--ad-bg);
     color: var(--secondary-text);
     width: 100%;
-    max-width: 728px; /* Standard Desktop Banner */
+    max-width: 728px;
     height: 90px;
     display: flex;
     align-items: center;
@@ -70,7 +70,7 @@ header p {
 
 main {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   padding: 20px;
   width: 100%;
@@ -82,7 +82,7 @@ main {
   background: var(--container-bg);
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  padding: 20px;
+  padding: 25px;
   text-align: center;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   display: flex;
@@ -92,13 +92,13 @@ main {
 
 .tool-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,188,212,0.2);
+  box-shadow: 0 6px 15px rgba(255,152,0,0.15);
   border-color: var(--accent-color);
 }
 
 .tool-card h2 {
   margin: 0 0 15px 0;
-  font-size: 1.2em;
+  font-size: 1.3em;
   color: var(--text-color);
 }
 
@@ -131,6 +131,7 @@ footer {
 }
 
 @media (max-width: 600px) {
+    header img { max-width: 180px; }
     main { grid-template-columns: 1fr; }
     .ad-space { max-width: 320px; height: 50px; }
 }
@@ -139,20 +140,20 @@ footer {
 <body>
 
 <header>
-  <h1>Pro Tools Suite</h1>
-  <p>Precision tools for musicians & engineers</p>
+  <img src="toolixhub_logo.jpg" alt="ToolixHub Logo">
+  <p>Your online hub of handy tools</p>
 </header>
 
 <div class="ad-space">Top Ad Banner (728x90)</div>
 
 <main>
   <div class="tool-card">
-    <h2>🧮 Pro Calculator</h2>
+    <h2>🧮 Calculator</h2>
     <a href="calculator.html">Open Tool</a>
   </div>
   
   <div class="tool-card">
-    <h2>🎵 Pro Metronome</h2>
+    <h2>🎵 Metronome</h2>
     <a href="metronome.html">Open Tool</a>
   </div>
   
@@ -170,7 +171,7 @@ footer {
 <div class="ad-space">Bottom Ad Banner (728x90)</div>
 
 <footer>
-  &copy; 2026 Pro Tools Suite — All tools free and online
+  &copy; 2026 ToolixHub — All tools free and online
 </footer>
 
 </body>
