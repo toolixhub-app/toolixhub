@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Metronome 4.0</title>
+<title>Pro Metronome 4.1</title>
 <style>
 /* --- Tema Dark (Padrão) --- */
 :root {
@@ -55,7 +55,7 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
     background-color: var(--ad-bg);
     color: var(--secondary-text);
     width: 100%;
-    max-width: 320px; /* Standard mobile banner width */
+    max-width: 320px;
     height: 50px;
     display: flex;
     align-items: center;
@@ -75,22 +75,6 @@ h1 { margin-bottom: 5px; font-size: 24px; color: var(--text-color); }
   width: 100%;
   max-width: 450px;
   flex-grow: 1;
-  position: relative;
-}
-
-/* Theme Toggle Button */
-#theme-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--btn-bg);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    font-size: 14px;
 }
 
 .controls-top {
@@ -284,6 +268,19 @@ input[type=range] { width: 150px; cursor: pointer; }
 .instructions ul { padding-left: 18px; margin: 0; }
 .instructions li { margin-bottom: 3px; }
 
+/* Theme Toggle Button Updated Positioning */
+#theme-toggle {
+    margin-top: 15px;
+    background: var(--btn-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 12px;
+    width: auto;
+}
+
 /* Footer */
 footer {
     margin-top: 20px;
@@ -298,12 +295,11 @@ footer {
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 4.0</div>
+<div class="subtitle">Pro 4.1</div>
 
 <div class="ad-space">Top Ad Banner (320x50)</div>
 
 <div class="main-container">
-    <button id="theme-toggle">🌓</button>
     
     <div class="controls-top">
       <label>T.S: 
@@ -373,12 +369,14 @@ footer {
             <li><span>Tap:</span> Click "Tap" to set rhythm.</li>
         </ul>
     </div>
+
+    <button id="theme-toggle">Toggle Theme 🌓</button>
 </div>
 
 <div class="ad-space">Bottom Ad Banner (320x50)</div>
 
 <footer>
-    Pro Metronome v4.0. Precision timing tool for musicians.
+    Pro Metronome v4.1. Precision timing tool for musicians.
 </footer>
 
 <script>
