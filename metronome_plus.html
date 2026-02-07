@@ -1,207 +1,139 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Metronome Full</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px;
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    .controls button {
-      font-size: 24px;
-      margin: 5px;
-      padding: 10px 15px;
-      cursor: pointer;
-    }
-    .beat-container {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .beat {
-      width: 30px;
-      height: 30px;
-      margin: 0 8px;
-      border-radius: 50%;
-      background-color: #333;
-      cursor: pointer;
-    }
-    .beat.active {
-      background-color: white;
-    }
-    .beat.accent {
-      background-color: red;
-    }
-    .bpm-container {
-      display: flex;
-      align-items: center;
-      margin-top: 20px;
-      gap: 10px;
-    }
-    select {
-      font-size: 16px;
-      padding: 5px;
-    }
-    label {
-      margin-right: 5px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Metronome Full</title>
+<style>
+  body { background: #000; color: #fff; font-family: Arial, sans-serif; text-align: center; }
+  .beat { display: inline-block; width: 30px; height: 30px; margin: 5px; border-radius: 50%; background: #444; cursor: pointer; }
+  .accent { background: red; }
+  .active { border: 2px solid #fff; }
+  button { font-size: 24px; margin: 5px; }
+  #controls { margin-top: 20px; }
+  #bpmValue { font-size: 24px; margin-left: 10px; }
+</style>
 </head>
 <body>
-  <h1>Metronome Full</h1>
 
-  <!-- Time Signature e Accent -->
-  <div>
-    <label for="beatsPerMeasure">Beats per measure:</label>
-    <select id="beatsPerMeasure">
-      <option value="2">2/4</option>
-      <option value="3">3/4</option>
-      <option value="4" selected>4/4</option>
-      <option value="5">5/4</option>
-      <option value="6">6/4</option>
-    </select>
-  </div>
+<h1>Metronome Full</h1>
 
-  <!-- BPM Slider -->
-  <div class="bpm-container">
-    <label for="bpm">BPM:</label>
-    <input type="range" id="bpm" min="30" max="300" value="120">
-    <span id="bpmValue">120</span>
-  </div>
+<label for="beatsPerMeasure">Beats per measure:</label><br>
+<select id="beatsPerMeasure">
+  <option value="2">2/4</option>
+  <option value="3">3/4</option>
+  <option value="4" selected>4/4</option>
+  <option value="5">5/4</option>
+  <option value="6">6/4</option>
+</select>
 
-  <!-- Bolinhas do beat -->
-  <div class="beat-container" id="beatContainer"></div>
+<div>
+  <label for="bpm">BPM:</label>
+  <input type="range" id="bpm" min="30" max="300" value="120">
+  <span id="bpmValue">120</span>
+</div>
 
-  <!-- Controles -->
-  <div class="controls">
-    <button id="playBtn">▶</button>
-    <button id="pauseBtn">⏸</button>
-    <button id="stopBtn">■</button>
-    <button id="tapBtn">TAP</button>
-  </div>
+<div id="beatContainer"></div>
 
-  <script>
-    // Configuração inicial
-    let bpm = 120;
-    let timeSig = 4;
-    let currentBeat = 0;
-    let accentIndex = 0;
-    let isPlaying = false;
-    let intervalId = null;
+<div id="controls">
+  <button id="playBtn">▶</button>
+  <button id="pauseBtn">⏸</button>
+  <button id="stopBtn">■</button>
+  <button id="tapBtn">TAP</button>
+</div>
 
-    const bpmSlider = document.getElementById('bpm');
-    const bpmValue = document.getElementById('bpmValue');
-    const beatContainer = document.getElementById('beatContainer');
-    const beatsPerMeasure = document.getElementById('beatsPerMeasure');
+<script>
+let bpm = 120;
+let beatsPerMeasure = 4;
+let accentIndex = 0;
+let currentBeat = 0;
+let intervalId = null;
 
-    // Web Audio API
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const bpmSlider = document.getElementById('bpm');
+const bpmValue = document.getElementById('bpmValue');
+const beatContainer = document.getElementById('beatContainer');
+const beatsPerMeasureSelect = document.getElementById('beatsPerMeasure');
 
-    function playClick(isAccent = false) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
+// Web Audio API para os sons
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playClick(accent = false) {
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.frequency.value = accent ? 1000 : 600; // som mais agudo para accent
+    gainNode.gain.value = 0.2;
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+}
 
-      osc.type = 'square';
-      osc.frequency.value = isAccent ? 1000 : 800;
-      gain.gain.value = 0.2;
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start();
-      osc.stop(audioCtx.currentTime + 0.05); // 50ms
-    }
-
-    // Atualiza bolinhas
-    function renderBeats() {
-      beatContainer.innerHTML = '';
-      for (let i = 0; i < timeSig; i++) {
+// Atualiza as bolinhas
+function renderBeats() {
+    beatContainer.innerHTML = '';
+    for (let i = 0; i < beatsPerMeasure; i++) {
         const div = document.createElement('div');
         div.classList.add('beat');
-        if (i === currentBeat) div.classList.add('active');
         if (i === accentIndex) div.classList.add('accent');
+        if (i === currentBeat) div.classList.add('active');
         div.addEventListener('click', () => {
-          accentIndex = i;
-          renderBeats();
+            accentIndex = i;
+            renderBeats();
         });
         beatContainer.appendChild(div);
-      }
     }
+}
 
-    // Função do metronome
-    function startMetronome() {
-      if (isPlaying) return;
-      isPlaying = true;
-      const interval = 60000 / bpm;
-      intervalId = setInterval(() => {
-        playClick(currentBeat === accentIndex);
-        currentBeat = (currentBeat + 1) % timeSig;
-        renderBeats();
-      }, interval);
-    }
-
-    function pauseMetronome() {
-      if (!isPlaying) return;
-      clearInterval(intervalId);
-      intervalId = null;
-      isPlaying = false;
-    }
-
-    function stopMetronome() {
-      pauseMetronome();
-      currentBeat = 0;
-      renderBeats();
-    }
-
-    // TAP Button
-    let tapTimes = [];
-    document.getElementById('tapBtn').addEventListener('click', () => {
-      const now = Date.now();
-      tapTimes.push(now);
-      if (tapTimes.length > 1) {
-        const diffs = tapTimes.slice(1).map((t, i) => t - tapTimes[i]);
-        const avg = diffs.reduce((a,b) => a+b, 0) / diffs.length;
-        bpm = Math.round(60000 / avg);
-        bpmSlider.value = bpm;
-        bpmValue.textContent = bpm;
-      }
-      if (tapTimes.length > 4) tapTimes.shift();
-    });
-
-    // Event Listeners
-    document.getElementById('playBtn').addEventListener('click', startMetronome);
-    document.getElementById('pauseBtn').addEventListener('click', pauseMetronome);
-    document.getElementById('stopBtn').addEventListener('click', stopMetronome);
-
-    bpmSlider.addEventListener('input', (e) => {
-      bpm = parseInt(e.target.value);
-      bpmValue.textContent = bpm;
-      if (isPlaying) {
-        pauseMetronome();
-        startMetronome();
-      }
-    });
-
-    beatsPerMeasure.addEventListener('change', (e) => {
-      timeSig = parseInt(e.target.value);
-      if (accentIndex >= timeSig) accentIndex = 0;
-      currentBeat = 0;
-      renderBeats();
-    });
-
-    // Inicializa
+// Função que toca o próximo beat
+function nextBeat() {
+    playClick(currentBeat === accentIndex);
+    currentBeat = (currentBeat + 1) % beatsPerMeasure;
     renderBeats();
-  </script>
+}
+
+// Controles
+document.getElementById('playBtn').addEventListener('click', () => {
+    if (intervalId) return;
+    const interval = 60000 / bpm;
+    intervalId = setInterval(nextBeat, interval);
+});
+document.getElementById('pauseBtn').addEventListener('click', () => {
+    clearInterval(intervalId);
+    intervalId = null;
+});
+document.getElementById('stopBtn').addEventListener('click', () => {
+    clearInterval(intervalId);
+    intervalId = null;
+    currentBeat = 0;
+    renderBeats();
+});
+document.getElementById('tapBtn').addEventListener('click', () => {
+    bpm = Math.min(300, bpm + 1);
+    bpmSlider.value = bpm;
+    bpmValue.textContent = bpm;
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = setInterval(nextBeat, 60000 / bpm);
+    }
+});
+
+bpmSlider.addEventListener('input', () => {
+    bpm = parseInt(bpmSlider.value);
+    bpmValue.textContent = bpm;
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = setInterval(nextBeat, 60000 / bpm);
+    }
+});
+
+beatsPerMeasureSelect.addEventListener('change', () => {
+    beatsPerMeasure = parseInt(beatsPerMeasureSelect.value);
+    if (accentIndex >= beatsPerMeasure) accentIndex = 0;
+    currentBeat = 0;
+    renderBeats();
+});
+
+// Inicializa
+renderBeats();
+</script>
+
 </body>
 </html>
