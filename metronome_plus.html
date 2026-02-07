@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Metronome Pro 3.1</title>
+<title>Metronome Pro 3.2</title>
 <style>
 body {
   background-color: #121212;
@@ -57,8 +57,30 @@ select {
     font-weight: bold;
 }
 
-#bpm-display { font-size: 80px; font-weight: bold; margin: 0; color: #fff; }
+/* BPM Display and Buttons */
+.bpm-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 10px 0;
+}
+
+#bpm-display { font-size: 80px; font-weight: bold; color: #fff; min-width: 150px;}
 .bpm-label { font-size: 16px; color: #888; margin-bottom: 10px; }
+
+.bpm-btn {
+    background: #333;
+    border: none;
+    color: white;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.bpm-btn:hover { background: #444; }
 
 #bpm-control {
   position: relative;
@@ -141,11 +163,11 @@ input[type=range] { width: 150px; cursor: pointer; }
 .btn#play-btn { background-color: #00bcd4; color: #000; }
 .btn#play-btn:hover { background-color: #26c6da; }
 
-#beat-indicator { display: flex; justify-content: center; margin-top: 10px; min-height: 25px;}
+#beat-indicator { display: flex; justify-content: center; margin-top: 10px; min-height: 25px; flex-wrap: wrap; gap: 5px;}
 .beat-dot {
   width: 15px;
   height: 15px;
-  margin: 0 5px;
+  margin: 0 2px;
   border-radius: 50%;
   background-color: #333;
   transition: all 0.1s;
@@ -161,23 +183,34 @@ input[type=range] { width: 150px; cursor: pointer; }
 <body>
 
 <h1>Metronome</h1>
-<div class="subtitle">Pro 3.1</div>
+<div class="subtitle">Pro 3.2</div>
 
 <div class="main-container">
     <div class="controls-top">
       <label>T.S: 
         <select id="time-signature">
-          <option value="2">2/4</option>
-          <option value="3">3/4</option>
-          <option value="4" selected>4/4</option>
-          <option value="5">5/4</option>
-          <option value="6">6/8</option>
+          <optgroup label="Simples" style="background:#333">
+              <option value="2">2/4</option>
+              <option value="3">3/4</option>
+              <option value="4" selected>4/4</option>
+              <option value="5">5/4</option>
+          </optgroup>
+          <optgroup label="Compostos/Ímpares" style="background:#333">
+              <option value="6">6/8</option>
+              <option value="7">7/8</option>
+              <option value="9">9/8</option>
+              <option value="12">12/8</option>
+          </optgroup>
         </select>
       </label>
       <div>Comp: <span id="measure-display">1</span></div>
     </div>
 
-    <div id="bpm-display">120</div>
+    <div class="bpm-wrapper">
+        <button class="bpm-btn" id="bpm-minus">-</button>
+        <div id="bpm-display">120</div>
+        <button class="bpm-btn" id="bpm-plus">+</button>
+    </div>
     <div class="bpm-label">BPM</div>
 
     <div id="bpm-control">
@@ -210,12 +243,12 @@ input[type=range] { width: 150px; cursor: pointer; }
 // --- Configurações e Estado ---
 let bpm = 120;
 let isPlaying = false;
-let currentBeat = 0; // Beat relativo à subdivisão
+let currentBeat = 0;
 let currentMeasure = 1;
 let timeSignature = 4;
 let subdivision = 1;
 let tempoAudioContext = null;
-let masterGainNode = null; // Para controle de volume
+let masterGainNode = null;
 let nextNoteTime = 0.0;
 let timerID = null;
 let accentBeatIndex = 0; 
@@ -238,14 +271,12 @@ function init() {
   updateBPMDisplay();
 }
 
-// --- Lógica de Áudio (Precisão + Volume) ---
+// --- Lógica de Áudio ---
 function nextNote() {
   const secondsPerBeat = 60.0 / bpm;
-  
   let timeToNext = secondsPerBeat / subdivision;
   nextNoteTime += timeToNext;
   
-  // Incrementa beat e compasso
   currentBeat = (currentBeat + 1) % (timeSignature * subdivision);
   if (currentBeat === 0) {
       currentMeasure++;
@@ -254,16 +285,13 @@ function nextNote() {
 }
 
 function scheduleNote(beatNumber, time) {
-  // beatNumber é o índice baseado na subdivisão
   const isMainBeat = beatNumber % subdivision === 0;
   const mainBeatNumber = Math.floor(beatNumber / subdivision);
 
-  // Atualização Visual Síncrona
   setTimeout(() => {
     const dots = document.querySelectorAll('.beat-dot');
     dots.forEach((dot, index) => {
       dot.classList.remove('accent-playing', 'sub-playing');
-      
       if (isMainBeat && index === mainBeatNumber) {
           dot.classList.add(mainBeatNumber === accentBeatIndex ? 'accent-playing' : 'active');
       } else if (!isMainBeat && index === mainBeatNumber) {
@@ -272,26 +300,22 @@ function scheduleNote(beatNumber, time) {
     });
   }, (time - tempoAudioContext.currentTime) * 1000);
 
-  // Som com oscilador
   const osc = tempoAudioContext.createOscillator();
   const envelope = tempoAudioContext.createGain();
 
   if (isMainBeat) {
-      // Som do tempo principal
       osc.frequency.value = (mainBeatNumber === accentBeatIndex) ? 1200 : 800;
       envelope.gain.setValueAtTime(1, time);
       envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
   } else {
-      // Som da subdivisão
       osc.frequency.value = 600;
-      envelope.gain.setValueAtTime(0.3, time); // Mais baixo
+      envelope.gain.setValueAtTime(0.3, time);
       envelope.gain.exponentialRampToValueAtTime(0.001, time + 0.03);
   }
 
   osc.connect(envelope);
-  envelope.connect(masterGainNode); // Conecta ao controle de volume
+  envelope.connect(masterGainNode);
   masterGainNode.connect(tempoAudioContext.destination);
-  
   osc.start(time);
   osc.stop(time + 0.05);
 }
@@ -308,7 +332,6 @@ function scheduler() {
 function play() {
   if (!tempoAudioContext) {
     tempoAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-    // Cria o nó de volume mestre
     masterGainNode = tempoAudioContext.createGain();
     masterGainNode.gain.value = volumeControl.value;
   }
@@ -349,7 +372,7 @@ document.getElementById('play-btn').addEventListener('click', () => {
 });
 document.getElementById('stop-btn').addEventListener('click', stop);
 
-// --- Funcionalidades UI ---
+// --- Funcionalidades UI (BPM Slider and Buttons) ---
 function updateBPMDisplay() {
   bpmDisplay.innerText = bpm;
   const percentage = (bpm - 40) / (220 - 40);
@@ -365,6 +388,14 @@ function setBPMFromSlider(e) {
   updateBPMDisplay();
 }
 
+// Buttons
+document.getElementById('bpm-plus').addEventListener('click', () => {
+    if(bpm < 220) { bpm++; updateBPMDisplay(); }
+});
+document.getElementById('bpm-minus').addEventListener('click', () => {
+    if(bpm > 40) { bpm--; updateBPMDisplay(); }
+});
+
 let dragging = false;
 bpmDot.addEventListener('mousedown', () => dragging = true);
 document.addEventListener('mouseup', () => dragging = false);
@@ -377,6 +408,7 @@ bpmControl.addEventListener('mousedown', setBPMFromSlider);
 // --- Time Signature & Accent ---
 function renderBeats() {
   beatIndicator.innerHTML = '';
+  // Se o índice de acento atual for maior que a nova assinatura, reseta para 0
   if(accentBeatIndex >= timeSignature) accentBeatIndex = 0;
 
   for (let i = 0; i < timeSignature; i++) {
