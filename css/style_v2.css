@@ -54,18 +54,13 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
   word-wrap: break-word;
 }
 
-/* --- GRADE DE BOTÕES (GRID) --- */
+/* --- GRADE DE BOTÕES (Básica) --- */
 .calc-buttons {
   display: grid;
   gap: 5px;
   width: 100%;
+  grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
 }
-
-/* --- MODO BÁSICO (4 Colunas) --- */
-.basic-grid { grid-template-columns: repeat(4, 1fr); }
-
-/* --- MODO CIENTÍFICO (5 Colunas) --- */
-.sci-grid { grid-template-columns: repeat(5, 1fr); }
 
 .btn-calc {
   background-color: var(--btn-bg);
@@ -90,38 +85,7 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.op { background-color: var(--special-btn-bg); }
 
-/* --- LÓGICA DE EXIBIÇÃO DE BOTÕES --- */
-/* Esconde botões científicos por padrão (modo básico) */
-.btn-calc.sci {
-  display: none;
-}
-
-/* Mostra botões científicos quando o grid estiver em modo sci-grid */
-.sci-grid .btn-calc.sci {
-  display: flex;
-  font-size: 12px; /* Fonte menor para caber na grade de 5 */
-}
-
-/* --- TOGGLE BUTTONS --- */
-.toggle-row {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-.btn-toggle {
-  background-color: #333;
-  color: #e0e0e0;
-  border: 1px solid #555;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-}
-.btn-toggle.active {
-  background-color: var(--accent-color);
-  color: #000;
-  font-weight: bold;
-}
+/* --- TOGGLE BUTTONS (Removido) --- */
+.toggle-row { display: none; }
 
 footer { text-align: center; padding: 20px; color: #888; font-size: 12px; margin-top: auto; }
