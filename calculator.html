@@ -1,211 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="css/style_v2.css">
-<meta name="viewport" content="width=device-width, initial-scale=1.2">
-
-<title>Pro Calculator 2.0 - ToolixHub</title>
-<meta name="description" content="A free, fast, and responsive scientific calculator. Perform basic and advanced mathematical calculations online.">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator - ToolixHub</title>
+    <link rel="stylesheet" href="css/style_v2.css">
 </head>
 <body>
-
-<div id="header-placeholder"></div>
-
-<div class="ad-space">Top Ad Banner (320x100)</div>
-
-<div class="main-container">
-    <div class="toggle-row">
-        <button id="toggle-basic" class="btn-toggle active" onclick="setMode('basic')">Basic</button>
-        <button id="toggle-sci" class="btn-toggle" onclick="setMode('sci')">Scientific</button>
-        <button id="theme-toggle" class="btn-toggle">🌓</button>
-    </div>
-    
-    <div id="calc-display">0</div>
-
-    <div id="basic-buttons" class="calc-buttons basic-grid">
-        <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
-        <button class="btn-calc op" onclick="appendOperator('/')">÷</button>
-        <button class="btn-calc op" onclick="appendOperator('*')">×</button>
-        <button class="btn-calc op" onclick="appendOperator('-')">−</button>
-        
-        <button class="btn-calc" onclick="appendNumber('7')">7</button>
-        <button class="btn-calc" onclick="appendNumber('8')">8</button>
-        <button class="btn-calc" onclick="appendNumber('9')">9</button>
-        <button class="btn-calc op" onclick="appendOperator('+')">+</button>
-        
-        <button class="btn-calc" onclick="appendNumber('4')">4</button>
-        <button class="btn-calc" onclick="appendNumber('5')">5</button>
-        <button class="btn-calc" onclick="appendNumber('6')">6</button>
-        <button class="btn-calc" onclick="appendNumber('.')">.</button>
-        
-        <button class="btn-calc" onclick="appendNumber('1')">1</button>
-        <button class="btn-calc" onclick="appendNumber('2')">2</button>
-        <button class="btn-calc" onclick="appendNumber('3')">3</button>
-        <button class="btn-calc" onclick="appendNumber('0')">0</button>
-        
-        <button class="btn-calc equal" onclick="calculate()">=</button>
-    </div>
-
-    <div id="sci-buttons" class="calc-buttons sci-grid">
-        <button class="btn-calc sci" onclick="scientific('sin')">sin</button>
-        <button class="btn-calc sci" onclick="scientific('cos')">cos</button>
-        <button class="btn-calc sci" onclick="scientific('tan')">tan</button>
-        <button class="btn-calc sci" onclick="scientific('log')">log</button>
-        <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
-        
-        <button class="btn-calc sci" onclick="scientific('sqrt')">√</button>
-        <button class="btn-calc sci" onclick="scientific('pow')">x²</button>
-        <button class="btn-calc sci" onclick="scientific('pi')">π</button>
-        <button class="btn-calc sci" onclick="scientific('e')">e</button>
-        <button class="btn-calc op" onclick="appendOperator('/')">÷</button>
-
-        <button class="btn-calc" onclick="appendNumber('7')">7</button>
-        <button class="btn-calc" onclick="appendNumber('8')">8</button>
-        <button class="btn-calc" onclick="appendNumber('9')">9</button>
-        <button class="btn-calc op" onclick="appendOperator('*')">×</button>
-        <button class="btn-calc op" onclick="appendOperator('-')">−</button>
-        
-        <button class="btn-calc" onclick="appendNumber('4')">4</button>
-        <button class="btn-calc" onclick="appendNumber('5')">5</button>
-        <button class="btn-calc" onclick="appendNumber('6')">6</button>
-        <button class="btn-calc op" onclick="appendOperator('+')">+</button>
-        <button class="btn-calc" onclick="appendNumber('.')">.</button>
-        
-        <button class="btn-calc" onclick="appendNumber('1')">1</button>
-        <button class="btn-calc" onclick="appendNumber('2')">2</button>
-        <button class="btn-calc" onclick="appendNumber('3')">3</button>
-        <button class="btn-calc" onclick="appendNumber('0')">0</button>
-        <button class="btn-calc equal" onclick="calculate()">=</button>
-    </div>
-</div>
-
-<div class="ad-space">Bottom Ad Banner (320x100)</div>
-
-<div id="footer-placeholder"></div>
-
-<script>
-    // --- 1. Carregador de Header/Footer ---
-    function loadComponent(id, file) {
-      fetch(file)
-        .then(response => response.ok ? response.text() : '')
-        .then(data => document.getElementById(id).innerHTML = data);
-    }
-    loadComponent('header-placeholder', 'header.html');
-    loadComponent('footer-placeholder', 'footer.html');
-
-    // --- 2. Lógica da Calculadora ---
-    const display = document.getElementById('calc-display');
-    const themeToggle = document.getElementById('theme-toggle');
-    const basicBtn = document.getElementById('toggle-basic');
-    const sciBtn = document.getElementById('toggle-sci');
-    const basicGrid = document.getElementById('basic-buttons');
-    const sciGrid = document.getElementById('sci-buttons');
-    
-    let currentInput = '0';
-    let shouldResetDisplay = false;
-
-    // Theme Toggle
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('light-theme');
-    });
-
-    // Mode Toggle
-    function setMode(mode) {
-        if (mode === 'basic') {
-            basicBtn.classList.add('active');
-            sciBtn.classList.remove('active');
-            basicGrid.style.display = 'grid';
-            sciGrid.style.display = 'none';
-        } else {
-            sciBtn.classList.add('active');
-            basicBtn.classList.remove('active');
-            sciGrid.style.display = 'grid';
-            basicGrid.style.display = 'none';
-        }
-    }
-
-    function updateDisplay() {
-        display.innerText = currentInput;
-    }
-
-    function clearDisplay() {
-        currentInput = '0';
-        updateDisplay();
-    }
-
-    function appendNumber(number) {
-        if (currentInput === '0' || shouldResetDisplay) {
-            currentInput = number;
-            shouldResetDisplay = false;
-        } else {
-            currentInput += number;
-        }
-        updateDisplay();
-    }
-
-    function appendOperator(operator) {
-        if (shouldResetDisplay) shouldResetDisplay = false;
-        if (['+','-','*','/'].includes(currentInput.slice(-1))) {
-            currentInput = currentInput.slice(0, -1) + operator;
-        } else {
-            currentInput += operator;
-        }
-        updateDisplay();
-    }
-
-    function calculate() {
-        try {
-            let result = eval(currentInput);
-            currentInput = result.toString();
-            shouldResetDisplay = true;
-            updateDisplay();
-        } catch (e) {
-            currentInput = 'Error';
-            updateDisplay();
-            shouldResetDisplay = true;
-        }
-    }
-
-    // Scientific Functions
-    function scientific(func) {
-        let val = parseFloat(currentInput);
-        let result = 0;
-        
-        switch(func) {
-            case 'sin': result = Math.sin(val); break;
-            case 'cos': result = Math.cos(val); break;
-            case 'tan': result = Math.tan(val); break;
-            case 'log': result = Math.log10(val); break;
-            case 'sqrt': result = Math.sqrt(val); break;
-            case 'pow': result = Math.pow(val, 2); break;
-            case 'pi': result = Math.PI; break;
-            case 'e': result = Math.E; break;
-        }
-        
-        currentInput = result.toString();
-        shouldResetDisplay = true;
-        updateDisplay();
-    }
-
-    // --- 3. Lógica de Idiomas ---
-    const translations = {
-      'en': { 'title': 'Calculator - ToolixHub' },
-      'es': { 'title': 'Calculadora - ToolixHub' },
-      'pt': { 'title': 'Calculadora - ToolixHub' }
-    };
     
-    function changeLanguage(lang) {
-      localStorage.setItem('preferredLang', lang);
-      document.title = translations[lang]['title'];
-      // Adicionar mais substituições de texto aqui se houver
-    }
+    <div id="header-placeholder"></div>
     
-    window.onload = function() {
-      const savedLang = localStorage.getItem('preferredLang') || 'en';
-      changeLanguage(savedLang);
-    };
-</script>
+    <div class="ad-space">Top Ad Banner (728x90)</div>
+    
+    <main class="calc-container">
+        
+        <div class="toggle-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button class="btn-toggle active" id="btn-basic">Basic</button>
+            <button class="btn-toggle" id="btn-sci">Scientific</button>
+        </div>
+
+        <div id="calc-display">0</div>
+
+        <div class="calc-buttons basic-grid" id="calc-grid">
+            <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
+            <button class="btn-calc" onclick="appendOperator('/')">/</button>
+            <button class="btn-calc" onclick="appendOperator('*')">×</button>
+            <button class="btn-calc" onclick="deleteLast()">DEL</button>
+            
+            <button class="btn-calc" onclick="appendNumber('7')">7</button>
+            <button class="btn-calc" onclick="appendNumber('8')">8</button>
+            <button class="btn-calc" onclick="appendNumber('9')">9</button>
+            <button class="btn-calc" onclick="appendOperator('-')">-</button>
+            
+            <button class="btn-calc" onclick="appendNumber('4')">4</button>
+            <button class="btn-calc" onclick="appendNumber('5')">5</button>
+            <button class="btn-calc" onclick="appendNumber('6')">6</button>
+            <button class="btn-calc" onclick="appendOperator('+')">+</button>
+            
+            <button class="btn-calc" onclick="appendNumber('1')">1</button>
+            <button class="btn-calc" onclick="appendNumber('2')">2</button>
+            <button class="btn-calc" onclick="appendNumber('3')">3</button>
+            <button class="btn-calc" onclick="appendNumber('.')">.</button>
+            
+            <button class="btn-calc" onclick="appendNumber('0')">0</button>
+            <button class="btn-calc" onclick="appendNumber('00')">00</button>
+            <button class="btn-calc equal" onclick="calculate()">=</button>
+        </div>
+    </main>
+    
+    <div class="ad-space">Bottom Ad Banner (728x90)</div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+      function loadComponent(id, file) {
+        fetch(file)
+          .then(response => {
+            if (!response.ok) return '';
+            return response.text();
+          })
+          .then(data => {
+            document.getElementById(id).innerHTML = data;
+          });
+      }
+      loadComponent('header-placeholder', 'header.html');
+      loadComponent('footer-placeholder', 'footer.html');
+    </script>
+    
+    <script>
+        // Suas funções JS: appendNumber, appendOperator, clearDisplay, calculate, etc.
+    </script>
 </body>
 </html>
