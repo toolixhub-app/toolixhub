@@ -61,8 +61,10 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
   width: 100%;
 }
 
-/* Define as colunas para o modo básico e científico */
+/* --- MODO BÁSICO (4 Colunas) --- */
 .basic-grid { grid-template-columns: repeat(4, 1fr); }
+
+/* --- MODO CIENTÍFICO (5 Colunas) --- */
 .sci-grid { grid-template-columns: repeat(5, 1fr); }
 
 .btn-calc {
@@ -78,6 +80,7 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
   display: flex;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .btn-calc:hover { background-color: var(--btn-hover); }
@@ -87,16 +90,16 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.op { background-color: var(--special-btn-bg); }
 
-/* --- LÓGICA DE EXIBIÇÃO --- */
-/* Esconde botões científicos por padrão */
+/* --- LÓGICA DE EXIBIÇÃO DE BOTÕES --- */
+/* Esconde botões científicos por padrão (modo básico) */
 .btn-calc.sci {
   display: none;
-  font-size: 13px;
 }
 
 /* Mostra botões científicos quando o grid estiver em modo sci-grid */
 .sci-grid .btn-calc.sci {
   display: flex;
+  font-size: 12px; /* Fonte menor para caber na grade de 5 */
 }
 
 /* --- TOGGLE BUTTONS --- */
