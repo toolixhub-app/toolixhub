@@ -62,7 +62,7 @@ body {
 
 .main-container {
   background: var(--container-bg);
-  padding: 20px;
+  padding: 15px; /* Reduzido de 20 para dar mais espaço interno */
   margin-top: 10px;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -110,10 +110,11 @@ body {
   letter-spacing: -1px;
 }
 
-/* Grade de Botões */
+/* --- AJUSTE DA GRADE DE BOTÕES --- */
 .calc-buttons {
   display: grid;
   gap: 8px;
+  width: 100%; /* Garante que ocupe toda a largura */
 }
 
 .basic-grid { grid-template-columns: repeat(4, 1fr); }
@@ -123,19 +124,20 @@ body {
   background-color: var(--btn-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 15px 5px;
+  padding: 15px 0; /* Padding lateral zero para ocupar melhor a célula */
   font-size: 16px;
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
   touch-action: manipulation;
+  width: 100%; /* Botão ocupa toda a largura da célula */
 }
 
 .btn-calc:hover { background-color: var(--btn-hover); }
 
 /* Botões Especiais */
 .btn-calc.op { background-color: var(--special-btn-bg); }
-.btn-calc.sci { background-color: var(--sci-btn-bg); font-size: 14px; }
+.btn-calc.sci { background-color: var(--sci-btn-bg); font-size: 13px; } /* Ajuste de fonte */
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.equal { background-color: var(--accent-color); color: #fff; grid-column: span 2; }
