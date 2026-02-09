@@ -20,6 +20,7 @@
             <a href="#" onclick="changeLanguage('pt'); return false;"><img src="bandeira_brasil.png" alt="Português"></a>
         </div>
     </header>
+    
     <div class="ad-space">Top Ad Banner (728x90)</div>
 
     <main>
@@ -38,7 +39,7 @@
     </footer>
 
     <script>
-        // --- Dicionário de Traduções ---
+        // --- Dicionário ---
         const translations = {
             en: {
                 "header_subtitle": "Your online hub of handy tools",
@@ -63,7 +64,7 @@
             }
         };
 
-        // --- Função para Alterar Idioma ---
+        // --- Função de Tradução ---
         function changeLanguage(lang) {
             localStorage.setItem('preferredLanguage', lang);
             const elements = document.querySelectorAll('[data-i18n]');
@@ -75,13 +76,13 @@
             });
         }
 
-        // Lógica do Sorteador
+        // --- Lógica do Sorteador ---
         function rollDice() {
             const result = Math.floor(Math.random() * 6) + 1;
             document.getElementById('dice-result').innerText = result;
         }
 
-        // Inicialização da Tradução (aplica o idioma salvo ao carregar)
+        // --- Inicialização (Ao carregar a página) ---
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
