@@ -16,7 +16,8 @@
         
         <div id="calc-display">0</div>
 
-        <div class="calc-buttons">
+        <div class="calc-buttons basic-grid">
+            
             <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
             <button class="btn-calc op" onclick="deleteLast()">DEL</button>
             <button class="btn-calc op" onclick="appendOperator('%')">%</button>
@@ -86,7 +87,7 @@
 
         function calculate() {
             try {
-                // Simplificação segura usando Function
+                // Simplificação segura usando Function para avaliar a expressão
                 display.innerText = eval(display.innerText.replace(/×/g, '*').replace(/÷/g, '/'));
             } catch (e) {
                 display.innerText = 'Error';
