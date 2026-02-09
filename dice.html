@@ -27,39 +27,39 @@
         <h1 data-i18n="tool_dice_title">Dice Roller</h1>
         <p data-i18n="tool_dice_desc">Random number generator</p>
         
-        <div class="dice-wrapper" style="text-align: center; margin: 30px auto; padding: 20px; max-width: 300px;">
+        <div class="dice-wrapper" style="text-align: center !important; margin: 30px auto !important; padding: 20px !important; max-width: 300px !important;">
             
             <div id="dice-result" style="
-                font-size: 120px;
-                font-weight: bold;
-                font-family: 'Courier New', Courier, monospace;
-                color: #00ffff;
-                text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
-                background: rgba(0, 0, 0, 0.5);
-                border-radius: 15px;
-                display: inline-block;
-                width: 150px;
-                height: 150px;
-                line-height: 150px;
-                margin-bottom: 20px;
-                border: 2px solid #00ffff;
-                box-shadow: inset 0 0 10px #00ffff;
+                font-size: 120px !important;
+                font-weight: bold !important;
+                font-family: 'Courier New', Courier, monospace !important;
+                color: #00ffff !important;
+                text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff !important;
+                background: rgba(0, 0, 0, 0.5) !important;
+                border-radius: 15px !important;
+                display: inline-block !important;
+                width: 150px !important;
+                height: 150px !important;
+                line-height: 150px !important;
+                margin-bottom: 20px !important;
+                border: 2px solid #00ffff !important;
+                box-shadow: inset 0 0 10px #00ffff !important;
             ">?</div>
             
             <br>
             
             <button id="roll-btn" onclick="rollDice()" style="
-                font-size: 24px;
-                padding: 15px 30px;
-                cursor: pointer;
-                background-color: #00ffff;
-                color: #000;
-                border: none;
-                border-radius: 10px;
-                font-weight: bold;
-                transition: all 0.3s ease;
-                box-shadow: 0 0 10px #00ffff;
-                font-family: inherit;
+                font-size: 24px !important;
+                padding: 15px 30px !important;
+                cursor: pointer !important;
+                background-color: #00ffff !important;
+                color: #000 !important;
+                border: none !important;
+                border-radius: 10px !important;
+                font-weight: bold !important;
+                transition: all 0.3s ease !important;
+                box-shadow: 0 0 10px #00ffff !important;
+                font-family: inherit !important;
             " data-i18n="btn_roll">Roll Dice</button>
         </div>
     </main>
@@ -70,14 +70,14 @@
     </footer>
 
     <script>
-        // --- Dicionário ---
+        // Dicionário
         const translations = {
             en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice" },
             es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado" },
             pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado" }
         };
 
-        // --- Função de Tradução ---
+        // Função de Tradução
         function changeLanguage(lang) {
             localStorage.setItem('preferredLanguage', lang);
             const elements = document.querySelectorAll('[data-i18n]');
@@ -89,15 +89,14 @@
             });
         }
 
-        // --- Lógica do Sorteador com Animação ---
+        // Lógica do Sorteador com Animação
         function rollDice() {
             const diceResult = document.getElementById('dice-result');
             const button = document.getElementById('roll-btn');
             
             button.disabled = true;
-            button.style.backgroundColor = "#555"; // Visual desabilitado
-            button.style.boxShadow = "none";
-            button.style.color = "#aaa";
+            button.style.backgroundColor = "#555 !important";
+            button.style.color = "#aaa !important";
             
             let counter = 0;
             const interval = setInterval(() => {
@@ -109,14 +108,13 @@
                     const finalResult = Math.floor(Math.random() * 6) + 1;
                     diceResult.innerText = finalResult;
                     button.disabled = false;
-                    button.style.backgroundColor = "#00ffff"; // Visual habilitado
-                    button.style.boxShadow = "0 0 10px #00ffff";
-                    button.style.color = "#000";
+                    button.style.backgroundColor = "#00ffff !important";
+                    button.style.color = "#000 !important";
                 }
             }, 80);
         }
 
-        // --- Inicialização ---
+        // Inicialização
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
