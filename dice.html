@@ -27,40 +27,13 @@
         <h1 data-i18n="tool_dice_title">Dice Roller</h1>
         <p data-i18n="tool_dice_desc">Random number generator</p>
         
-        <div class="dice-wrapper" style="text-align: center !important; margin: 30px auto !important; padding: 20px !important; max-width: 300px !important;">
+        <div class="dice-wrapper">
             
-            <div id="dice-result" style="
-                font-size: 120px !important;
-                font-weight: bold !important;
-                font-family: 'Courier New', Courier, monospace !important;
-                color: #00ffff !important;
-                text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff !important;
-                background: rgba(0, 0, 0, 0.5) !important;
-                border-radius: 15px !important;
-                display: inline-block !important;
-                width: 150px !important;
-                height: 150px !important;
-                line-height: 150px !important;
-                margin-bottom: 20px !important;
-                border: 2px solid #00ffff !important;
-                box-shadow: inset 0 0 10px #00ffff !important;
-            ">?</div>
+            <div id="dice-result">?</div>
             
             <br>
             
-            <button id="roll-btn" onclick="rollDice()" style="
-                font-size: 24px !important;
-                padding: 15px 30px !important;
-                cursor: pointer !important;
-                background-color: #00ffff !important;
-                color: #000 !important;
-                border: none !important;
-                border-radius: 10px !important;
-                font-weight: bold !important;
-                transition: all 0.3s ease !important;
-                box-shadow: 0 0 10px #00ffff !important;
-                font-family: inherit !important;
-            " data-i18n="btn_roll">Roll Dice</button>
+            <button id="roll-btn" onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
         </div>
     </main>
 
@@ -95,8 +68,6 @@
             const button = document.getElementById('roll-btn');
             
             button.disabled = true;
-            button.style.backgroundColor = "#555 !important";
-            button.style.color = "#aaa !important";
             
             let counter = 0;
             const interval = setInterval(() => {
@@ -108,8 +79,6 @@
                     const finalResult = Math.floor(Math.random() * 6) + 1;
                     diceResult.innerText = finalResult;
                     button.disabled = false;
-                    button.style.backgroundColor = "#00ffff !important";
-                    button.style.color = "#000 !important";
                 }
             }, 80);
         }
