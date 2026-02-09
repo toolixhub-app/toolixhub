@@ -5,6 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dice Roller - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
+    
+    <style>
+        /* Estilos específicos para a animação do dado (Estilo Cyber/Neon) */
+        .dice-wrapper {
+            text-align: center;
+            margin: 30px auto;
+            padding: 20px;
+            max-width: 300px;
+        }
+
+        #dice-result {
+            font-size: 120px;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace; /* Fonte estilo digital */
+            color: #00ffff; /* Ciano Neon */
+            text-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            display: inline-block;
+            width: 150px;
+            height: 150px;
+            line-height: 150px;
+            margin-bottom: 20px;
+            border: 2px solid #00ffff;
+            box-shadow: inset 0 0 10px #00ffff;
+        }
+
+        #roll-btn {
+            font-size: 24px;
+            padding: 15px 30px;
+            cursor: pointer;
+            background-color: #00ffff;
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        #roll-btn:hover {
+            background-color: #fff;
+            box-shadow: 0 0 20px #fff;
+        }
+
+        #roll-btn:disabled {
+            background-color: #555;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #aaa;
+        }
+    </style>
 </head>
 <body>
 
@@ -27,9 +79,10 @@
         <h1 data-i18n="tool_dice_title">Dice Roller</h1>
         <p data-i18n="tool_dice_desc">Random number generator</p>
         
-        <div class="dice-wrapper" style="text-align: center; margin: 20px 0;">
-            <div id="dice-result" style="font-size: 80px; font-weight: bold; margin-bottom: 20px;">?</div>
-            <button onclick="rollDice()" data-i18n="btn_roll" style="font-size: 20px; padding: 10px 20px;">Roll Dice</button>
+        <div class="dice-wrapper">
+            <div id="dice-result">?</div>
+            <br>
+            <button id="roll-btn" onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
         </div>
     </main>
 
@@ -39,14 +92,14 @@
     </footer>
 
     <script>
-        // Dicionário
+        // --- Dicionário ---
         const translations = {
             en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice" },
             es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado" },
             pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado" }
         };
 
-        // Função de Tradução
+        // --- Função de Tradução ---
         function changeLanguage(lang) {
             localStorage.setItem('preferredLanguage', lang);
             const elements = document.querySelectorAll('[data-i18n]');
@@ -58,15 +111,33 @@
             });
         }
 
-        // Lógica do Sorteador (Adicionado estilo inline rápido para garantir tamanho)
+        // --- Lógica do Sorteador com Animação ---
         function rollDice() {
-            const result = Math.floor(Math.random() * 6) + 1;
             const diceResult = document.getElementById('dice-result');
-            diceResult.innerText = result;
-            diceResult.style.fontSize = "80px"; // Garante tamanho grande
+            const button = document.getElementById('roll-btn');
+            
+            // Desabilita o botão para evitar cliques múltiplos
+            button.disabled = true;
+            
+            let counter = 0;
+            // Intervalo para mudar os números rapidamente (efeito rodando)
+            const interval = setInterval(() => {
+                diceResult.innerText = Math.floor(Math.random() * 6) + 1;
+                counter++;
+                
+                // Para a animação após 12 mudanças (aprox. 1 segundo)
+                if (counter > 12) {
+                    clearInterval(interval);
+                    // Define o resultado final
+                    const finalResult = Math.floor(Math.random() * 6) + 1;
+                    diceResult.innerText = finalResult;
+                    // Reabilita o botão
+                    button.disabled = false;
+                }
+            }, 80); // Velocidade da animação
         }
 
-        // Inicialização
+        // --- Inicialização (Ao carregar a página) ---
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
