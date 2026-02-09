@@ -1,4 +1,22 @@
 <div class="ad-space">Bottom Ad Banner (728x90)</div>
 <footer>
-  &copy; 2026 ToolixHub — All tools free and online
+    <p>&copy; 2026 ToolixHub — All tools free and online</p>
+    <p style="font-size: 10px; color: #555;">CSS Version: <span id="css-version">Checking...</span></p>
 </footer>
+
+<script>
+    // Tenta ler a versão do comentário no topo do CSS
+    fetch('css/style.css')
+        .then(response => response.text())
+        .then(text => {
+            const match = text.match(/\/\* version: (.*) \*\//);
+            if (match) {
+                document.getElementById('css-version').innerText = match[1];
+            } else {
+                document.getElementById('css-version').innerText = "Not found";
+            }
+        })
+        .catch(() => {
+            document.getElementById('css-version').innerText = "Error loading CSS";
+        });
+</script>
