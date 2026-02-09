@@ -96,19 +96,19 @@ header p {
   border: 1px dashed var(--border-color);
 }
 
-/* --- container da calculadora --- */
+/* --- CONTAINER CALCULADORA --- */
 .main-container {
   background: var(--container-bg);
   padding: 15px;
   margin: 10px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  width: 95%; /* Ajuste para preencher melhor a tela */
-  max-width: 360px; /* Um pouco mais largo */
+  width: 95%;
+  max-width: 360px;
   box-sizing: border-box;
 }
 
-/* --- CALCULADORA --- */
+/* --- BOTÕES DE MODO --- */
 .toggle-row {
   display: flex;
   gap: 10px;
@@ -124,6 +124,7 @@ header p {
   padding: 8px;
   cursor: pointer;
   font-size: 12px;
+  transition: background 0.2s;
 }
 
 .btn-toggle.active {
@@ -145,7 +146,7 @@ header p {
   font-weight: bold;
 }
 
-/* --- GRADE DE BOTÕES --- */
+/* --- GRADE DE BOTÕES (GRID) --- */
 .calc-buttons {
   display: grid;
   gap: 6px;
@@ -159,8 +160,8 @@ header p {
   background-color: var(--btn-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 20px 0; /* Padding vertical aumentado */
-  font-size: 18px; /* Fonte aumentada */
+  padding: 20px 0;
+  font-size: 18px;
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
@@ -168,16 +169,21 @@ header p {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%; /* Força preenchimento da célula */
+  width: 100%;
   box-sizing: border-box;
 }
 
 .btn-calc:hover { background-color: var(--btn-hover); }
 
-/* Tamanho de fonte reduzido para botões científicos */
 .btn-calc.sci { font-size: 14px; }
-
-/* Botões Especiais */
 .btn-calc.op { background-color: var(--special-btn-bg); }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.equal { background-color: var(--accent-color); color: #fff; grid-column: span 2; }
+
+/* --- FOOTER --- */
+footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--secondary-text);
+  font-size: 14px;
+}
