@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metronome - ToolixHub</title>
+    <title data-i18n="tool_metro_title">Metronome - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
     <style>
         /* --- ESTILOS ESPECÍFICOS DO METRÔNOMO --- */
@@ -41,6 +41,7 @@
         #measure-display {
             color: var(--accent-color);
             font-weight: bold;
+            font-size: 28px; /* Dobro do tamanho anterior */
         }
 
         .bpm-wrapper {
@@ -198,7 +199,18 @@
 </head>
 <body>
     
-    <div id="header-placeholder"></div>
+    <header>
+        <a href="/" style="text-decoration: none;">
+            <img src="logo_toolixhub.jpg" alt="ToolixHub Logo" style="width: 250px; height: auto;">
+        </a>
+        <p data-i18n="header_subtitle">Your online hub of handy tools</p>
+        
+        <div class="lang-selector">
+            <a href="#" onclick="changeLanguage('en'); return false;"><img src="bandeira_eua.png" alt="English"></a>
+            <a href="#" onclick="changeLanguage('es'); return false;"><img src="bandeira_espanha.png" alt="Español"></a>
+            <a href="#" onclick="changeLanguage('pt'); return false;"><img src="bandeira_brasil.png" alt="Português"></a>
+        </div>
+    </header>
     
     <div class="ad-space">Top Ad Banner (728x90)</div>
     
@@ -206,24 +218,18 @@
         <div class="metronome-container">
             
             <div class="controls-top">
-                <label>Time Sig: 
-                    <select id="time-signature">
-                        <optgroup label="Simple" style="background:#2a2a2a; color:#fff">
-                            <option value="2/4">2/4</option>
-                            <option value="3/4">3/4</option>
-                            <option value="4/4" selected>4/4</option>
-                            <option value="5/4">5/4</option>
-                            <option value="6/4">6/4</option>
-                        </optgroup>
-                        <optgroup label="Compound" style="background:#2a2a2a; color:#fff">
-                            <option value="3/8">3/8</option>
-                            <option value="6/8">6/8</option>
-                            <option value="9/8">9/8</option>
-                            <option value="12/8">12/8</option>
-                        </optgroup>
-                    </select>
-                </label>
-                <div>Measure: <span id="measure-display">1</span></div>
+                <select id="time-signature">
+                    <option value="2/4">2/4</option>
+                    <option value="3/4">3/4</option>
+                    <option value="4/4" selected>4/4</option>
+                    <option value="5/4">5/4</option>
+                    <option value="6/4">6/4</option>
+                    <option value="3/8">3/8</option>
+                    <option value="6/8">6/8</option>
+                    <option value="9/8">9/8</option>
+                    <option value="12/8">12/8</option>
+                </select>
+                <div><span id="measure-display">1</span></div>
             </div>
 
             <div class="bpm-wrapper">
@@ -252,9 +258,9 @@
             </div>
 
             <div class="metronome-controls">
-                <button class="btn-metro" id="play-btn">Play</button>
-                <button class="btn-metro" id="stop-btn">Stop</button>
-                <button class="btn-metro" id="tap-btn">Tap</button>
+                <button class="btn-metro" id="play-btn" data-i18n="btn_play">Play</button>
+                <button class="btn-metro" id="stop-btn" data-i18n="btn_stop">Stop</button>
+                <button class="btn-metro" id="tap-btn" data-i18n="btn_tap">Tap</button>
             </div>
 
             <div id="beat-indicator"></div>
@@ -262,10 +268,10 @@
     </main>
 
     <section class="tool-info">
-        <h3>How to use</h3>
-        <p><strong>Accent:</strong> Click the dots below the controls to set which beat is accented (red).</p>
-        <p><strong>Speed:</strong> Use + / - buttons or drag the cyan dot on the slider.</p>
-        <p><strong>Tap:</strong> Click "Tap" rhythmically to match your desired BPM.</p>
+        <h3 data-i18n="metro_how_title">How to use</h3>
+        <p data-i18n="metro_how_desc1"><strong>Accent:</strong> Click the dots below the controls to set which beat is accented (red).</p>
+        <p data-i18n="metro_how_desc2"><strong>Speed:</strong> Use + / - buttons or drag the cyan dot on the slider.</p>
+        <p data-i18n="metro_how_desc3"><strong>Tap:</strong> Click "Tap" rhythmically to match your desired BPM.</p>
     </section>
     
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
@@ -273,21 +279,50 @@
     <div id="footer-placeholder"></div>
 
     <script>
-        // Carrega header e footer
-        function loadComponent(id, file) {
-            fetch(file)
-                .then(response => {
-                    if (!response.ok) return '';
-                    return response.text();
-                })
-                .then(data => {
-                    document.getElementById(id).innerHTML = data;
-                });
-        }
-        loadComponent('header-placeholder', 'header.html');
-        loadComponent('footer-placeholder', 'footer.html');
+        // --- Dicionário de Traduções ---
+        const translations = {
+            en: { 
+                "header_subtitle": "Your online hub of handy tools",
+                "tool_metro_title": "Metronome - ToolixHub",
+                "btn_play": "Play", "btn_stop": "Stop", "btn_tap": "Tap",
+                "metro_how_title": "How to use",
+                "metro_how_desc1": "<strong>Accent:</strong> Click the dots below the controls to set which beat is accented (red).",
+                "metro_how_desc2": "<strong>Speed:</strong> Use + / - buttons or drag the cyan dot on the slider.",
+                "metro_how_desc3": "<strong>Tap:</strong> Click \"Tap\" rhythmically to match your desired BPM."
+            },
+            es: { 
+                "header_subtitle": "Tu centro de herramientas prácticas",
+                "tool_metro_title": "Metrónomo - ToolixHub",
+                "btn_play": "Reproducir", "btn_stop": "Detener", "btn_tap": "Tap",
+                "metro_how_title": "Cómo utilizar",
+                "metro_how_desc1": "<strong>Acento:</strong> Haga clic en los puntos debajo de los controles para establecer qué pulso se acentúa (rojo).",
+                "metro_how_desc2": "<strong>Velocidad:</strong> Use los botones + / - o arrastre el punto cian en el control deslizante.",
+                "metro_how_desc3": "<strong>Tap:</strong> Haga clic en \"Tap\" rítmicamente para igualar el BPM deseado."
+            },
+            pt: { 
+                "header_subtitle": "Seu centro de ferramentas práticas",
+                "tool_metro_title": "Metrônomo - ToolixHub",
+                "btn_play": "Tocar", "btn_stop": "Parar", "btn_tap": "Tap",
+                "metro_how_title": "Como usar",
+                "metro_how_desc1": "<strong>Acento:</strong> Clique nos pontos abaixo dos controles para definir qual batida será acentuada (vermelho).",
+                "metro_how_desc2": "<strong>Velocidade:</strong> Use os botões + / - ou arraste o ponto ciano no controle deslizante.",
+                "metro_how_desc3": "<strong>Tap:</strong> Clique em \"Tap\" ritmicamente para igualar o BPM desejado."
+            }
+        };
 
-        // --- Config & State ---
+        // --- Função de Tradução ---
+        function changeLanguage(lang) {
+            localStorage.setItem('preferredLanguage', lang);
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerHTML = translations[lang][key]; // innerHTML para suportar <strong>
+                }
+            });
+        }
+
+        // --- Lógica do Metrônomo (Inalterada) ---
         let bpm = 120;
         let isPlaying = false;
         let currentBeat = 0;
@@ -322,6 +357,20 @@
             parseTimeSignature();
             renderBeats();
             updateBPMDisplay();
+            
+            // Carrega idioma salvo
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            changeLanguage(savedLang);
+            loadFooter();
+        }
+
+        // Carrega Footer Component
+        function loadFooter() {
+            fetch('footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-placeholder').innerHTML = data;
+                });
         }
 
         function parseTimeSignature() {
