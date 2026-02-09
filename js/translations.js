@@ -2,6 +2,7 @@
 const translations = {
     en: {
         "header_subtitle": "Your online hub of handy tools",
+        "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online",
         "tool_dice_title": "Dice Roller",
         "tool_dice_desc": "Random number generator",
         "btn_roll": "Roll Dice",
@@ -10,6 +11,7 @@ const translations = {
     },
     es: {
         "header_subtitle": "Tu centro de herramientas prácticas",
+        "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online",
         "tool_dice_title": "Lanzador de Dados",
         "tool_dice_desc": "Generador de números aleatorios",
         "btn_roll": "Lanzar Dado",
@@ -18,6 +20,7 @@ const translations = {
     },
     pt: {
         "header_subtitle": "Seu centro de ferramentas práticas",
+        "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online",
         "tool_dice_title": "Sorteador de Dados",
         "tool_dice_desc": "Gerador de números aleatórios",
         "btn_roll": "Jogar Dado",
