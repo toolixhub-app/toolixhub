@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dice Roller - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
-    
-    <script src="js/translations.js"></script>
 </head>
 <body>
 
@@ -32,7 +30,7 @@
             <div id="dice-result">?</div>
             <button onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
         </div>
-        </main>
+    </main>
 
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
     <footer>
@@ -40,14 +38,50 @@
     </footer>
 
     <script>
-        // --- Sua Lógica JS do Sorteador (Cole aqui) ---
+        // --- Dicionário de Traduções ---
+        const translations = {
+            en: {
+                "header_subtitle": "Your online hub of handy tools",
+                "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online",
+                "tool_dice_title": "Dice Roller",
+                "tool_dice_desc": "Random number generator",
+                "btn_roll": "Roll Dice"
+            },
+            es: {
+                "header_subtitle": "Tu centro de herramientas prácticas",
+                "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online",
+                "tool_dice_title": "Lanzador de Dados",
+                "tool_dice_desc": "Generador de números aleatorios",
+                "btn_roll": "Lanzar Dado"
+            },
+            pt: {
+                "header_subtitle": "Seu centro de ferramentas práticas",
+                "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online",
+                "tool_dice_title": "Sorteador de Dados",
+                "tool_dice_desc": "Gerador de números aleatórios",
+                "btn_roll": "Jogar Dado"
+            }
+        };
+
+        // --- Função para Alterar Idioma ---
+        function changeLanguage(lang) {
+            localStorage.setItem('preferredLanguage', lang);
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        // Lógica do Sorteador
         function rollDice() {
             const result = Math.floor(Math.random() * 6) + 1;
             document.getElementById('dice-result').innerText = result;
         }
-        // ----------------------------------------------
 
-        // --- Lógica de Tradução (Não remova) ---
+        // Inicialização da Tradução (aplica o idioma salvo ao carregar)
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
