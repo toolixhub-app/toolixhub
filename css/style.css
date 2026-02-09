@@ -3,22 +3,18 @@
   --bg-color: #121212;
   --container-bg: #1e1e1e;
   --text-color: #e0e0e0;
-  --secondary-text: #888;
   --accent-color: #00bcd4;
-  --highlight-color: #c6ff00;
   --border-color: #555;
   --btn-bg: #333;
   --btn-hover: #444;
   --special-btn-bg: #555;
-  --sci-btn-bg: #2a2a2a;
   --ac-btn-bg: #ff5252;
-  --ad-bg: #2a2a2a;
 }
 
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Segoe UI', Roboto, sans-serif;
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -27,34 +23,12 @@ body {
 }
 
 /* --- CABEÇALHO --- */
-header {
-  text-align: center;
-  padding: 15px;
-  width: 100%;
-}
+header { text-align: center; padding: 10px; width: 100%; }
+header img { max-width: 150px; height: auto; }
+.lang-selector { margin-top: 5px; display: flex; justify-content: center; gap: 8px; }
+.lang-selector img { width: 20px; height: 13px; border-radius: 2px; }
 
-header img {
-  max-width: 200px;
-  height: auto;
-}
-
-.lang-selector {
-  margin-top: 10px;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-}
-
-/* Padronizando bandeiras */
-.lang-selector img {
-  width: 24px;
-  height: 16px;
-  border-radius: 2px;
-  border: 1px solid #444;
-  display: block;
-}
-
-/* --- Container da calculadora --- */
+/* --- CONTAINER DA CALCULADORA --- */
 .main-container {
   background: var(--container-bg);
   padding: 15px;
@@ -62,11 +36,11 @@ header img {
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   width: 90%;
-  max-width: 320px;
+  max-width: 300px;
   box-sizing: border-box;
 }
 
-/* --- GRADE DE BOTÕES (Corrigida) --- */
+/* --- GRADE DE BOTÕES (GRID) --- */
 .calc-buttons {
   display: grid;
   gap: 5px;
@@ -89,13 +63,9 @@ header img {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
 }
 
-/* Tamanho de fonte reduzido para botões científicos */
-.btn-calc.sci { font-size: 12px; }
-
-/* Botões Especiais */
 .btn-calc.equal { grid-column: span 2; background-color: var(--accent-color); color: #000; }
 .btn-calc.op { background-color: var(--special-btn-bg); }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
+.btn-calc.sci { font-size: 11px; }
