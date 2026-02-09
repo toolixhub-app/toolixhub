@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timer & Cronômetro - ToolixHub</title>
+    <title data-i18n="tool_timer_title">Timer & Cronômetro - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
     <style>
         /* Estilos específicos para o Timer/Cronômetro */
@@ -110,51 +110,68 @@
             color: var(--secondary-text);
             margin-bottom: 5px;
         }
+        /* Estilo do Seletor de Idioma */
+        .lang-selector {
+            text-align: center;
+            padding: 10px;
+        }
+        .lang-selector img {
+            width: 30px;
+            height: auto;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
     
     <div id="header-placeholder"></div>
     
+    <div class="lang-selector">
+        <img src="bandeira_eua.png" alt="English" onclick="changeLanguage('en')">
+        <img src="bandeira_espanha.png" alt="Español" onclick="changeLanguage('es')">
+        <img src="bandeira_brasil.png" alt="Português" onclick="changeLanguage('pt')">
+    </div>
+
     <div class="ad-space">Top Ad Banner (728x90)</div>
     
     <main class="calc-container">
         <div class="timer-container">
             
             <div class="toggle-row">
-                <button class="btn-toggle active" id="btn-timer-mode" onclick="setMode('timer')">Timer</button>
-                <button class="btn-toggle" id="btn-stopwatch-mode" onclick="setMode('stopwatch')">Cronômetro</button>
+                <button class="btn-toggle active" id="btn-timer-mode" onclick="setMode('timer')" data-i18n="btn_timer">Timer</button>
+                <button class="btn-toggle" id="btn-stopwatch-mode" onclick="setMode('stopwatch')" data-i18n="btn_stopwatch">Cronômetro</button>
             </div>
 
             <div id="display">00:00</div>
             
             <div class="time-input-group" id="timer-inputs">
-                <input type="number" id="minutes" placeholder="Min" min="0" max="99">
-                <input type="number" id="seconds" placeholder="Seg" min="0" max="59">
+                <input type="number" id="minutes" data-i18n="placeholder_min" placeholder="Min" min="0" max="99">
+                <input type="number" id="seconds" data-i18n="placeholder_sec" placeholder="Seg" min="0" max="59">
             </div>
             
             <div class="timer-controls">
-                <button class="btn-timer primary" onclick="start()">Start</button>
-                <button class="btn-timer" onclick="stop()">Stop</button>
-                <button class="btn-timer danger" onclick="reset()">Reset</button>
+                <button class="btn-timer primary" onclick="start()" data-i18n="btn_start">Start</button>
+                <button class="btn-timer" onclick="stop()" data-i18n="btn_stop">Stop</button>
+                <button class="btn-timer danger" onclick="reset()" data-i18n="btn_reset">Reset</button>
             </div>
 
             <div class="timer-controls" id="quick-add" style="display:none;">
-                <button class="btn-timer" onclick="addTime(1)">+1 min</button>
-                <button class="btn-timer" onclick="addTime(5)">+5 min</button>
+                <button class="btn-timer" onclick="addTime(1)" data-i18n="btn_add1">+1 min</button>
+                <button class="btn-timer" onclick="addTime(5)" data-i18n="btn_add5">+5 min</button>
             </div>
 
             <div class="checkbox-container">
-                <input type="checkbox" id="sound-toggle" checked> <label for="sound-toggle">Alarme Sonoro</label>
+                <input type="checkbox" id="sound-toggle" checked> 
+                <label for="sound-toggle" data-i18n="label_sound">Alarme Sonoro</label>
             </div>
         </div>
     </main>
 
     <section class="tool-info">
-        <h3>Como usar</h3>
-        <p><strong>Timer:</strong> Defina minutos e segundos, clique em Start. O cronômetro regredirará até zero.</p>
-        <p><strong>Cronômetro:</strong> Clique em Start para contar o tempo progressivamente.</p>
-        <p><strong>Som:</strong> Ative a opção para ouvir um alerta ao final do tempo.</p>
+        <h3 data-i18n="how_to_title">Como usar</h3>
+        <p data-i18n="how_to_desc">Use os botões para alternar entre Timer e Cronômetro. Defina o tempo e inicie.</p>
     </section>
     
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
@@ -183,6 +200,79 @@
         let mode = 'timer'; // 'timer' ou 'stopwatch'
         let startTime;
 
+        // --- LÓGICA DE IDIOMA ---
+        const translations = {
+            en: {
+                "tool_timer_title": "Timer & Stopwatch - ToolixHub",
+                "btn_timer": "Timer",
+                "btn_stopwatch": "Stopwatch",
+                "placeholder_min": "Min",
+                "placeholder_sec": "Sec",
+                "btn_start": "Start",
+                "btn_stop": "Stop",
+                "btn_reset": "Reset",
+                "btn_add1": "+1 min",
+                "btn_add5": "+5 min",
+                "label_sound": "Sound Alarm",
+                "how_to_title": "How to use",
+                "how_to_desc": "Use the buttons to switch between Timer and Stopwatch. Set the time and start.",
+                "msg_timeout": "Time is up!"
+            },
+            es: {
+                "tool_timer_title": "Temporizador y Cronómetro - ToolixHub",
+                "btn_timer": "Temporizador",
+                "btn_stopwatch": "Cronómetro",
+                "placeholder_min": "Min",
+                "placeholder_sec": "Seg",
+                "btn_start": "Iniciar",
+                "btn_stop": "Detener",
+                "btn_reset": "Reiniciar",
+                "btn_add1": "+1 min",
+                "btn_add5": "+5 min",
+                "label_sound": "Alarma Sonora",
+                "how_to_title": "Cómo utilizar",
+                "how_to_desc": "Utilice los botones para cambiar entre Temporizador y Cronómetro. Establezca el tiempo y comience.",
+                "msg_timeout": "¡Tiempo agotado!"
+            },
+            pt: {
+                "tool_timer_title": "Timer & Cronômetro - ToolixHub",
+                "btn_timer": "Timer",
+                "btn_stopwatch": "Cronômetro",
+                "placeholder_min": "Min",
+                "placeholder_sec": "Seg",
+                "btn_start": "Iniciar",
+                "btn_stop": "Parar",
+                "btn_reset": "Resetar",
+                "btn_add1": "+1 min",
+                "btn_add5": "+5 min",
+                "label_sound": "Alarme Sonoro",
+                "how_to_title": "Como usar",
+                "how_to_desc": "Use os botões para alternar entre Timer e Cronômetro. Defina o tempo e inicie.",
+                "msg_timeout": "Tempo esgotado!"
+            }
+        };
+
+        function changeLanguage(lang) {
+            localStorage.setItem('preferredLanguage', lang);
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    if (el.tagName === 'INPUT') {
+                        el.placeholder = translations[lang][key];
+                    } else {
+                        el.innerHTML = translations[lang][key];
+                    }
+                }
+            });
+        }
+
+        // Inicializar idioma
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'pt';
+            changeLanguage(savedLang);
+        });
+
+        // --- LÓGICA DO TIMER (Inalterada) ---
         // Contexto de áudio para bip
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -237,7 +327,9 @@
                     } else {
                         stop();
                         beep();
-                        alert("Tempo esgotado!");
+                        // Mensagem de alerta traduzida
+                        const lang = localStorage.getItem('preferredLanguage') || 'pt';
+                        alert(translations[lang]["msg_timeout"]);
                     }
                 } else {
                     totalSeconds++;
