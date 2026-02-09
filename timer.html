@@ -6,135 +6,31 @@
     <title data-i18n="tool_timer_title">Timer & Cronômetro - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
     <style>
-        /* Estilos específicos para o Timer/Cronômetro */
-        .timer-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            padding: 20px;
-        }
-        .toggle-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .btn-toggle {
-            background-color: var(--btn-bg);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-toggle.active {
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-        }
-        .time-input-group {
-            display: flex;
-            gap: 10px;
-        }
-        .time-input-group input {
-            width: 70px;
-            padding: 10px;
-            font-size: 18px;
-            text-align: center;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            background-color: var(--btn-bg);
-            color: var(--text-color);
-        }
-        .timer-controls {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        #display {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 50px;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin: 10px 0;
-            background-color: #121212;
-            padding: 15px 30px;
-            border-radius: 12px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
-            width: 100%;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        .btn-timer {
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            background-color: var(--btn-bg);
-            color: var(--text-color);
-            transition: background 0.2s;
-        }
+        /* Estilos específicos para o Timer/Cronômetro (Mantenha o mesmo CSS) */
+        .timer-container { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px; }
+        .toggle-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .btn-toggle { background-color: var(--btn-bg); color: var(--text-color); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; }
+        .btn-toggle.active { background-color: var(--accent-color); color: #000; font-weight: bold; }
+        .time-input-group { display: flex; gap: 10px; }
+        .time-input-group input { width: 70px; padding: 10px; font-size: 18px; text-align: center; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--btn-bg); color: var(--text-color); }
+        .timer-controls { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        #display { font-family: 'Courier New', Courier, monospace; font-size: 50px; font-weight: bold; color: var(--accent-color); margin: 10px 0; background-color: #121212; padding: 15px 30px; border-radius: 12px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); width: 100%; box-sizing: border-box; text-align: center; }
+        .btn-timer { padding: 10px 20px; font-size: 16px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border-color); background-color: var(--btn-bg); color: var(--text-color); transition: background 0.2s; }
         .btn-timer:hover { background-color: var(--btn-hover); }
-        .btn-timer.primary {
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-            border: none;
-        }
-        .btn-timer.danger {
-            background-color: var(--ac-btn-bg);
-            color: white;
-            border: none;
-        }
-        .tool-info {
-            background: var(--container-bg);
-            padding: 15px;
-            margin: 10px auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 320px;
-            font-size: 14px;
-            color: var(--secondary-text);
-            text-align: center;
-            border: 1px solid var(--border-color);
-            box-sizing: border-box;
-        }
+        .btn-timer.primary { background-color: var(--accent-color); color: #000; font-weight: bold; border: none; }
+        .btn-timer.danger { background-color: var(--ac-btn-bg); color: white; border: none; }
+        .tool-info { background: var(--container-bg); padding: 15px; margin: 10px auto; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); width: 90%; max-width: 320px; font-size: 14px; color: var(--secondary-text); text-align: center; border: 1px solid var(--border-color); box-sizing: border-box; }
         .tool-info h3 { color: var(--accent-color); margin-top: 0; }
-        .checkbox-container {
-            font-size: 14px;
-            color: var(--secondary-text);
-            margin-bottom: 5px;
-        }
-        /* Estilo do Seletor de Idioma */
-        .lang-selector {
-            text-align: center;
-            padding: 10px;
-        }
-        .lang-selector img {
-            width: 30px;
-            height: auto;
-            margin: 0 5px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
+        .checkbox-container { font-size: 14px; color: var(--secondary-text); margin-bottom: 5px; }
+        
+        /* O estilo lang-selector pode ser movido para style_v2.css se estiver no header.html */
+        .lang-selector { text-align: center; padding: 10px; }
+        .lang-selector img { width: 30px; height: auto; margin: 0 5px; cursor: pointer; border-radius: 4px; }
     </style>
 </head>
 <body>
     
     <div id="header-placeholder"></div>
-    
-    <div class="lang-selector">
-        <img src="bandeira_eua.png" alt="English" onclick="changeLanguage('en')">
-        <img src="bandeira_espanha.png" alt="Español" onclick="changeLanguage('es')">
-        <img src="bandeira_brasil.png" alt="Português" onclick="changeLanguage('pt')">
-    </div>
-
-    <div class="ad-space">Top Ad Banner (728x90)</div>
     
     <main class="calc-container">
         <div class="timer-container">
@@ -179,6 +75,7 @@
     <div id="footer-placeholder"></div>
 
     <script>
+        // Função para carregar componentes externos (header/footer)
         function loadComponent(id, file) {
             fetch(file)
                 .then(response => {
@@ -189,18 +86,20 @@
                     document.getElementById(id).innerHTML = data;
                 });
         }
+        
+        // Carrega o header e footer
         loadComponent('header-placeholder', 'header.html');
         loadComponent('footer-placeholder', 'footer.html');
     </script>
     
     <script>
+        // Lógica JS (Inalterada)
         let timer;
         let totalSeconds = 0;
         let isRunning = false;
-        let mode = 'timer'; // 'timer' ou 'stopwatch'
+        let mode = 'timer';
         let startTime;
 
-        // --- LÓGICA DE IDIOMA ---
         const translations = {
             en: {
                 "tool_timer_title": "Timer & Stopwatch - ToolixHub",
@@ -266,16 +165,12 @@
             });
         }
 
-        // Inicializar idioma
         window.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'pt';
             changeLanguage(savedLang);
         });
 
-        // --- LÓGICA DO TIMER (Inalterada) ---
-        // Contexto de áudio para bip
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
         function beep() {
             if (!document.getElementById('sound-toggle').checked) return;
             const oscillator = audioCtx.createOscillator();
@@ -283,19 +178,17 @@
             oscillator.connect(gainNode);
             gainNode.connect(audioCtx.destination);
             oscillator.type = 'sine';
-            oscillator.frequency.value = 800; // Frequência em Hz
+            oscillator.frequency.value = 800;
             gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
             oscillator.start();
-            oscillator.stop(audioCtx.currentTime + 0.5); // Duração em segundos
+            oscillator.stop(audioCtx.currentTime + 0.5);
         }
 
         function setMode(newMode) {
             mode = newMode;
             reset();
-            
             document.getElementById('btn-timer-mode').classList.toggle('active', mode === 'timer');
             document.getElementById('btn-stopwatch-mode').classList.toggle('active', mode === 'stopwatch');
-            
             document.getElementById('timer-inputs').style.display = mode === 'timer' ? 'flex' : 'none';
             document.getElementById('quick-add').style.display = mode === 'stopwatch' ? 'flex' : 'none';
         }
@@ -308,17 +201,14 @@
 
         function start() {
             if (isRunning) return;
-
             if (mode === 'timer' && totalSeconds === 0) {
                 const m = parseInt(document.getElementById('minutes').value) || 0;
                 const s = parseInt(document.getElementById('seconds').value) || 0;
                 totalSeconds = m * 60 + s;
                 if (totalSeconds <= 0) return;
             }
-
             isRunning = true;
             startTime = Date.now();
-            
             timer = setInterval(() => {
                 if (mode === 'timer') {
                     if (totalSeconds > 0) {
@@ -327,7 +217,6 @@
                     } else {
                         stop();
                         beep();
-                        // Mensagem de alerta traduzida
                         const lang = localStorage.getItem('preferredLanguage') || 'pt';
                         alert(translations[lang]["msg_timeout"]);
                     }
