@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dice Roller - ToolixHub</title>
+    <title data-i18n="tool_dice_title">Sorteador de Dados - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
+    <style>
+        /* Estilos específicos para o Sorteador de Dados */
+        .dice-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: var(--container-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            margin: 20px auto;
+            max-width: 320px;
+        }
+        #dice-result {
+            font-size: 80px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 20px 0;
+            background-color: #121212;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            border: 2px solid var(--border-color);
+        }
+        #roll-btn {
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            background-color: var(--accent-color);
+            color: #000;
+            transition: background 0.2s, transform 0.1s;
+        }
+        #roll-btn:hover { background-color: var(--btn-hover); }
+        #roll-btn:active { transform: scale(0.98); }
+        #roll-btn:disabled { background-color: #555; cursor: not-allowed; }
+
+        /* Estilo do Seletor de Idioma */
+        .lang-selector {
+            text-align: center;
+            padding: 10px;
+        }
+        .lang-selector img {
+            width: 30px;
+            height: auto;
+            margin: 0 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            border: 1px solid transparent;
+        }
+        .lang-selector img:hover {
+            border-color: var(--accent-color);
+        }
+
+        /* Estilo Texto Explicativo */
+        .tool-info {
+            background: var(--container-bg);
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 320px;
+            font-size: 14px;
+            color: var(--secondary-text);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+        .tool-info h3 { color: var(--accent-color); margin-top: 0; }
+    </style>
 </head>
 <body>
 
@@ -12,42 +89,69 @@
         <a href="/" style="text-decoration: none;">
             <img src="logo_toolixhub.jpg" alt="ToolixHub Logo" style="width: 250px; height: auto;">
         </a>
-        <p data-i18n="header_subtitle">Your online hub of handy tools</p>
+        <p data-i18n="header_subtitle">Seu centro online de ferramentas práticas</p>
         
         <div class="lang-selector">
-            <a href="#" onclick="changeLanguage('en'); return false;"><img src="bandeira_eua.png" alt="English"></a>
-            <a href="#" onclick="changeLanguage('es'); return false;"><img src="bandeira_espanha.png" alt="Español"></a>
-            <a href="#" onclick="changeLanguage('pt'); return false;"><img src="bandeira_brasil.png" alt="Português"></a>
+            <img src="bandeira_eua.png" alt="English" onclick="changeLanguage('en')">
+            <img src="bandeira_espanha.png" alt="Español" onclick="changeLanguage('es')">
+            <img src="bandeira_brasil.png" alt="Português" onclick="changeLanguage('pt')">
         </div>
     </header>
     
     <div class="ad-space">Top Ad Banner (728x90)</div>
 
     <main>
-        <h1 data-i18n="tool_dice_title">Dice Roller</h1>
-        <p data-i18n="tool_dice_desc">Random number generator</p>
-        
         <div class="dice-wrapper">
+            <h1 style="margin-top: 0;" data-i18n="tool_dice_title">Sorteador de Dados</h1>
+            <p data-i18n="tool_dice_desc">Gerador de números aleatórios</p>
             
             <div id="dice-result">?</div>
             
-            <br>
-            
-            <button id="roll-btn" onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
+            <button id="roll-btn" onclick="rollDice()" data-i18n="btn_roll">Jogar Dado</button>
         </div>
+
+        <section class="tool-info">
+            <h3 data-i18n="how_to_title">Como usar</h3>
+            <p data-i18n="how_to_desc">Clique no botão "Jogar Dado" para gerar um número aleatório de 1 a 6.</p>
+        </section>
     </main>
 
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
+    
     <footer>
-        <p data-i18n="footer_copyright">&copy; 2026 ToolixHub — All tools free and online</p>
+        <p data-i18n="footer_copyright">&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online</p>
     </footer>
 
     <script>
-        // Dicionário
+        // Dicionário de Traduções
         const translations = {
-            en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice" },
-            es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado" },
-            pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado" }
+            en: { 
+                "header_subtitle": "Your online hub of handy tools", 
+                "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", 
+                "tool_dice_title": "Dice Roller", 
+                "tool_dice_desc": "Random number generator", 
+                "btn_roll": "Roll Dice",
+                "how_to_title": "How to use",
+                "how_to_desc": "Click the 'Roll Dice' button to generate a random number from 1 to 6."
+            },
+            es: { 
+                "header_subtitle": "Tu centro de herramientas prácticas", 
+                "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", 
+                "tool_dice_title": "Lanzador de Dados", 
+                "tool_dice_desc": "Generador de números aleatorios", 
+                "btn_roll": "Lanzar Dado",
+                "how_to_title": "Cómo utilizar",
+                "how_to_desc": "Haga clic en el botón 'Lanzar Dado' para generar un número aleatorio del 1 al 6."
+            },
+            pt: { 
+                "header_subtitle": "Seu centro de ferramentas práticas", 
+                "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", 
+                "tool_dice_title": "Sorteador de Dados", 
+                "tool_dice_desc": "Gerador de números aleatórios", 
+                "btn_roll": "Jogar Dado",
+                "how_to_title": "Como usar",
+                "how_to_desc": "Clique no botão 'Jogar Dado' para gerar um número aleatório de 1 a 6."
+            }
         };
 
         // Função de Tradução
@@ -57,7 +161,7 @@
             elements.forEach(el => {
                 const key = el.getAttribute('data-i18n');
                 if (translations[lang] && translations[lang][key]) {
-                    el.innerText = translations[lang][key];
+                    el.innerHTML = translations[lang][key];
                 }
             });
         }
@@ -83,9 +187,9 @@
             }, 80);
         }
 
-        // Inicialização
-        window.addEventListener('DOMContentLoaded', (event) => {
-            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+        // Inicialização do Idioma ao carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'pt';
             changeLanguage(savedLang);
         });
     </script>
