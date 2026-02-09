@@ -52,7 +52,7 @@ header {
 }
 
 #header-placeholder img, header img {
-  max-width: 200px; /* Logo tamanho padrão */
+  max-width: 200px;
   height: auto;
   display: block;
   margin: 0 auto;
@@ -96,18 +96,19 @@ header p {
   border: 1px dashed var(--border-color);
 }
 
+/* --- container da calculadora --- */
 .main-container {
   background: var(--container-bg);
   padding: 15px;
   margin: 10px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  width: 90%;
-  max-width: 320px;
+  width: 95%; /* Ajuste para preencher melhor a tela */
+  max-width: 360px; /* Um pouco mais largo */
   box-sizing: border-box;
 }
 
-/* --- CALCULADORA (Corrigindo grade) --- */
+/* --- CALCULADORA --- */
 .toggle-row {
   display: flex;
   gap: 10px;
@@ -135,19 +136,19 @@ header p {
   background: #000;
   color: var(--highlight-color);
   font-family: 'Courier New', Courier, monospace;
-  font-size: 28px; /* Reduzido um pouco */
+  font-size: 32px;
   text-align: right;
-  padding: 10px;
+  padding: 15px;
   border-radius: 8px;
   margin-bottom: 15px;
   overflow-x: auto;
   font-weight: bold;
 }
 
-/* --- GRADE DE BOTÕES (Forçando 4 e 5 colunas) --- */
+/* --- GRADE DE BOTÕES --- */
 .calc-buttons {
   display: grid;
-  gap: 5px; /* Reduzido o gap */
+  gap: 6px;
   width: 100%;
 }
 
@@ -158,21 +159,23 @@ header p {
   background-color: var(--btn-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 12px 0; /* Ajuste de padding */
-  font-size: 16px;
+  padding: 20px 0; /* Padding vertical aumentado */
+  font-size: 18px; /* Fonte aumentada */
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%; /* Força preenchimento da célula */
+  box-sizing: border-box;
 }
 
 .btn-calc:hover { background-color: var(--btn-hover); }
 
-/* Tamanho de fonte reduzido para caber na grade */
-.btn-calc.sci { font-size: 13px; }
+/* Tamanho de fonte reduzido para botões científicos */
+.btn-calc.sci { font-size: 14px; }
 
 /* Botões Especiais */
 .btn-calc.op { background-color: var(--special-btn-bg); }
