@@ -1,4 +1,3 @@
-/* version: 1.3 */
 /* --- Identidade Visual Unificada (Dark Mode Pro) --- */
 :root {
   --bg-color: #121212;
@@ -70,3 +69,5 @@ header img { max-width: 150px; height: auto; }
 .btn-calc.op { background-color: var(--special-btn-bg); }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.sci { font-size: 11px; }
+
+footer { text-align: center; padding: 10px; color: #888; font-size: 12px; }
