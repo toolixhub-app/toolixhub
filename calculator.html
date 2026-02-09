@@ -5,40 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculator - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
-    <style>
-        /* Estilos específicos para os botões de toggle do modo */
-        .toggle-row {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .btn-toggle {
-            background-color: #333;
-            color: #e0e0e0;
-            border: 1px solid #555;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-toggle.active {
-            background-color: #00bcd4;
-            color: #000;
-            font-weight: bold;
-        }
-        #calc-display {
-            background-color: #121212;
-            color: #00bcd4;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 32px;
-            text-align: right;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            overflow-x: auto;
-        }
-    </style>
 </head>
 <body>
     
@@ -48,14 +14,9 @@
     
     <main class="calc-container">
         
-        <div class="toggle-row">
-            <button class="btn-toggle active" id="btn-basic">Basic</button>
-            <button class="btn-toggle" id="btn-sci">Scientific</button>
-        </div>
-
         <div id="calc-display">0</div>
 
-        <div class="calc-buttons basic-grid" id="calc-grid">
+        <div class="calc-buttons">
             <button class="btn-calc ac" onclick="clearDisplay()">AC</button>
             <button class="btn-calc op" onclick="deleteLast()">DEL</button>
             <button class="btn-calc op" onclick="appendOperator('%')">%</button>
@@ -80,12 +41,6 @@
             <button class="btn-calc" onclick="appendNumber('00')">00</button>
             <button class="btn-calc" onclick="appendNumber('.')">.</button>
             <button class="btn-calc equal" onclick="calculate()">=</button>
-
-            <button class="btn-calc sci" onclick="scientificCalc('sin')">sin</button>
-            <button class="btn-calc sci" onclick="scientificCalc('cos')">cos</button>
-            <button class="btn-calc sci" onclick="scientificCalc('tan')">tan</button>
-            <button class="btn-calc sci" onclick="scientificCalc('log')">log</button>
-            <button class="btn-calc sci" onclick="scientificCalc('sqrt')">√</button>
         </div>
     </main>
     
@@ -110,9 +65,6 @@
     
     <script>
         let display = document.getElementById('calc-display');
-        let calcGrid = document.getElementById('calc-grid');
-        let btnBasic = document.getElementById('btn-basic');
-        let btnSci = document.getElementById('btn-sci');
 
         function appendNumber(number) {
             if (display.innerText === '0') display.innerText = '';
@@ -140,32 +92,6 @@
                 display.innerText = 'Error';
             }
         }
-
-        function scientificCalc(func) {
-            let value = parseFloat(display.innerText);
-            switch(func) {
-                case 'sin': display.innerText = Math.sin(value); break;
-                case 'cos': display.innerText = Math.cos(value); break;
-                case 'tan': display.innerText = Math.tan(value); break;
-                case 'log': display.innerText = Math.log10(value); break;
-                case 'sqrt': display.innerText = Math.sqrt(value); break;
-            }
-        }
-
-        // Lógica de alternância (Toggle)
-        btnBasic.addEventListener('click', () => {
-            btnBasic.classList.add('active');
-            btnSci.classList.remove('active');
-            calcGrid.classList.remove('sci-grid');
-            calcGrid.classList.add('basic-grid');
-        });
-
-        btnSci.addEventListener('click', () => {
-            btnSci.classList.add('active');
-            btnBasic.classList.remove('active');
-            calcGrid.classList.remove('basic-grid');
-            calcGrid.classList.add('sci-grid');
-        });
     </script>
 </body>
 </html>
