@@ -3,11 +3,11 @@
   --bg-color: #121212;
   --container-bg: #1e1e1e;
   --text-color: #e0e0e0;
+  --secondary-text: #888;
   --accent-color: #00bcd4;
   --border-color: #555;
   --btn-bg: #333;
   --btn-hover: #444;
-  --special-btn-bg: #555;
   --ac-btn-bg: #ff5252;
 }
 
@@ -22,31 +22,75 @@ body {
   min-height: 100vh;
 }
 
-/* --- CABEÇALHO --- */
-header { text-align: center; padding: 10px; width: 100%; }
-header img { max-width: 150px; height: auto; }
+/* --- CABEÇALHO UNIFICADO --- */
+header { text-align: center; padding: 15px; width: 100%; }
+header img { max-width: 180px; height: auto; }
+header p { color: var(--secondary-text); margin: 5px 0; font-size: 14px; }
 .lang-selector { margin-top: 5px; display: flex; justify-content: center; gap: 8px; }
-.lang-selector img { width: 20px; height: 13px; border-radius: 2px; }
+.lang-selector img { width: 24px; height: 16px; border-radius: 2px; }
 
-/* --- CONTAINER DA CALCULADORA --- */
-.main-container {
+/* --- ESPAÇO DE ANÚNCIO --- */
+.ad-space {
+  background-color: #2a2a2a;
+  color: #888;
+  width: 90%;
+  max-width: 728px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+/* --- LAYOUT HOME (Cards) --- */
+.home-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  width: 90%;
+  max-width: 800px;
+  padding: 20px 0;
+}
+
+.tool-card {
+  background: var(--container-bg);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+}
+
+.tool-card h3 { margin: 0 0 10px 0; font-size: 16px; }
+.tool-card p { margin: 0; font-size: 12px; color: var(--secondary-text); }
+
+/* --- LAYOUT CALCULADORA (Grid) --- */
+.calc-container {
   background: var(--container-bg);
   padding: 15px;
   margin: 10px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   width: 90%;
-  max-width: 300px;
+  max-width: 320px;
   box-sizing: border-box;
 }
 
-/* --- GRADE DE BOTÕES (GRID) --- */
 .calc-buttons {
   display: grid;
   gap: 5px;
   width: 100%;
 }
-
 .basic-grid { grid-template-columns: repeat(4, 1fr); }
 .sci-grid { grid-template-columns: repeat(5, 1fr); display: none; }
 
@@ -66,8 +110,7 @@ header img { max-width: 150px; height: auto; }
 }
 
 .btn-calc.equal { grid-column: span 2; background-color: var(--accent-color); color: #000; }
-.btn-calc.op { background-color: var(--special-btn-bg); }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
-.btn-calc.sci { font-size: 11px; }
+.btn-calc.sci { font-size: 12px; }
 
-footer { text-align: center; padding: 10px; color: #888; font-size: 12px; }
+footer { text-align: center; padding: 20px; color: var(--secondary-text); font-size: 12px; margin-top: auto; }
