@@ -1,3 +1,7 @@
+body {
+    border: 10px solid red !important;
+}
+
 /* --- Identidade Visual Unificada (Dark Mode Pro) --- */
 :root {
   --bg-color: #121212;
