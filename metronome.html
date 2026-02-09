@@ -51,11 +51,15 @@
             margin: 10px 0;
         }
 
+        /* CORREÇÃO: Fonte maior e Bold como no original */
         #bpm-display { 
-            font-size: 70px;
-            font-weight: bold;
-            color: var(--accent-color);
-            font-family: 'Courier New', Courier, monospace;
+            font-size: 90px;
+            font-weight: 900;
+            color: var(--bpm-color, #c6ff00);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            letter-spacing: -2px;
+            min-width: 160px;
+            text-align: center;
         }
 
         .bpm-btn {
@@ -147,6 +151,15 @@
             color: #000;
         }
 
+        /* CORREÇÃO: Tempo decorrido */
+        #timer-display {
+            font-size: 16px;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+
         #beat-indicator { 
             display: flex; 
             justify-content: center; 
@@ -197,10 +210,19 @@
             <div class="controls-top">
                 <label>Time Sig: 
                     <select id="time-signature">
-                        <option value="2/4">2/4</option>
-                        <option value="3/4">3/4</option>
-                        <option value="4/4" selected>4/4</option>
-                        <option value="6/8">6/8</option>
+                        <optgroup label="Simple" style="background:#2a2a2a; color:#fff">
+                            <option value="2/4">2/4</option>
+                            <option value="3/4">3/4</option>
+                            <option value="4/4" selected>4/4</option>
+                            <option value="5/4">5/4</option>
+                            <option value="6/4">6/4</option>
+                        </optgroup>
+                        <optgroup label="Compound" style="background:#2a2a2a; color:#fff">
+                            <option value="3/8">3/8</option>
+                            <option value="6/8">6/8</option>
+                            <option value="9/8">9/8</option>
+                            <option value="12/8">12/8</option>
+                        </optgroup>
                     </select>
                 </label>
                 <div>Measure: <span id="measure-display">1</span></div>
@@ -212,6 +234,8 @@
                 <button class="bpm-btn" id="bpm-plus">+</button>
             </div>
             
+            <div id="timer-display">00:00</div>
+
             <div id="bpm-control">
                 <div id="bpm-dot"></div>
             </div>
@@ -220,6 +244,7 @@
                 <button class="sub-btn active" data-sub="1">1/4</button>
                 <button class="sub-btn" data-sub="2">1/8</button>
                 <button class="sub-btn" data-sub="3">1/8 T</button>
+                <button class="sub-btn" data-sub="4">1/16</button>
             </div>
             
             <div class="volume-container">
@@ -279,6 +304,10 @@
         let timerID = null;
         let accentBeatIndex = 0; 
 
+        // CORREÇÃO: Variáveis do Timer
+        let studyTimerID = null;
+        let startTime = 0;
+
         const lookahead = 25.0;
         const scheduleAheadTime = 0.1;
 
@@ -290,6 +319,7 @@
         const beatIndicator = document.getElementById('beat-indicator');
         const measureDisplay = document.getElementById('measure-display');
         const volumeControl = document.getElementById('volume-control');
+        const timerDisplay = document.getElementById('timer-display'); // CORREÇÃO
 
         function init() {
             parseTimeSignature();
@@ -375,6 +405,12 @@
             currentMeasure = 1;
             measureDisplay.innerText = currentMeasure;
             nextNoteTime = tempoAudioContext.currentTime;
+
+            // CORREÇÃO: Iniciar Timer
+            if (!studyTimerID) {
+                startTime = Date.now();
+                studyTimerID = setInterval(updateTimer, 1000);
+            }
             
             scheduler();
             document.getElementById('play-btn').innerText = "Pause";
@@ -383,6 +419,11 @@
         function pause() {
             isPlaying = false;
             clearTimeout(timerID);
+
+            // CORREÇÃO: Pausar Timer
+            clearInterval(studyTimerID);
+            studyTimerID = null;
+
             document.getElementById('play-btn').innerText = "Play";
         }
 
@@ -391,7 +432,21 @@
             currentBeat = 0;
             currentMeasure = 1;
             measureDisplay.innerText = currentMeasure;
+            
+            // CORREÇÃO: Resetar Timer
+            clearInterval(studyTimerID);
+            studyTimerID = null;
+            timerDisplay.innerText = "00:00";
+            
             resetBeatVisuals();
+        }
+
+        // CORREÇÃO: Função do Timer
+        function updateTimer() {
+            const diff = Date.now() - startTime;
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            timerDisplay.innerText = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
         volumeControl.addEventListener('input', (e) => {
