@@ -3,16 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timer - ToolixHub</title>
+    <title>Timer & Cronômetro - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
     <style>
-        /* Estilos específicos para o conteúdo do Timer */
+        /* Estilos específicos para o Timer/Cronômetro */
         .timer-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 15px;
             padding: 20px;
+        }
+        .toggle-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .btn-toggle {
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-toggle.active {
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
         }
         .time-input-group {
             display: flex;
@@ -36,7 +56,7 @@
         }
         #display {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 60px;
+            font-size: 50px;
             font-weight: bold;
             color: var(--accent-color);
             margin: 10px 0;
@@ -44,6 +64,9 @@
             padding: 15px 30px;
             border-radius: 12px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
         }
         .btn-timer {
             padding: 10px 20px;
@@ -67,6 +90,26 @@
             color: white;
             border: none;
         }
+        .tool-info {
+            background: var(--container-bg);
+            padding: 15px;
+            margin: 10px auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 320px;
+            font-size: 14px;
+            color: var(--secondary-text);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            box-sizing: border-box;
+        }
+        .tool-info h3 { color: var(--accent-color); margin-top: 0; }
+        .checkbox-container {
+            font-size: 14px;
+            color: var(--secondary-text);
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -78,25 +121,41 @@
     <main class="calc-container">
         <div class="timer-container">
             
+            <div class="toggle-row">
+                <button class="btn-toggle active" id="btn-timer-mode" onclick="setMode('timer')">Timer</button>
+                <button class="btn-toggle" id="btn-stopwatch-mode" onclick="setMode('stopwatch')">Cronômetro</button>
+            </div>
+
             <div id="display">00:00</div>
             
-            <div class="time-input-group">
+            <div class="time-input-group" id="timer-inputs">
                 <input type="number" id="minutes" placeholder="Min" min="0" max="99">
                 <input type="number" id="seconds" placeholder="Seg" min="0" max="59">
             </div>
             
             <div class="timer-controls">
-                <button class="btn-timer primary" onclick="startTimer()">Start</button>
-                <button class="btn-timer" onclick="stopTimer()">Stop</button>
-                <button class="btn-timer danger" onclick="resetTimer()">Reset</button>
+                <button class="btn-timer primary" onclick="start()">Start</button>
+                <button class="btn-timer" onclick="stop()">Stop</button>
+                <button class="btn-timer danger" onclick="reset()">Reset</button>
             </div>
 
-            <div class="timer-controls">
+            <div class="timer-controls" id="quick-add" style="display:none;">
                 <button class="btn-timer" onclick="addTime(1)">+1 min</button>
                 <button class="btn-timer" onclick="addTime(5)">+5 min</button>
             </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="sound-toggle" checked> <label for="sound-toggle">Alarme Sonoro</label>
+            </div>
         </div>
     </main>
+
+    <section class="tool-info">
+        <h3>Como usar</h3>
+        <p><strong>Timer:</strong> Defina minutos e segundos, clique em Start. O cronômetro regredirará até zero.</p>
+        <p><strong>Cronômetro:</strong> Clique em Start para contar o tempo progressivamente.</p>
+        <p><strong>Som:</strong> Ative a opção para ouvir um alerta ao final do tempo.</p>
+    </section>
     
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
 
@@ -121,6 +180,35 @@
         let timer;
         let totalSeconds = 0;
         let isRunning = false;
+        let mode = 'timer'; // 'timer' ou 'stopwatch'
+        let startTime;
+
+        // Contexto de áudio para bip
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function beep() {
+            if (!document.getElementById('sound-toggle').checked) return;
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.type = 'sine';
+            oscillator.frequency.value = 800; // Frequência em Hz
+            gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.5); // Duração em segundos
+        }
+
+        function setMode(newMode) {
+            mode = newMode;
+            reset();
+            
+            document.getElementById('btn-timer-mode').classList.toggle('active', mode === 'timer');
+            document.getElementById('btn-stopwatch-mode').classList.toggle('active', mode === 'stopwatch');
+            
+            document.getElementById('timer-inputs').style.display = mode === 'timer' ? 'flex' : 'none';
+            document.getElementById('quick-add').style.display = mode === 'stopwatch' ? 'flex' : 'none';
+        }
 
         function updateDisplay() {
             const min = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
@@ -128,43 +216,49 @@
             document.getElementById('display').innerText = `${min}:${sec}`;
         }
 
-        function startTimer() {
-            if (!isRunning) {
-                if (totalSeconds === 0) {
-                    const m = parseInt(document.getElementById('minutes').value) || 0;
-                    const s = parseInt(document.getElementById('seconds').value) || 0;
-                    totalSeconds = m * 60 + s;
-                }
-                
-                if (totalSeconds <= 0) return;
+        function start() {
+            if (isRunning) return;
 
-                isRunning = true;
-                timer = setInterval(() => {
+            if (mode === 'timer' && totalSeconds === 0) {
+                const m = parseInt(document.getElementById('minutes').value) || 0;
+                const s = parseInt(document.getElementById('seconds').value) || 0;
+                totalSeconds = m * 60 + s;
+                if (totalSeconds <= 0) return;
+            }
+
+            isRunning = true;
+            startTime = Date.now();
+            
+            timer = setInterval(() => {
+                if (mode === 'timer') {
                     if (totalSeconds > 0) {
                         totalSeconds--;
                         updateDisplay();
                     } else {
-                        stopTimer();
+                        stop();
+                        beep();
                         alert("Tempo esgotado!");
                     }
-                }, 1000);
-            }
+                } else {
+                    totalSeconds++;
+                    updateDisplay();
+                }
+            }, 1000);
         }
 
-        function stopTimer() {
+        function stop() {
             isRunning = false;
             clearInterval(timer);
         }
 
-        function resetTimer() {
-            stopTimer();
+        function reset() {
+            stop();
             totalSeconds = 0;
             updateDisplay();
             document.getElementById('minutes').value = '';
             document.getElementById('seconds').value = '';
         }
 
-        // NOVIDADE: Função para adicionar tempo rápido
         function addTime(minutes) {
             totalSeconds += minutes * 60;
             updateDisplay();
