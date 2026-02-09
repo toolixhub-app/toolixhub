@@ -15,63 +15,34 @@
   --ad-bg: #2a2a2a;
 }
 
-body.light-theme {
-  --bg-color: #f4f4f4;
-  --container-bg: #ffffff;
-  --text-color: #333;
-  --secondary-text: #666;
-  --accent-color: #008ba3;
-  --highlight-color: #000;
-  --border-color: #ccc;
-  --btn-bg: #e0e0e0;
-  --btn-hover: #d0d0d0;
-  --special-btn-bg: #bbb;
-  --sci-btn-bg: #eee;
-  --ac-btn-bg: #ff7961;
-  --ad-bg: #eee;
-}
-
 body {
   background-color: var(--bg-color);
   color: var(--text-color);
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0;
-  padding: 0;
-  transition: background-color 0.3s, color 0.3s;
   min-height: 100vh;
 }
 
-/* --- CABEÇALHO PADRONIZADO --- */
+/* --- LOGO E BANDEIRAS PADRONIZADOS --- */
 header {
   text-align: center;
-  padding: 15px;
+  padding: 10px;
   width: 100%;
 }
 
-#header-placeholder img, header img {
+header img {
   max-width: 200px;
   height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-header p {
-  color: var(--secondary-text);
-  font-size: 14px;
-  margin: 5px 0;
 }
 
 .lang-selector {
-  margin-top: 10px;
+  margin-top: 5px;
   display: flex;
   justify-content: center;
-  gap: 10px;
-}
-.lang-selector a {
-  text-decoration: none;
+  gap: 8px;
 }
 .lang-selector img {
   width: 24px;
@@ -80,76 +51,22 @@ header p {
   border: 1px solid #444;
 }
 
-/* --- ESTRUTURA --- */
-.ad-space {
-  background-color: var(--ad-bg);
-  color: var(--secondary-text);
-  width: 100%;
-  max-width: 728px;
-  height: 90px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 15px auto;
-  border-radius: 8px;
-  font-size: 12px;
-  border: 1px dashed var(--border-color);
-}
-
-/* --- CONTAINER CALCULADORA --- */
+/* --- container da calculadora --- */
 .main-container {
   background: var(--container-bg);
   padding: 15px;
   margin: 10px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  width: 95%;
-  max-width: 360px;
+  width: 90%;
+  max-width: 320px;
   box-sizing: border-box;
 }
 
-/* --- BOTÕES DE MODO --- */
-.toggle-row {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
-}
-
-.btn-toggle {
-  flex: 1;
-  background: var(--btn-bg);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 8px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: background 0.2s;
-}
-
-.btn-toggle.active {
-  background: var(--accent-color);
-  color: #fff;
-  border-color: var(--accent-color);
-}
-
-#calc-display {
-  background: #000;
-  color: var(--highlight-color);
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 32px;
-  text-align: right;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  overflow-x: auto;
-  font-weight: bold;
-}
-
-/* --- GRADE DE BOTÕES (GRID) --- */
+/* --- GRADE DE BOTÕES (Corrigida) --- */
 .calc-buttons {
   display: grid;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -160,30 +77,19 @@ header p {
   background-color: var(--btn-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 20px 0;
-  font-size: 18px;
+  padding: 15px 0;
+  font-size: 16px;
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s;
+  width: 100%; /* Preenche a célula */
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: 100%;
-  box-sizing: border-box;
+  align-items: center;
 }
 
-.btn-calc:hover { background-color: var(--btn-hover); }
+/* Tamanho de fonte reduzido para botões científicos */
+.btn-calc.sci { font-size: 13px; }
 
-.btn-calc.sci { font-size: 14px; }
-.btn-calc.op { background-color: var(--special-btn-bg); }
-.btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
-.btn-calc.equal { background-color: var(--accent-color); color: #fff; grid-column: span 2; }
-
-/* --- FOOTER --- */
-footer {
-  text-align: center;
-  padding: 20px;
-  color: var(--secondary-text);
-  font-size: 14px;
-}
+/* Botões Especiais */
+.btn-calc.equal { grid-column: span 2; background-color: var(--accent-color); }
