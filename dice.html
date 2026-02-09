@@ -1,120 +1,64 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sorteador de Dados - ToolixHub</title>
+    <title>Dice Roller - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
-    <style>
-        /* Estilos específicos para o Dado */
-        .dice-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 20px;
-        }
-        #dice-result {
-            font-size: 80px;
-            font-weight: bold;
-            color: var(--accent-color);
-            background-color: #121212;
-            width: 120px;
-            height: 120px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 20px;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
-            border: 2px solid var(--border-color);
-        }
-        .btn-dice {
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            border: none;
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-            transition: transform 0.1s, background 0.2s;
-        }
-        .btn-dice:hover { opacity: 0.9; }
-        .btn-dice:active { transform: scale(0.95); }
-        
-        .tool-info {
-            background: var(--container-bg);
-            padding: 15px;
-            margin: 10px auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 320px;
-            font-size: 14px;
-            color: var(--secondary-text);
-            text-align: center;
-            border: 1px solid var(--border-color);
-            box-sizing: border-box;
-        }
-        .tool-info h3 { color: var(--accent-color); margin-top: 0; }
-    </style>
 </head>
 <body>
-    
-    <div id="header-placeholder"></div>
-    
-    <div class="ad-space">Top Ad Banner (728x90)</div>
-    
-    <main class="calc-container">
-        <div class="dice-container">
-            <div id="dice-result">?</div>
-            <button class="btn-dice" onclick="rollDice()">Jogar Dado</button>
+
+    <header>
+        <a href="/" style="text-decoration: none;">
+            <img src="logo_toolixhub.jpg" alt="ToolixHub Logo" style="width: 250px; height: auto;">
+        </a>
+        <p data-i18n="header_subtitle">Your online hub of handy tools</p>
+        
+        <div class="lang-selector">
+            <a href="#" onclick="changeLanguage('en'); return false;"><img src="bandeira_eua.png" alt="English"></a>
+            <a href="#" onclick="changeLanguage('es'); return false;"><img src="bandeira_espanha.png" alt="Español"></a>
+            <a href="#" onclick="changeLanguage('pt'); return false;"><img src="bandeira_brasil.png" alt="Português"></a>
         </div>
+    </header>
+    <div class="ad-space">Top Ad Banner (728x90)</div>
+
+    <main>
+        <h1 data-i18n="tool_dice_title">Dice Roller</h1>
+        <p data-i18n="tool_dice_desc">Random number generator</p>
+        <button data-i18n="btn_roll">Roll Dice</button>
     </main>
 
-    <section class="tool-info">
-        <h3>Como usar</h3>
-        <p>Clique no botão <strong>"Jogar Dado"</strong> para gerar um número aleatório entre 1 e 6.</p>
-        <p>Perfeito para jogos de tabuleiro, sorteios rápidos ou tomadas de decisão.</p>
-    </section>
-    
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
-
-    <div id="footer-placeholder"></div>
+    <footer>
+        <p data-i18n="footer_copyright">&copy; 2026 ToolixHub — All tools free and online</p>
+    </footer>
 
     <script>
-        function loadComponent(id, file) {
-            fetch(file)
-                .then(response => {
-                    if (!response.ok) return '';
-                    return response.text();
-                })
-                .then(data => {
-                    document.getElementById(id).innerHTML = data;
-                });
-        }
-        loadComponent('header-placeholder', 'header.html');
-        loadComponent('footer-placeholder', 'footer.html');
-    </script>
-    
-    <script>
-        function rollDice() {
-            const resultDisplay = document.getElementById('dice-result');
-            resultDisplay.innerText = "?"; // Efeito de carregamento rápido
-            
-            // Simulação rápida de animação
-            setTimeout(() => {
-                const randomNumber = Math.floor(Math.random() * 6) + 1;
-                resultDisplay.innerText = randomNumber;
-            }, 150);
-        }
-    </script>
+        // 1. Dicionário
+        const translations = {
+            en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice", "tool_metro_title": "Metronome", "tool_metro_desc": "Pro precision timing tool" },
+            es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado", "tool_metro_title": "Metrónomo", "tool_metro_desc": "Herramienta de temporización de precisión" },
+            pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado", "tool_metro_title": "Metrônomo", "tool_metro_desc": "Ferramenta de precisão para músicos" }
+        };
 
-<script>
-        // --- CÓDIGO DA TRADUÇÃO AQUI (SÓ PARA TESTAR NO DICE.HTML) ---
-        const translations = { /* ... dicionário ... */ };
-        function changeLanguage(lang) { /* ... função ... */ }
+        // 2. Função
+        function changeLanguage(lang) {
+            console.log("Mudando para:", lang);
+            localStorage.setItem('preferredLanguage', lang);
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key]) {
+                    el.innerText = translations[lang][key];
+                }
+            });
+        }
+
+        // 3. Inicialização
+        window.addEventListener('DOMContentLoaded', (event) => {
+            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+            changeLanguage(savedLang);
+        });
     </script>
-    
 </body>
 </html>
