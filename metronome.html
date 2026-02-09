@@ -6,7 +6,7 @@
     <title>Metronome - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
     <style>
-        /* --- ESTILOS ESPECÍFICOS DO METRÔNOMO (Unificados ao sistema) --- */
+        /* --- ESTILOS ESPECÍFICOS DO METRÔNOMO --- */
         .metronome-container {
             display: flex;
             flex-direction: column;
@@ -51,7 +51,6 @@
             margin: 10px 0;
         }
 
-        /* CORREÇÃO: Fonte maior e Bold como no original */
         #bpm-display { 
             font-size: 90px;
             font-weight: 900;
@@ -151,7 +150,6 @@
             color: #000;
         }
 
-        /* CORREÇÃO: Tempo decorrido */
         #timer-display {
             font-size: 16px;
             color: var(--accent-color);
@@ -275,6 +273,7 @@
     <div id="footer-placeholder"></div>
 
     <script>
+        // Carrega header e footer
         function loadComponent(id, file) {
             fetch(file)
                 .then(response => {
@@ -287,9 +286,7 @@
         }
         loadComponent('header-placeholder', 'header.html');
         loadComponent('footer-placeholder', 'footer.html');
-    </script>
-    
-    <script>
+
         // --- Config & State ---
         let bpm = 120;
         let isPlaying = false;
@@ -304,14 +301,14 @@
         let timerID = null;
         let accentBeatIndex = 0; 
 
-        // CORREÇÃO: Variáveis do Timer
+        // Variáveis do Timer
         let studyTimerID = null;
         let startTime = 0;
 
         const lookahead = 25.0;
         const scheduleAheadTime = 0.1;
 
-        // --- UI Elements ---
+        // UI Elements
         const bpmDisplay = document.getElementById('bpm-display');
         const bpmDot = document.getElementById('bpm-dot');
         const bpmControl = document.getElementById('bpm-control');
@@ -319,7 +316,7 @@
         const beatIndicator = document.getElementById('beat-indicator');
         const measureDisplay = document.getElementById('measure-display');
         const volumeControl = document.getElementById('volume-control');
-        const timerDisplay = document.getElementById('timer-display'); // CORREÇÃO
+        const timerDisplay = document.getElementById('timer-display');
 
         function init() {
             parseTimeSignature();
@@ -406,7 +403,7 @@
             measureDisplay.innerText = currentMeasure;
             nextNoteTime = tempoAudioContext.currentTime;
 
-            // CORREÇÃO: Iniciar Timer
+            // Iniciar Timer
             if (!studyTimerID) {
                 startTime = Date.now();
                 studyTimerID = setInterval(updateTimer, 1000);
@@ -420,7 +417,7 @@
             isPlaying = false;
             clearTimeout(timerID);
 
-            // CORREÇÃO: Pausar Timer
+            // Pausar Timer
             clearInterval(studyTimerID);
             studyTimerID = null;
 
@@ -433,7 +430,7 @@
             currentMeasure = 1;
             measureDisplay.innerText = currentMeasure;
             
-            // CORREÇÃO: Resetar Timer
+            // Resetar Timer
             clearInterval(studyTimerID);
             studyTimerID = null;
             timerDisplay.innerText = "00:00";
@@ -441,7 +438,7 @@
             resetBeatVisuals();
         }
 
-        // CORREÇÃO: Função do Timer
+        // Função do Timer
         function updateTimer() {
             const diff = Date.now() - startTime;
             const minutes = Math.floor(diff / 60000);
@@ -480,16 +477,29 @@
             if(bpm > 40) { bpm--; updateBPMDisplay(); }
         });
 
+        // Lógica de arraste do slider com correção de scroll mobile
         let dragging = false;
+        
+        // desktop
         bpmDot.addEventListener('mousedown', () => dragging = true);
         document.addEventListener('mouseup', () => dragging = false);
         document.addEventListener('mousemove', (e) => { if (dragging) setBPMFromSlider(e.clientX); });
         bpmControl.addEventListener('mousedown', (e) => setBPMFromSlider(e.clientX));
 
-        // Touch
-        bpmDot.addEventListener('touchstart', (e) => { dragging = true; e.preventDefault(); }, {passive: false});
+        // mobile - CORRIGIDO PARA PERMITIR SCROLL
+        bpmDot.addEventListener('touchstart', (e) => { 
+            dragging = true; 
+            e.preventDefault(); // Impede scroll ao tocar no ponto
+        }, {passive: false});
+        
         document.addEventListener('touchend', () => dragging = false);
-        document.addEventListener('touchmove', (e) => { if (dragging) setBPMFromSlider(e.touches[0].clientX); e.preventDefault(); }, {passive: false});
+        
+        document.addEventListener('touchmove', (e) => { 
+            if (dragging) {
+                setBPMFromSlider(e.touches[0].clientX);
+                e.preventDefault(); // Impede rolar apenas quando arrastando o ponto
+            }
+        }, {passive: false});
 
         function renderBeats() {
             beatIndicator.innerHTML = '';
