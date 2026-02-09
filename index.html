@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - ToolixHub</title>
+    <title>ToolixHub - Your Online Tool Hub</title>
     <style>
-      /* --- Estilos unificados --- */
+      /* --- Estilos unificados (Dark Mode Pro) --- */
       :root {
         --bg-color: #121212;
         --container-bg: #1e1e1e;
@@ -26,6 +26,8 @@
         align-items: center;
         min-height: 100vh;
       }
+      
+      /* Estilos que serão carregados do header.html */
       header {
         background: #000000;
         color: #fff;
@@ -59,21 +61,21 @@
         transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
       }
       .tool-card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
-      .tool-card h2 { margin: 0 0 15px 0; font-size: 1.3em; color: var(--text-color); }
+      
+      /* Link no Título */
       .tool-card a {
-        display: block;
-        padding: 10px;
-        background: transparent;
-        color: var(--accent-color);
         text-decoration: none;
-        border: 1px solid var(--accent-color);
-        border-radius: 6px;
+        color: var(--text-color);
+        font-size: 1.2em;
         font-weight: bold;
+        transition: color 0.2s;
       }
-      .tool-card a:hover { background: var(--accent-color); color: #000; }
+      .tool-card a:hover {
+        color: var(--accent-color);
+      }
       
       .ad-space {
           background-color: var(--ad-bg);
@@ -87,6 +89,7 @@
           margin: 20px 0;
           border-radius: 8px;
           border: 1px dashed var(--border-color);
+          font-size: 14px;
       }
       
       footer {
@@ -102,39 +105,63 @@
 </head>
 <body>
     
-    <header>
-      <a href="/" style="text-decoration: none;">
-        <img src="logo_toolixhub.jpg" alt="ToolixHub Logo">
-      </a>
-      <p>Your online hub of handy tools</p>
-    </header>
+    <div id="header-placeholder"></div>
     
     <div class="ad-space">Top Ad Banner (728x90)</div>
     
     <main>
         <div class="tool-card">
-          <h2>🧮 Calculator</h2>
-          <a href="calculator.html">Open Tool</a>
+          <a href="calculator.html">🧮 Calculator</a>
         </div>
         <div class="tool-card">
-          <h2>🎵 Metronome</h2>
-          <a href="metronome.html">Open Tool</a>
+          <a href="metronome.html">🎵 Metronome</a>
         </div>
         <div class="tool-card">
-          <h2>💬 WhatsApp Link</h2>
-          <a href="whatsapp.html">Open Tool</a>
+          <a href="timer.html">⏱️ Timer</a>
         </div>
         <div class="tool-card">
-          <h2>⏳ Countdown</h2>
-          <a href="countdown.html">Open Tool</a>
+          <a href="currency.html">💱 Currency Converter</a>
+        </div>
+        <div class="tool-card">
+          <a href="countdown.html">⏳ Countdown</a>
+        </div>
+        <div class="tool-card">
+          <a href="wordcounter.html">📝 Word Counter</a>
+        </div>
+        <div class="tool-card">
+          <a href="password.html">🔐 Password Generator</a>
+        </div>
+        <div class="tool-card">
+          <a href="bmi.html">⚖️ BMI Calculator</a>
+        </div>
+        <div class="tool-card">
+          <a href="stopwatch.html">⏱️ Stopwatch</a>
+        </div>
+        <div class="tool-card">
+          <a href="temperature.html">🌡️ Temperature Converter</a>
+        </div>
+        <div class="tool-card">
+          <a href="whatsapp.html">💬 WhatsApp Link</a>
         </div>
     </main>
     
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
 
-    <footer>
-      &copy; 2026 ToolixHub — All tools free and online
-    </footer>
+    <div id="footer-placeholder"></div>
 
+    <script>
+      function loadComponent(id, file) {
+        fetch(file)
+          .then(response => {
+            if (!response.ok) return '';
+            return response.text();
+          })
+          .then(data => {
+            document.getElementById(id).innerHTML = data;
+          });
+      }
+      loadComponent('header-placeholder', 'header.html');
+      loadComponent('footer-placeholder', 'footer.html');
+    </script>
 </body>
 </html>
