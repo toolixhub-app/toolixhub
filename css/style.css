@@ -44,18 +44,18 @@ body {
   min-height: 100vh;
 }
 
-/* --- LOGO NO HEADER (Ajuste para tamanho uniforme) --- */
+/* --- CABEÇALHO PADRONIZADO --- */
+header {
+  text-align: center;
+  padding: 15px;
+  width: 100%;
+}
+
 #header-placeholder img, header img {
-  max-width: 250px; /* Tamanho do logo na home e subpáginas */
+  max-width: 200px; /* Logo tamanho padrão */
   height: auto;
   display: block;
   margin: 0 auto;
-}
-
-header {
-  text-align: center;
-  padding: 20px;
-  width: 100%;
 }
 
 header p {
@@ -64,7 +64,6 @@ header p {
   margin: 5px 0;
 }
 
-/* --- ADICIONADO: Seletor de Idiomas (Corrigindo layout) --- */
 .lang-selector {
   margin-top: 10px;
   display: flex;
@@ -81,12 +80,12 @@ header p {
   border: 1px solid #444;
 }
 
-/* Espaço para Anúncios */
+/* --- ESTRUTURA --- */
 .ad-space {
   background-color: var(--ad-bg);
   color: var(--secondary-text);
   width: 100%;
-  max-width: 728px; /* AdSense padrão */
+  max-width: 728px;
   height: 90px; 
   display: flex;
   align-items: center;
@@ -97,11 +96,10 @@ header p {
   border: 1px dashed var(--border-color);
 }
 
-/* Container Principal da Calculadora */
 .main-container {
   background: var(--container-bg);
-  padding: 20px;
-  margin: 20px auto;
+  padding: 15px;
+  margin: 10px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   width: 90%;
@@ -109,7 +107,7 @@ header p {
   box-sizing: border-box;
 }
 
-/* Botões de Alternância (Basic/Sci) */
+/* --- CALCULADORA (Corrigindo grade) --- */
 .toggle-row {
   display: flex;
   gap: 10px;
@@ -125,7 +123,6 @@ header p {
   padding: 8px;
   cursor: pointer;
   font-size: 12px;
-  transition: background 0.2s;
 }
 
 .btn-toggle.active {
@@ -134,25 +131,23 @@ header p {
   border-color: var(--accent-color);
 }
 
-/* Display da Calculadora */
 #calc-display {
   background: #000;
   color: var(--highlight-color);
   font-family: 'Courier New', Courier, monospace;
-  font-size: 32px;
+  font-size: 28px; /* Reduzido um pouco */
   text-align: right;
-  padding: 15px;
+  padding: 10px;
   border-radius: 8px;
   margin-bottom: 15px;
   overflow-x: auto;
   font-weight: bold;
-  letter-spacing: -1px;
 }
 
-/* --- GRADE DE BOTÕES (Corrigida) --- */
+/* --- GRADE DE BOTÕES (Forçando 4 e 5 colunas) --- */
 .calc-buttons {
   display: grid;
-  gap: 8px;
+  gap: 5px; /* Reduzido o gap */
   width: 100%;
 }
 
@@ -163,14 +158,12 @@ header p {
   background-color: var(--btn-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
-  padding: 15px 0;
+  padding: 12px 0; /* Ajuste de padding */
   font-size: 16px;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: background 0.2s;
-  touch-action: manipulation;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -178,8 +171,10 @@ header p {
 
 .btn-calc:hover { background-color: var(--btn-hover); }
 
+/* Tamanho de fonte reduzido para caber na grade */
+.btn-calc.sci { font-size: 13px; }
+
 /* Botões Especiais */
 .btn-calc.op { background-color: var(--special-btn-bg); }
-.btn-calc.sci { background-color: var(--sci-btn-bg); font-size: 13px; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
 .btn-calc.equal { background-color: var(--accent-color); color: #fff; grid-column: span 2; }
