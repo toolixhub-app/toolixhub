@@ -27,9 +27,9 @@
         <h1 data-i18n="tool_dice_title">Dice Roller</h1>
         <p data-i18n="tool_dice_desc">Random number generator</p>
         
-        <div class="dice-container">
-            <div id="dice-result">?</div>
-            <button onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
+        <div class="dice-wrapper" style="text-align: center; margin: 20px 0;">
+            <div id="dice-result" style="font-size: 80px; font-weight: bold; margin-bottom: 20px;">?</div>
+            <button onclick="rollDice()" data-i18n="btn_roll" style="font-size: 20px; padding: 10px 20px;">Roll Dice</button>
         </div>
     </main>
 
@@ -39,32 +39,14 @@
     </footer>
 
     <script>
-        // --- Dicionário ---
+        // Dicionário
         const translations = {
-            en: {
-                "header_subtitle": "Your online hub of handy tools",
-                "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online",
-                "tool_dice_title": "Dice Roller",
-                "tool_dice_desc": "Random number generator",
-                "btn_roll": "Roll Dice"
-            },
-            es: {
-                "header_subtitle": "Tu centro de herramientas prácticas",
-                "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online",
-                "tool_dice_title": "Lanzador de Dados",
-                "tool_dice_desc": "Generador de números aleatorios",
-                "btn_roll": "Lanzar Dado"
-            },
-            pt: {
-                "header_subtitle": "Seu centro de ferramentas práticas",
-                "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online",
-                "tool_dice_title": "Sorteador de Dados",
-                "tool_dice_desc": "Gerador de números aleatórios",
-                "btn_roll": "Jogar Dado"
-            }
+            en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice" },
+            es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado" },
+            pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado" }
         };
 
-        // --- Função de Tradução ---
+        // Função de Tradução
         function changeLanguage(lang) {
             localStorage.setItem('preferredLanguage', lang);
             const elements = document.querySelectorAll('[data-i18n]');
@@ -76,13 +58,15 @@
             });
         }
 
-        // --- Lógica do Sorteador ---
+        // Lógica do Sorteador (Adicionado estilo inline rápido para garantir tamanho)
         function rollDice() {
             const result = Math.floor(Math.random() * 6) + 1;
-            document.getElementById('dice-result').innerText = result;
+            const diceResult = document.getElementById('dice-result');
+            diceResult.innerText = result;
+            diceResult.style.fontSize = "80px"; // Garante tamanho grande
         }
 
-        // --- Inicialização (Ao carregar a página) ---
+        // Inicialização
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
