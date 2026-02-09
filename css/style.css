@@ -44,10 +44,41 @@ body {
   min-height: 100vh;
 }
 
-/* --- LOGO NO HEADER --- */
-#header-placeholder img {
-  max-width: 150px; /* Ajuste o tamanho máximo do logo aqui */
+/* --- LOGO NO HEADER (Ajuste para tamanho uniforme) --- */
+#header-placeholder img, header img {
+  max-width: 250px; /* Tamanho do logo na home e subpáginas */
   height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+}
+
+header p {
+  color: var(--secondary-text);
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+/* --- ADICIONADO: Seletor de Idiomas (Corrigindo layout) --- */
+.lang-selector {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.lang-selector a {
+  text-decoration: none;
+}
+.lang-selector img {
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+  border: 1px solid #444;
 }
 
 /* Espaço para Anúncios */
@@ -55,28 +86,30 @@ body {
   background-color: var(--ad-bg);
   color: var(--secondary-text);
   width: 100%;
-  max-width: 320px;
-  height: 100px; 
+  max-width: 728px; /* AdSense padrão */
+  height: 90px; 
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 15px 0;
+  margin: 15px auto;
   border-radius: 8px;
   font-size: 12px;
   border: 1px dashed var(--border-color);
 }
 
+/* Container Principal da Calculadora */
 .main-container {
   background: var(--container-bg);
-  padding: 15px;
-  margin-top: 10px;
+  padding: 20px;
+  margin: 20px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  width: 100%;
+  width: 90%;
   max-width: 320px;
   box-sizing: border-box;
 }
 
+/* Botões de Alternância (Basic/Sci) */
 .toggle-row {
   display: flex;
   gap: 10px;
@@ -92,6 +125,7 @@ body {
   padding: 8px;
   cursor: pointer;
   font-size: 12px;
+  transition: background 0.2s;
 }
 
 .btn-toggle.active {
@@ -100,6 +134,7 @@ body {
   border-color: var(--accent-color);
 }
 
+/* Display da Calculadora */
 #calc-display {
   background: #000;
   color: var(--highlight-color);
@@ -114,6 +149,7 @@ body {
   letter-spacing: -1px;
 }
 
+/* --- GRADE DE BOTÕES (Corrigida) --- */
 .calc-buttons {
   display: grid;
   gap: 8px;
@@ -142,6 +178,7 @@ body {
 
 .btn-calc:hover { background-color: var(--btn-hover); }
 
+/* Botões Especiais */
 .btn-calc.op { background-color: var(--special-btn-bg); }
 .btn-calc.sci { background-color: var(--sci-btn-bg); font-size: 13px; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
