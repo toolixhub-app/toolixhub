@@ -3,12 +3,12 @@
   --bg-color: #121212;
   --container-bg: #1e1e1e;
   --text-color: #e0e0e0;
+  --secondary-text: #888;
   --accent-color: #00bcd4;
   --border-color: #555;
   --btn-bg: #333;
   --btn-hover: #444;
   --ac-btn-bg: #ff5252;
-  --special-btn-bg: #555;
 }
 
 body {
@@ -25,9 +25,54 @@ body {
 /* --- CABEÇALHO UNIFICADO --- */
 header { text-align: center; padding: 15px; width: 100%; }
 header img { max-width: 180px; height: auto; }
-header p { color: #888; margin: 5px 0; font-size: 14px; }
+header p { color: var(--secondary-text); margin: 5px 0; font-size: 14px; }
 .lang-selector { margin-top: 5px; display: flex; justify-content: center; gap: 8px; }
 .lang-selector img { width: 24px; height: 16px; border-radius: 2px; }
+
+/* --- ESPAÇO DE ANÚNCIO --- */
+.ad-space {
+  background-color: #2a2a2a;
+  color: #888;
+  width: 90%;
+  max-width: 728px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+  border-radius: 8px;
+  font-size: 12px;
+  border: 1px dashed var(--border-color);
+}
+
+/* --- LAYOUT HOME (Cards) --- */
+.home-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+  width: 90%;
+  max-width: 800px;
+  padding: 20px 0;
+}
+
+.tool-card {
+  background: var(--container-bg);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.tool-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-color);
+}
+
+.tool-card h3 { margin: 0 0 10px 0; font-size: 16px; }
+.tool-card p { margin: 0; font-size: 12px; color: var(--secondary-text); }
 
 /* --- LAYOUT CALCULADORA (Grid) --- */
 .calc-container {
@@ -41,26 +86,13 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
   box-sizing: border-box;
 }
 
-#calc-display {
-  background-color: #121212;
-  color: var(--accent-color);
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 32px;
-  text-align: right;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 10px;
-  overflow-x: auto;
-  word-wrap: break-word;
-}
-
-/* --- GRADE DE BOTÕES (Básica) --- */
 .calc-buttons {
   display: grid;
   gap: 5px;
   width: 100%;
-  grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
 }
+.basic-grid { grid-template-columns: repeat(4, 1fr); }
+.sci-grid { grid-template-columns: repeat(5, 1fr); display: none; }
 
 .btn-calc {
   background-color: var(--btn-bg);
@@ -75,17 +107,10 @@ header p { color: #888; margin: 5px 0; font-size: 14px; }
   display: flex;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
 }
 
-.btn-calc:hover { background-color: var(--btn-hover); }
-
-/* Estilos especiais para botões */
 .btn-calc.equal { grid-column: span 2; background-color: var(--accent-color); color: #000; }
 .btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
-.btn-calc.op { background-color: var(--special-btn-bg); }
+.btn-calc.sci { font-size: 12px; }
 
-/* --- TOGGLE BUTTONS (Removido) --- */
-.toggle-row { display: none; }
-
-footer { text-align: center; padding: 20px; color: #888; font-size: 12px; margin-top: auto; }
+footer { text-align: center; padding: 20px; color: var(--secondary-text); font-size: 12px; margin-top: auto; }
