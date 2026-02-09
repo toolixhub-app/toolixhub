@@ -1,75 +1,176 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Timer - ToolixHub</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f0f0f0; }
-    h1 { color: #333; }
-    input { width: 80px; font-size: 20px; text-align: center; margin: 5px; }
-    button { font-size: 18px; margin: 5px; padding: 5px 15px; }
-    #display { font-size: 48px; margin-top: 20px; color: #222; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timer - ToolixHub</title>
+    <link rel="stylesheet" href="css/style_v2.css">
+    <style>
+        /* Estilos específicos para o conteúdo do Timer */
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+        }
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .time-input-group input {
+            width: 70px;
+            padding: 10px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+        }
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        #display {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 60px;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+            background-color: #121212;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .btn-timer {
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            background-color: var(--btn-bg);
+            color: var(--text-color);
+            transition: background 0.2s;
+        }
+        .btn-timer:hover { background-color: var(--btn-hover); }
+        .btn-timer.primary {
+            background-color: var(--accent-color);
+            color: #000;
+            font-weight: bold;
+            border: none;
+        }
+        .btn-timer.danger {
+            background-color: var(--ac-btn-bg);
+            color: white;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Timer ToolixHub</h1>
-  <div>
-    <input type="number" id="minutes" placeholder="Min" min="0">
-    <input type="number" id="seconds" placeholder="Seg" min="0" max="59">
-  </div>
-  <div>
-    <button onclick="startTimer()">Start</button>
-    <button onclick="stopTimer()">Stop</button>
-    <button onclick="resetTimer()">Reset</button>
-  </div>
-  <div id="display">00:00</div>
+    
+    <div id="header-placeholder"></div>
+    
+    <div class="ad-space">Top Ad Banner (728x90)</div>
+    
+    <main class="calc-container">
+        <div class="timer-container">
+            
+            <div id="display">00:00</div>
+            
+            <div class="time-input-group">
+                <input type="number" id="minutes" placeholder="Min" min="0" max="99">
+                <input type="number" id="seconds" placeholder="Seg" min="0" max="59">
+            </div>
+            
+            <div class="timer-controls">
+                <button class="btn-timer primary" onclick="startTimer()">Start</button>
+                <button class="btn-timer" onclick="stopTimer()">Stop</button>
+                <button class="btn-timer danger" onclick="resetTimer()">Reset</button>
+            </div>
 
-  <script>
-    let timer;
-    let totalSeconds = 0;
+            <div class="timer-controls">
+                <button class="btn-timer" onclick="addTime(1)">+1 min</button>
+                <button class="btn-timer" onclick="addTime(5)">+5 min</button>
+            </div>
+        </div>
+    </main>
+    
+    <div class="ad-space">Bottom Ad Banner (728x90)</div>
 
-    function updateDisplay() {
-      const min = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-      const sec = String(totalSeconds % 60).padStart(2, '0');
-      document.getElementById('display').innerText = `${min}:${sec}`;
-    }
+    <div id="footer-placeholder"></div>
 
-    function startTimer() {
-      if (!timer) {
-        const m = parseInt(document.getElementById('minutes').value) || 0;
-        const s = parseInt(document.getElementById('seconds').value) || 0;
-        totalSeconds = m * 60 + s;
-        updateDisplay();
-        timer = setInterval(() => {
-          if (totalSeconds > 0) {
-            totalSeconds--;
-            updateDisplay();
-          } else {
+    <script>
+        function loadComponent(id, file) {
+            fetch(file)
+                .then(response => {
+                    if (!response.ok) return '';
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                });
+        }
+        loadComponent('header-placeholder', 'header.html');
+        loadComponent('footer-placeholder', 'footer.html');
+    </script>
+    
+    <script>
+        let timer;
+        let totalSeconds = 0;
+        let isRunning = false;
+
+        function updateDisplay() {
+            const min = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
+            const sec = String(totalSeconds % 60).padStart(2, '0');
+            document.getElementById('display').innerText = `${min}:${sec}`;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                if (totalSeconds === 0) {
+                    const m = parseInt(document.getElementById('minutes').value) || 0;
+                    const s = parseInt(document.getElementById('seconds').value) || 0;
+                    totalSeconds = m * 60 + s;
+                }
+                
+                if (totalSeconds <= 0) return;
+
+                isRunning = true;
+                timer = setInterval(() => {
+                    if (totalSeconds > 0) {
+                        totalSeconds--;
+                        updateDisplay();
+                    } else {
+                        stopTimer();
+                        alert("Tempo esgotado!");
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            isRunning = false;
             clearInterval(timer);
-            timer = null;
-            alert("Tempo esgotado!");
-          }
-        }, 1000);
-      }
-    }
+        }
 
-    function stopTimer() {
-      if (timer) {
-        clearInterval(timer);
-        timer = null;
-      }
-    }
+        function resetTimer() {
+            stopTimer();
+            totalSeconds = 0;
+            updateDisplay();
+            document.getElementById('minutes').value = '';
+            document.getElementById('seconds').value = '';
+        }
 
-    function resetTimer() {
-      stopTimer();
-      totalSeconds = 0;
-      updateDisplay();
-      document.getElementById('minutes').value = '';
-      document.getElementById('seconds').value = '';
-    }
+        // NOVIDADE: Função para adicionar tempo rápido
+        function addTime(minutes) {
+            totalSeconds += minutes * 60;
+            updateDisplay();
+        }
 
-    updateDisplay();
-  </script>
+        updateDisplay();
+    </script>
 </body>
 </html>
