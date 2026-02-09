@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dice Roller - ToolixHub</title>
     <link rel="stylesheet" href="css/style_v2.css">
+    
+    <script src="js/translations.js"></script>
 </head>
 <body>
 
@@ -25,8 +27,12 @@
     <main>
         <h1 data-i18n="tool_dice_title">Dice Roller</h1>
         <p data-i18n="tool_dice_desc">Random number generator</p>
-        <button data-i18n="btn_roll">Roll Dice</button>
-    </main>
+        
+        <div class="dice-container">
+            <div id="dice-result">?</div>
+            <button onclick="rollDice()" data-i18n="btn_roll">Roll Dice</button>
+        </div>
+        </main>
 
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
     <footer>
@@ -34,27 +40,14 @@
     </footer>
 
     <script>
-        // 1. Dicionário
-        const translations = {
-            en: { "header_subtitle": "Your online hub of handy tools", "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online", "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator", "btn_roll": "Roll Dice", "tool_metro_title": "Metronome", "tool_metro_desc": "Pro precision timing tool" },
-            es: { "header_subtitle": "Tu centro de herramientas prácticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online", "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador de números aleatorios", "btn_roll": "Lanzar Dado", "tool_metro_title": "Metrónomo", "tool_metro_desc": "Herramienta de temporización de precisión" },
-            pt: { "header_subtitle": "Seu centro de ferramentas práticas", "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online", "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador de números aleatórios", "btn_roll": "Jogar Dado", "tool_metro_title": "Metrônomo", "tool_metro_desc": "Ferramenta de precisão para músicos" }
-        };
-
-        // 2. Função
-        function changeLanguage(lang) {
-            console.log("Mudando para:", lang);
-            localStorage.setItem('preferredLanguage', lang);
-            const elements = document.querySelectorAll('[data-i18n]');
-            elements.forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                if (translations[lang] && translations[lang][key]) {
-                    el.innerText = translations[lang][key];
-                }
-            });
+        // --- Sua Lógica JS do Sorteador (Cole aqui) ---
+        function rollDice() {
+            const result = Math.floor(Math.random() * 6) + 1;
+            document.getElementById('dice-result').innerText = result;
         }
+        // ----------------------------------------------
 
-        // 3. Inicialização
+        // --- Lógica de Tradução (Não remova) ---
         window.addEventListener('DOMContentLoaded', (event) => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
