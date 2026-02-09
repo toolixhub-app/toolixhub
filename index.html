@@ -5,6 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToolixHub - Your Online Tool Hub</title>
     <link rel="stylesheet" href="css/style_v2.css">
+    <style>
+        /* Estilos básicos para o index se o CSS não cobrir */
+        .home-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        .tool-card {
+            border: 1px solid #444;
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #e0e0e0;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: #00bcd4;
+        }
+        .tool-card h3 { color: #00bcd4; margin-top: 0; }
+        .ad-space { text-align: center; margin: 20px 0; color: #888; }
+        .lang-selector { text-align: center; padding: 10px; }
+        .lang-selector img { width: 30px; margin: 0 5px; cursor: pointer; }
+    </style>
 </head>
 <body>
     
@@ -40,93 +66,58 @@
             <h3>🎲 <span data-i18n="tool_dice_title">Dice Roller</span></h3>
             <p data-i18n="tool_dice_desc">Random number generator</p>
         </a>
-        <a href="countdown.html" class="tool-card">
-            <h3>⏳ <span data-i18n="tool_count_title">Countdown</span></h3>
-            <p data-i18n="tool_count_desc">Event tracker</p>
-        </a>
-        <a href="wordcounter.html" class="tool-card">
-            <h3>📝 <span data-i18n="tool_word_title">Word Counter</span></h3>
-            <p data-i18n="tool_word_desc">Text analysis</p>
-        </a>
-        <a href="password.html" class="tool-card">
-            <h3>🔐 <span data-i18n="tool_pass_title">Password</span></h3>
-            <p data-i18n="tool_pass_desc">Secure generator</p>
-        </a>
-        <a href="bmi.html" class="tool-card">
-            <h3>⚖️ <span data-i18n="tool_bmi_title">BMI</span></h3>
-            <p data-i18n="tool_bmi_desc">Health calculator</p>
-        </a>
-        <a href="stopwatch.html" class="tool-card">
-            <h3>⏱️ <span data-i18n="tool_stop_title">Stopwatch</span></h3>
-            <p data-i18n="tool_stop_desc">Time your actions</p>
-        </a>
-        <a href="temperature.html" class="tool-card">
-            <h3>🌡️ <span data-i18n="tool_temp_title">Temperature</span></h3>
-            <p data-i18n="tool_temp_desc">Units converter</p>
-        </a>
-        <a href="whatsapp.html" class="tool-card">
-            <h3>💬 <span data-i18n="tool_wa_title">WhatsApp</span></h3>
-            <p data-i18n="tool_wa_desc">Direct links</p>
-        </a>
-    </main>
+        </main>
     
     <div class="ad-space">Bottom Ad Banner (728x90)</div>
 
-    <footer>
-        <p data-i18n="footer_copyright">&copy; 2026 ToolixHub — All tools free and online</p>
-    </footer>
+    <div id="footer-placeholder"></div>
 
     <script>
-        // Dicionário de Traduções (Integrado para o Index)
+        // --- Função para Carregar Componentes (Fetch) ---
+        function loadComponent(id, file) {
+            fetch(file)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.text();
+                })
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                })
+                .catch(error => console.error('Error loading component:', file, error));
+        }
+
+        // --- Carregar o Footer ---
+        loadComponent('footer-placeholder', 'footer.html');
+
+        // --- Dicionário de Traduções (Index) ---
         const translations = {
             en: { 
                 "header_subtitle": "Your online hub of handy tools",
-                "footer_copyright": "&copy; 2026 ToolixHub — All tools free and online",
                 "tool_calc_title": "Calculator", "tool_calc_desc": "Simple",
                 "tool_metro_title": "Metronome", "tool_metro_desc": "Precise timing",
                 "tool_timer_title": "Timer", "tool_timer_desc": "Set countdowns",
-                "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator",
-                "tool_count_title": "Countdown", "tool_count_desc": "Event tracker",
-                "tool_word_title": "Word Counter", "tool_word_desc": "Text analysis",
-                "tool_pass_title": "Password", "tool_pass_desc": "Secure generator",
-                "tool_bmi_title": "BMI", "tool_bmi_desc": "Health calculator",
-                "tool_stop_title": "Stopwatch", "tool_stop_desc": "Time your actions",
-                "tool_temp_title": "Temperature", "tool_temp_desc": "Units converter",
-                "tool_wa_title": "WhatsApp", "tool_wa_desc": "Direct links"
+                "tool_dice_title": "Dice Roller", "tool_dice_desc": "Random number generator"
+                // Adicione as outras traduções aqui
             },
             es: { 
                 "header_subtitle": "Tu centro de herramientas prácticas",
-                "footer_copyright": "&copy; 2026 ToolixHub — Todas las herramientas gratis y online",
                 "tool_calc_title": "Calculadora", "tool_calc_desc": "Simple",
                 "tool_metro_title": "Metrónomo", "tool_metro_desc": "Tiempo preciso",
                 "tool_timer_title": "Temporizador", "tool_timer_desc": "Cuenta regresiva",
-                "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador aleatorio",
-                "tool_count_title": "Cuenta Regresiva", "tool_count_desc": "Seguimiento de eventos",
-                "tool_word_title": "Contador de Palabras", "tool_word_desc": "Análisis de texto",
-                "tool_pass_title": "Contraseña", "tool_pass_desc": "Generador seguro",
-                "tool_bmi_title": "IMC", "tool_bmi_desc": "Calculadora de salud",
-                "tool_stop_title": "Cronómetro", "tool_stop_desc": "Cronometra acciones",
-                "tool_temp_title": "Temperatura", "tool_temp_desc": "Conversor de unidades",
-                "tool_wa_title": "WhatsApp", "tool_wa_desc": "Enlaces directos"
+                "tool_dice_title": "Lanzador de Dados", "tool_dice_desc": "Generador aleatorio"
+                // Adicione as outras traduções aqui
             },
             pt: { 
                 "header_subtitle": "Seu centro de ferramentas práticas",
-                "footer_copyright": "&copy; 2026 ToolixHub — Todas as ferramentas gratuitas e online",
                 "tool_calc_title": "Calculadora", "tool_calc_desc": "Simples",
                 "tool_metro_title": "Metrônomo", "tool_metro_desc": "Tempo preciso",
                 "tool_timer_title": "Temporizador", "tool_timer_desc": "Contagem regressiva",
-                "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador aleatório",
-                "tool_count_title": "Contagem Regressiva", "tool_count_desc": "Rastreador de eventos",
-                "tool_word_title": "Contador de Palavras", "tool_word_desc": "Análise de texto",
-                "tool_pass_title": "Senha", "tool_pass_desc": "Gerador seguro",
-                "tool_bmi_title": "IMC", "tool_bmi_desc": "Calculadora de saúde",
-                "tool_stop_title": "Cronômetro", "tool_stop_desc": "Cronometre ações",
-                "tool_temp_title": "Temperatura", "tool_temp_desc": "Conversor de unidades",
-                "tool_wa_title": "WhatsApp", "tool_wa_desc": "Links diretos"
+                "tool_dice_title": "Sorteador de Dados", "tool_dice_desc": "Gerador aleatório"
+                // Adicione as outras traduções aqui
             }
         };
 
-        // Função de Tradução (Exatamente igual ao dice.html)
+        // --- Função para Alterar Idioma ---
         function changeLanguage(lang) {
             localStorage.setItem('preferredLanguage', lang);
             const elements = document.querySelectorAll('[data-i18n]');
@@ -138,8 +129,8 @@
             });
         }
 
-        // Inicialização (Exatamente igual ao dice.html)
-        window.addEventListener('DOMContentLoaded', (event) => {
+        // --- Inicialização (Idioma salvo) ---
+        window.addEventListener('DOMContentLoaded', () => {
             const savedLang = localStorage.getItem('preferredLanguage') || 'en';
             changeLanguage(savedLang);
         });
