@@ -26,10 +26,10 @@ body {
   min-height: 100vh;
 }
 
-/* --- LOGO E BANDEIRAS PADRONIZADOS --- */
+/* --- LOGO E BANDEIRAS --- */
 header {
   text-align: center;
-  padding: 10px;
+  padding: 15px;
   width: 100%;
 }
 
@@ -39,7 +39,7 @@ header img {
 }
 
 .lang-selector {
-  margin-top: 5px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   gap: 8px;
@@ -51,11 +51,11 @@ header img {
   border: 1px solid #444;
 }
 
-/* --- container da calculadora --- */
+/* --- CONTAINER DA CALCULADORA --- */
 .main-container {
   background: var(--container-bg);
-  padding: 15px;
-  margin: 10px auto;
+  padding: 20px;
+  margin: 15px auto;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
   width: 90%;
@@ -63,10 +63,10 @@ header img {
   box-sizing: border-box;
 }
 
-/* --- GRADE DE BOTÕES (Corrigida) --- */
+/* --- GRADE DE BOTÕES (GRID) --- */
 .calc-buttons {
   display: grid;
-  gap: 5px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -82,14 +82,14 @@ header img {
   font-weight: bold;
   border-radius: 8px;
   cursor: pointer;
-  width: 100%; /* Preenche a célula */
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* Tamanho de fonte reduzido para botões científicos */
-.btn-calc.sci { font-size: 13px; }
-
 /* Botões Especiais */
 .btn-calc.equal { grid-column: span 2; background-color: var(--accent-color); }
+.btn-calc.op { background-color: var(--special-btn-bg); }
+.btn-calc.ac { background-color: var(--ac-btn-bg); color: #fff; }
+.btn-calc.sci { font-size: 13px; }
